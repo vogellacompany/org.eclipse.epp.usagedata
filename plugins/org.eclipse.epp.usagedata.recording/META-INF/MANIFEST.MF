@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Recording Plug-in
+Bundle-SymbolicName: org.eclipse.epp.usagedata.recording;singleton:=true
+Bundle-Version: 0.1.4.qualifier
+Bundle-Activator: org.eclipse.epp.usagedata.recording.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.epp.usagedata.gathering,
+ org.apache.commons.httpclient
+Eclipse-LazyStart: true
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Export-Package: org.eclipse.epp.usagedata.recording,
+ org.eclipse.epp.usagedata.recording.settings,
+ org.eclipse.epp.usagedata.recording.uploading

@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Usage Data Gathering Plug-in
+Bundle-SymbolicName: org.eclipse.epp.usagedata.gathering;singleton:=true
+Bundle-Version: 0.1.4.qualifier
+Bundle-Activator: org.eclipse.epp.usagedata.gathering.Activator
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.ui
+Eclipse-LazyStart: true
+Export-Package: org.eclipse.epp.usagedata.gathering,
+ org.eclipse.epp.usagedata.gathering.events,
+ org.eclipse.epp.usagedata.gathering.monitors,
+ org.eclipse.epp.usagedata.gathering.services,
+ org.eclipse.epp.usagedata.gathering.settings
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

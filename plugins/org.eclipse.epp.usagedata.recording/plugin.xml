@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension-point id="uploader" name="Upload Delegate" schema="schema/uploader.exsd"/>
+   <extension
+         point="org.eclipse.epp.usagedata.listeners.event">
+      <listener
+            class="org.eclipse.epp.usagedata.recording.UsageDataRecorder">
+      </listener>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="org.eclipse.epp.usagedata.recording.settings.UsageDataRecordingPreferenceInitializer">
+      </initializer>
+   </extension>
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup></startup>
+   </extension>
+
+</plugin>

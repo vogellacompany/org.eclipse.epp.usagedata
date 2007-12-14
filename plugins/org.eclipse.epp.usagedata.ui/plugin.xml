@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="org.eclipse.epp.usagedata.ui.preferences.UsageDataCapturePreferencesPage"
+            id="org.eclipse.epp.usagedata.ui.preferences.UsageDataCapture"
+            name="Usage Data Capture">
+      </page>
+      <page
+            category="org.eclipse.epp.usagedata.ui.preferences.UsageDataCapture"
+            class="org.eclipse.epp.usagedata.ui.preferences.UsageDataUploadingPreferencesPage"
+            id="org.eclipse.epp.usagedata.ui.preferences.UsageDataUploading"
+            name="Uploading">
+      </page>
+      <page
+            category="org.eclipse.epp.usagedata.ui.preferences.UsageDataCapture"
+            class="org.eclipse.epp.usagedata.ui.preferences.UsageDataUploadingTermsOfUsePage"
+            id="org.eclipse.epp.usagedata.ui.preferences.UsageDataUploadingTermsOfUsePage"
+            name="Terms of Use">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.epp.usagedata.recording.uploader">
+      <uploader
+            class="org.eclipse.epp.usagedata.ui.AskUserUploader">
+      </uploader>
+   </extension>
+
+</plugin>

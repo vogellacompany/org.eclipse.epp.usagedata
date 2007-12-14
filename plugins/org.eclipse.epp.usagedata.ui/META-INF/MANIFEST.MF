@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Ui Plug-in
+Bundle-SymbolicName: org.eclipse.epp.usagedata.ui;singleton:=true
+Bundle-Version: 0.1.4.qualifer
+Bundle-Activator: org.eclipse.epp.usagedata.ui.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.epp.usagedata.recording,
+ org.eclipse.epp.usagedata.gathering
+Eclipse-LazyStart: true
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
