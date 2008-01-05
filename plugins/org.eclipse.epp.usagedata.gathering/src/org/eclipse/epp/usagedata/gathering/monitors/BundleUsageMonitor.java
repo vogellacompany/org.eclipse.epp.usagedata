@@ -31,7 +31,7 @@ public class BundleUsageMonitor implements UsageMonitor {
 
 	public void startMonitoring(final UsageDataService usageDataService) {
 		// First, create events for all the bundles that have already been registered.
-		recordCurrentlyInstalledBundles(usageDataService);
+		recordCurrentlyActiveBundles(usageDataService);
 		
 		// Create an install a listener on the bundle context.
 		bundleUsageListener = new BundleListener() {
@@ -43,7 +43,7 @@ public class BundleUsageMonitor implements UsageMonitor {
 	}
 
 
-	private void recordCurrentlyInstalledBundles(UsageDataService usageDataService) {
+	private void recordCurrentlyActiveBundles(UsageDataService usageDataService) {
 		for (Bundle bundle : getBundleContext().getBundles()) {
 			if (bundle.getState() != Bundle.ACTIVE) continue;
 			String bundleId = bundle.getSymbolicName();

@@ -77,14 +77,14 @@ public class UsageDataService {
 	public void startMonitoring() {
 		if (isMonitoring())
 			return;
-
+		
 		startMonitors();
 		startEventConsumerJob();
 
 		monitoring = true;
 
 	}
-	
+
 	/**
 	 * This method stops the monitoring process. If the service is already stopped
 	 * when this method is called, nothing happens (i.e. multiple calls
@@ -95,13 +95,12 @@ public class UsageDataService {
 			return;
 
 		stopMonitors();
+		stopEventConsumerJob();
 
 		monitoring = false;
 
-		eventConsumerJob.cancel();
-		
-		eventConsumerJob = null;
 	}
+
 
 	public boolean isMonitoring() {
 		return monitoring;
@@ -118,7 +117,7 @@ public class UsageDataService {
 	 * activities to happen without significantly impacting the user's
 	 * experience.
 	 */
-	private void startEventConsumerJob() {
+	protected void startEventConsumerJob() {
 		// TODO Decide if the job is more trouble than it's worth.
 		if (eventConsumerJob != null) return;
 		
@@ -156,10 +155,7 @@ public class UsageDataService {
 				 * I had originally tried using Display.syncExec(Runnable) (with
 				 * an "do nothing" Runnable, but this caused some weird classloading
 				 * issues similar to those referenced in Bug 88109.
-				 * 
-				 * The EclipseStarter.isRunning() method seems to fit the bill,
-				 * despite being restricted access.
-				 * 
+				 * 	
 				 * TODO Re-evaluate use of restricted access code.
 				 */
 				while (!EclipseStarter.isRunning()) {
@@ -178,6 +174,12 @@ public class UsageDataService {
 		eventConsumerJob.schedule(1000); // Wait a few minutes before scheduling the job.
 	}
 
+	protected void stopEventConsumerJob() {
+		eventConsumerJob.cancel();
+		
+		eventConsumerJob = null;
+	}
+	
 	/**
 	 * This method returns the next available event. If no event is available,
 	 * the current thread is suspended until an event is added. This method will
@@ -326,7 +328,7 @@ public class UsageDataService {
 		}
 	}
 
-	private void startMonitors() {
+	protected void startMonitors() {
 		IConfigurationElement[] elements = Platform.getExtensionRegistry()
 				.getConfigurationElementsFor(
 						"org.eclipse.epp.usagedata.gathering.monitors");
@@ -351,7 +353,7 @@ public class UsageDataService {
 		monitors.add(monitor);
 	}
 
-	private void stopMonitors() {
+	protected void stopMonitors() {
 		for (Object monitor : monitors.getListeners()) {
 			stopMonitor((UsageMonitor) monitor);
 		}

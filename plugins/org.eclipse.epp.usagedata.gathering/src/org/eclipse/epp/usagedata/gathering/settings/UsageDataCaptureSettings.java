@@ -34,12 +34,10 @@ public class UsageDataCaptureSettings {
 		if (getPreferencesStore().getBoolean(CAPTURE_ENABLED_KEY) == value) return;
 		
 		getPreferencesStore().setValue(CAPTURE_ENABLED_KEY, value);
-		// TODO Is this good enough, or do we need an observer?
-		if (value) {
-			Activator.getDefault().getUsageDataCaptureService().startMonitoring();
-		} else {
-			Activator.getDefault().getUsageDataCaptureService().stopMonitoring();
-		}
+		
+		// The activator should be listening to changes in the preferences store
+		// and will change the state of the service as a result of us setting
+		// the value here.
 	}
 	
 	private IPreferenceStore getPreferencesStore() {

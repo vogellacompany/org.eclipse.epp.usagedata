@@ -75,6 +75,9 @@ public class Activator extends AbstractUIPlugin implements IStartup {
 			
 		});
 		
+		// TODO There is basically no value to having this as a service at this point.
+		// In fact, there is potential for some weirdness with this as a service. For
+		// example, if the service is shut down it will just keep running anyway.
 		registration = context.registerService(UsageDataService.class.getName(), service, null);
 		
 		usageDataServiceTracker = new ServiceTracker(context, UsageDataService.class.getName(), null);
@@ -96,7 +99,7 @@ public class Activator extends AbstractUIPlugin implements IStartup {
 		super.stop(context);
 	}
 
-	public UsageDataService getUsageDataCaptureService() {
+	private UsageDataService getUsageDataCaptureService() {
 		return (UsageDataService)usageDataServiceTracker.getService();
 	}
 
