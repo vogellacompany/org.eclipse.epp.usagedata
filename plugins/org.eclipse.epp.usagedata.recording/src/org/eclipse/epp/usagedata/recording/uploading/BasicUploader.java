@@ -13,7 +13,9 @@ package org.eclipse.epp.usagedata.recording.uploading;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.text.MessageFormat;
+import java.io.InterruptedIOException;
+import java.net.ConnectException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +31,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.epp.usagedata.recording.Activator;
-import org.eclipse.epp.usagedata.recording.settings.UsageDataRecordingSettings;
 
 /**
  * Instances of the {@link BasicUploader} class are responsible for
@@ -38,25 +39,54 @@ import org.eclipse.epp.usagedata.recording.settings.UsageDataRecordingSettings;
  * @author Wayne Beaton
  *
  */
-public class BasicUploader implements Uploader {
+public class BasicUploader extends AbstractUploader {
 
+	/**
+	 * The HTTP_USERID constant is the key for the HTTP header
+	 * that is used to pass the user (i.e. workstation) identifier.
+	 * This value identifies the user's workstation (which may
+	 * include multiple Eclipse workspaces).
+	 */
+	private static final String HTTP_USERID = "USERID";
+	
+	/**
+	 * The HTTP_WORKSPACE constant is the key for the HTTP header
+	 * that is used to pass the workspace identifier. This value
+	 * is used to identify a single workspace on the user's workstation.
+	 * A user may have more than one workspace and each will have
+	 * a different workspace id.
+	 */
+	private static final String HTTP_WORKSPACEID = "WORKSPACEID";	
+
+	/**
+	 * The HTTP_TIME constant is the key for the HTTP header
+	 * that is used to pass the current time on the workstation to
+	 * the server. This value is included in the request so that the
+	 * server, if desired, can account for differences in the clock
+	 * between the user's workstation and the server.
+	 */
+	private static final String HTTP_TIME = "TIME";
+	
 	private boolean uploadInProgress = false;
 
 	/**
 	 * Uploads are done with a {@link Job} running in the background
 	 * at a relatively low priority. The intent is to make the user
 	 * as blissfully unaware that anything is happening as possible.
+	 * <p>
+	 * Once the job has been started, the values on the instance
+	 * cannot be modified. The instance is <em>not</em> reusable.
+	 * </p>
 	 */
-	public void startUpload(final UploadManager uploadManager, final File[] files) {
+	public synchronized void startUpload(final UploadParameters uploadParameters) {
 		if (uploadInProgress) return;
 		uploadInProgress = true;
-		getSettings().setLastUploadTime();
 		Job job = new Job("Uploading usage data...") {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				doUpload(files, monitor);
+				UploadResult result = upload(uploadParameters, monitor);
 				uploadInProgress = false;
-				uploadManager.uploadComplete();
+				fireUploadComplete(result);
 				return Status.OK_STATUS;
 			}
 		};
@@ -64,6 +94,31 @@ public class BasicUploader implements Uploader {
 		job.schedule();
 	}
 	
+	protected UploadResult upload(UploadParameters uploadParameters, IProgressMonitor monitor) {
+		UploadResult result = null;
+		
+		try {
+			long start = System.currentTimeMillis();
+			result = doUpload(uploadParameters, monitor);
+			long duration = System.currentTimeMillis() - start;
+			
+			Activator.getDefault().log(IStatus.INFO, "Usage data uploaded to %1$s in %2$s milliseconds.", uploadParameters.getSettings().getUploadUrl(), duration);
+			
+		} catch (IllegalStateException e) {
+			Activator.getDefault().log(IStatus.WARNING, e, "The URL provided for usage data upload, %1$s, is invalid.", uploadParameters.getSettings().getUploadUrl());
+		} catch (UnknownHostException e) {
+			Activator.getDefault().log(IStatus.WARNING, e, "The usage data upload server at %1$s could not be found.", uploadParameters.getSettings().getUploadUrl());
+		} catch (ConnectException e) {
+			Activator.getDefault().log(IStatus.WARNING, e, "Could not connect to the usage data upload server at %1$s.", uploadParameters.getSettings().getUploadUrl());
+		} catch (InterruptedIOException e) {
+			Activator.getDefault().log(IStatus.WARNING, e, "A socket timeout occurred while trying to upload usage data.");			
+		} catch (Exception e) {
+			Activator.getDefault().log(IStatus.WARNING, e, "An exception occurred while trying to upload usage data.");
+		}
+		
+		return result;
+	}
+
 	/**
 	 * I can envision a time when we may want to upload something other than files.
 	 * We may, for example, want to upload an in-memory representation of the files.
@@ -73,8 +128,10 @@ public class BasicUploader implements Uploader {
 	 * TODO All of this can be moved to an UploadJob class.
 	 * @param files
 	 * @param monitor
+	 * @throws IOException 
+	 * @throws HttpException 
 	 */
-	protected void doUpload(File[] files, IProgressMonitor monitor) {
+	protected UploadResult doUpload(UploadParameters uploadParameters, IProgressMonitor monitor) throws HttpException, IOException {
 		/*
 		 * The files that we have been provided with were determined while the recorder
 		 * was suspended. We should be safe to work with these files without worrying
@@ -82,56 +139,29 @@ public class BasicUploader implements Uploader {
 		 * processes running outside of our JVM may be messing with these files and
 		 * anticipate errors accordingly.
 		 */
-
-//		File zipFile = File.createTempFile("upload", "zip");
-//		try {
-//			if (!zipFile.exists()) zipFile.createNewFile(); // TODO Do we need this?
-//			ZipOutputStream output = new ZipOutputStream(new FileOutputStream(zipFile));
-//			for (File file : files) {
-//				addFileToZip(output, file);
-//			}
-//			output.close();
-//		} catch (IOException e) {
-//			handleException(e);
-//		}
-		
+	
 		/*
 		 * There appears to be some mechanism on some versions of HttpClient that
 		 * allows the insertion of compression technology. For now, we don't worry
 		 * about compressing our output; we can worry about that later.
 		 */
-		
-		PostMethod post = new PostMethod(getSettings().getUploadUrl());
-		post.setRequestHeader("USERID", getSettings().getUserId());
-		post.setRequestHeader("WORKSPACEID", getSettings().getWorkspaceId());
-		post.setRequestHeader("TIME", String.valueOf(System.currentTimeMillis()));
+		PostMethod post = new PostMethod(uploadParameters.getSettings().getUploadUrl());
+
+		post.setRequestHeader(HTTP_USERID, uploadParameters.getSettings().getUserId());
+		post.setRequestHeader(HTTP_WORKSPACEID, uploadParameters.getSettings().getWorkspaceId());
+		post.setRequestHeader(HTTP_TIME, String.valueOf(System.currentTimeMillis()));
 		// TODO Set the user agent header
-		if ("true".equals(getSettings().isLoggingServerActivity())) {
+		if (uploadParameters.getSettings().isLoggingServerActivity()) {
 			post.setRequestHeader("LOGGING", "true");
 		}
-		post.setRequestEntity(new MultipartRequestEntity(getFileParts(files), post.getParams()));
+		post.setRequestEntity(new MultipartRequestEntity(getFileParts(uploadParameters), post.getParams()));
 		
-		// Configure the HttpClient to timeout after 4 seconds.
-		HttpClientParams parameters = new HttpClientParams();
+		// Configure the HttpClient to timeout after one minute.
+		HttpClientParams httpParameters = new HttpClientParams();
 		// TODO Make the socket timeout a preference.
-		parameters.setSoTimeout(4000); // "So" means "socket"; who knew?
+		httpParameters.setSoTimeout(60000); // "So" means "socket"; who knew?
 		
-		int result = 0;
-		try {
-			long start = System.currentTimeMillis();
-			result = new HttpClient(parameters).executeMethod(post);
-			long duration = System.currentTimeMillis() - start;
-			
-			Activator.getDefault().getLog()
-				.log(new Status(IStatus.INFO, Activator.PLUGIN_ID,
-					MessageFormat.format("Usage data uploaded to {0} in {1} milliseconds", getSettings().getUploadUrl(), duration)));
-		} catch (HttpException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		int result = new HttpClient(httpParameters).executeMethod(post);
 		
 		// TODO What do we do with the response?
 		try {
@@ -143,18 +173,22 @@ public class BasicUploader implements Uploader {
 			e.printStackTrace();
 		}
 		
+		post.releaseConnection();
+		
 		// Check the result. HTTP return code of 200 means success.
 		if (result == 200) {
-			for (File file : files) {
+			for (File file : uploadParameters.getFiles()) {
 				// TODO what if file delete fails?
 				if (file.exists()) file.delete();
 			}
 		}
+		
+		return new UploadResult(result);
 	}
 
-	private Part[] getFileParts(File[] files) {
+	private Part[] getFileParts(UploadParameters uploadParameters) {
 		List<Part> fileParts = new ArrayList<Part>();
-		for (File file : files) {
+		for (File file : uploadParameters.getFiles()) {
 			try {
 				// TODO Hook in a custom FilePart that filters contents.
 				fileParts.add(new FilePart("uploads[]", file));
@@ -165,13 +199,9 @@ public class BasicUploader implements Uploader {
 			}
 		}
 		return (Part[]) fileParts.toArray(new Part[fileParts.size()]);
-	}	
-
-	private UsageDataRecordingSettings getSettings() {
-		return Activator.getDefault().getSettings();
 	}
 
-	public boolean isUploadInProgress() {
+	public synchronized boolean isUploadInProgress() {
 		return uploadInProgress;
-	}
+	}	
 }

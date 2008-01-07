@@ -19,12 +19,12 @@ import java.io.Reader;
 import java.io.Writer;
 import java.util.UUID;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.epp.usagedata.recording.Activator;
-import org.eclipse.epp.usagedata.recording.uploading.BasicUploader;
-import org.eclipse.epp.usagedata.recording.uploading.Uploader;
+import org.eclipse.epp.usagedata.recording.filtering.AcceptAllEventsFilter;
+import org.eclipse.epp.usagedata.recording.filtering.UsageDataEventFilter;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.PlatformUI;
 
@@ -75,9 +75,8 @@ public class UsageDataRecordingSettings {
 			} catch (NumberFormatException e) {
 				// If we can't get it from this source, we'll pick it up some
 				// other way. Long the problem and move on.
-				Activator.getDefault().logException(
-						"The UsageDataUploader cannot parse the " + UPLOAD_PERIOD_KEY
-								+ " system property (\"" + value + "\").", e);
+				Activator.getDefault().log(IStatus.WARNING,
+						e, "The UsageDataUploader cannot parse the %1$s system property (\"%2$s\"", UPLOAD_PERIOD_KEY, value);
 			}
 		} else if (getPreferencesStore().contains(UPLOAD_PERIOD_KEY)) {
 			period = getPreferencesStore().getLong(UPLOAD_PERIOD_KEY);
@@ -191,8 +190,8 @@ public class UsageDataRecordingSettings {
 	 * 
 	 * @return
 	 */
-	public String isLoggingServerActivity() {
-		return System.getProperty(LOG_SERVER_ACTIVITY_KEY);
+	public boolean isLoggingServerActivity() {
+		return "true".equals(System.getProperty(LOG_SERVER_ACTIVITY_KEY));
 	}
 
 	/**
@@ -261,9 +260,7 @@ public class UsageDataRecordingSettings {
 				// content?
 				return new String(buffer, 0, count);
 			} catch (IOException e) {
-				Activator.getDefault().logException(
-						"Cannot read the existing id from " + file.toString()
-								+ ", using the default", e);
+				handleCannotReadFileException(file, e);
 				return DEFAULT_ID;
 			} finally {
 				close(reader);
@@ -277,14 +274,16 @@ public class UsageDataRecordingSettings {
 				writer.write(id);
 				return id;
 			} catch (IOException e) {
-				Activator.getDefault().logException(
-						"Cannot write the generated id to " + file.toString()
-								+ ", using the default", e);
+				handleCannotReadFileException(file, e);
 				return DEFAULT_ID;
 			} finally {
 				close(writer);
 			}
 		}
+	}
+
+	private void handleCannotReadFileException(File file, IOException e) {
+		Activator.getDefault().log(IStatus.WARNING,	e, "Cannot read the existing id from %1$s; using the default.", file.toString());
 	}
 
 	private IPreferenceStore getPreferencesStore() {
@@ -349,42 +348,13 @@ public class UsageDataRecordingSettings {
 		}
 	}
 
-	/**
-	 * This method returns the {@link Uploader} to use to upload data to the
-	 * server. At present, this is implemented using the extension point
-	 * registry. This separation is done so that a UI component can participate
-	 * in the upload process without muddying the lines between model and view;
-	 * a UI plug-in, might, for example, open an editor or dialogue box asking
-	 * the user if it is okay to do the upload.
-	 * <p>
-	 * An extension point is not quite the right fit here as there is currently
-	 * only provision for there being a single choice. It's a good choice, 
-	 * because we want this to be lazy loaded. At some point, it may
-	 * make sense to have multiple uploaders available and let the user
-	 * (via preferences) select the one that they want to use (perhaps using
-	 * a combo box or something. For now, that's probably just too complicated,
-	 * and so the extension point is used with an understanding that there
-	 * should only be one extension to it (in the event that there is more than
-	 * one extension, the first one that we find is used).
-	 * </p>
-	 * 
-	 * @return
-	 */
-	public Uploader getUploader() {
-		IConfigurationElement[] elements = Platform.getExtensionRegistry()
-				.getConfigurationElementsFor(Activator.PLUGIN_ID + ".uploader");
-		for (IConfigurationElement element : elements) {
-			if ("uploader".equals(element.getName())) {
-				try {
-					Object uploader = element.createExecutableExtension("class");
-					if (uploader instanceof Uploader) {
-						return (Uploader) uploader;
-					}
-				} catch (CoreException e) {
-					Activator.getDefault().getLog().log(e.getStatus());
-				}
-			}
-		}
-		return new BasicUploader();
+	public String getMyUsageDataUrl() {
+		// TODO This is a bit of a hack. 
+		IPath path = new Path(getUploadUrl()).removeLastSegments(1).append("myusage.php");
+		return path.toString() + "?user=" + getUserId() + "&workspace=" + getWorkspaceId();
+	}
+
+	public UsageDataEventFilter getFilter() {
+		return new AcceptAllEventsFilter();
 	}
 }

@@ -17,6 +17,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.epp.usagedata.gathering.events.UsageDataEvent;
 import org.eclipse.epp.usagedata.gathering.events.UsageDataEventListener;
 import org.eclipse.epp.usagedata.recording.settings.UsageDataRecordingSettings;
@@ -37,6 +38,12 @@ public class UsageDataRecorder implements UsageDataEventListener {
 	 * messages into the log.
 	 */
 	private static final int EXCEPTION_THRESHOLD = 5;
+
+	/**
+	 * When the file holding upload data exceeds this number
+	 * of bytes, it is moved so that it can be uploaded.
+	 */
+	private static final long FILE_SIZE_THRESHOLD = 1000; // TODO Increase to 10KB.
 
 	/**
 	 * This list holds events as they are received. Once the number of events in
@@ -81,21 +88,20 @@ public class UsageDataRecorder implements UsageDataEventListener {
 		events.add(event);
 			
 		if (events.size() >= EVENT_COUNT_THRESHOLD) dumpEvents();
-			
+		
 		uploadDataIfNecessary();
 	}
 	
-	private void uploadDataIfNecessary() {
+	protected void uploadDataIfNecessary() {
 		if (getSettings() == null) return;
-		if (getSettings().isTimeToUpload()) {
-			prepareForUpload();
-			UploadManager manager = getUploadManager();
-			if (manager == null) return;
-			manager.startUpload();
-		}
+		if (!getSettings().isTimeToUpload()) return;
+		
+		UploadManager manager = getUploadManager();
+		if (manager == null) return;
+		manager.startUpload();
 	}
 
-	private UsageDataRecordingSettings getSettings() {
+	protected UsageDataRecordingSettings getSettings() {
 		if (Activator.getDefault() == null) return null; 
 		return Activator.getDefault().getSettings();
 	}
@@ -108,13 +114,14 @@ public class UsageDataRecorder implements UsageDataEventListener {
 	 * that it can be found by the {@link BasicUploader}. When the next
 	 * event comes in, a new file will be created.
 	 */
-	private void prepareForUpload() {
-		dumpEvents();
+	private synchronized void prepareForUpload() {
 		if (getSettings() == null) return;
 		File file = getSettings().getEventFile();
 		
 		// If the file does not exist, then something bad has happened. Just return.
 		if (!file.exists()) return;
+		
+		if (file.length() < FILE_SIZE_THRESHOLD) return;
 		
 		File destination = getSettings().computeDestinationFile();
 		
@@ -132,7 +139,9 @@ public class UsageDataRecorder implements UsageDataEventListener {
 		return true;
 	}
 
-	private void dumpEvents() {
+	protected synchronized void dumpEvents() {
+		prepareForUpload();
+		
 		Writer writer = null;
 		try {
 			writer = getWriter();
@@ -150,10 +159,10 @@ public class UsageDataRecorder implements UsageDataEventListener {
 
 	private void handleException(IOException e, String message) {
 		if (exceptionCount++ > EXCEPTION_THRESHOLD) {
-			Activator.getDefault().logException("The UsageDataRecorder has been stopped because it has caused too many exceptions", e);
+			Activator.getDefault().log(IStatus.INFO, e, "The UsageDataRecorder has been stopped because it has caused too many exceptions");
 			stop();
 		}
-		Activator.getDefault().logException(message, e);
+		Activator.getDefault().log(IStatus.ERROR, e, message);
 	}
 	
 	/**
@@ -184,7 +193,6 @@ public class UsageDataRecorder implements UsageDataEventListener {
 		return createEventWriter(getSettings().getEventFile());
 	}
 
-	
 	private Writer createEventWriter(File file) throws IOException {
 		if (file.exists())
 			return new FileWriter(file, true);

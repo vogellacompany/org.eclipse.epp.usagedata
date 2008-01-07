@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.epp.usagedata.recording;
 
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.epp.usagedata.gathering.services.UsageDataService;
 import org.eclipse.epp.usagedata.recording.settings.UsageDataRecordingSettings;
@@ -18,6 +17,7 @@ import org.eclipse.epp.usagedata.recording.uploading.UploadManager;
 import org.eclipse.ui.IStartup;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
+import org.osgi.util.tracker.ServiceTracker;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -35,6 +35,8 @@ public class Activator extends AbstractUIPlugin implements IStartup {
 	private UsageDataRecordingSettings settings;
 
 	private UsageDataRecorder usageDataRecorder;
+
+	private ServiceTracker usageDataServiceTracker;
 	
 	/*
 	 * (non-Javadoc)
@@ -49,6 +51,10 @@ public class Activator extends AbstractUIPlugin implements IStartup {
 		
 		usageDataRecorder = new UsageDataRecorder();
 		usageDataRecorder.start();
+		
+		usageDataServiceTracker = new ServiceTracker(context, UsageDataService.class.getName(), null);
+		usageDataServiceTracker.open();
+		
 		getUsageDataService().addUsageDataEventListener(usageDataRecorder);
 	}
 
@@ -65,7 +71,7 @@ public class Activator extends AbstractUIPlugin implements IStartup {
 	}
 
 	private UsageDataService getUsageDataService() {
-		return org.eclipse.epp.usagedata.gathering.Activator.getDefault().getUsageDataCaptureService();
+		return (UsageDataService)usageDataServiceTracker.getService();
 	}
 
 	/**
@@ -80,9 +86,22 @@ public class Activator extends AbstractUIPlugin implements IStartup {
 	public UsageDataRecordingSettings getSettings() {
 		return settings;
 	}
+
+	public void log(int status, String message, Object ... arguments) {
+		log(status, (Exception)null, message, arguments);
+	}
 	
-	public void logException(String message, Exception e) {
-		getLog().log(new Status(IStatus.ERROR, PLUGIN_ID, message, e));
+	public void log(int status, Exception exception, String message, Object ... arguments) {
+		log(status, exception, String.format(message, arguments));
+	}
+	
+	public void log(int status, Exception e, String message) {
+		getLog().log(new Status(status, PLUGIN_ID, message, e));
+	}
+	
+
+	public void log(Status status) {
+		getLog().log(status);
 	}
 
 	// TODO Figure out why this is causing compiler problems.
@@ -95,4 +114,6 @@ public class Activator extends AbstractUIPlugin implements IStartup {
 	public UploadManager getUploadManager() {
 		return uploadManager;
 	}
+
+
 }

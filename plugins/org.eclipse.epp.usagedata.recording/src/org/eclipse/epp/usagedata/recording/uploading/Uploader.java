@@ -10,11 +10,13 @@
  *******************************************************************************/
 package org.eclipse.epp.usagedata.recording.uploading;
 
-import java.io.File;
 
 public interface Uploader {
-
-	void startUpload(UploadManager uploadManager, File[] usageDataUploadFiles);
-
 	boolean isUploadInProgress();
+
+	void startUpload(UploadParameters uploadParameters);
+	
+	void addUploadListener(UploadListener listener);
+	
+	void removeUploadListener(UploadListener listener);
 }
