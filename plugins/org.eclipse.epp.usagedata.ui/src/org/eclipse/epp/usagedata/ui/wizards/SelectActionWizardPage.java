@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.epp.usagedata.ui.wizards;
 
+import org.eclipse.epp.usagedata.gathering.Activator;
+import org.eclipse.epp.usagedata.gathering.settings.UsageDataCaptureSettings;
 import org.eclipse.epp.usagedata.ui.uploaders.AskUserUploader;
 import org.eclipse.jface.dialogs.IDialogPage;
 import org.eclipse.jface.wizard.WizardPage;
@@ -64,7 +66,7 @@ public class SelectActionWizardPage extends WizardPage {
 		createNeverUploadRadio(composite);
 		createSpacer(composite);
 		
-		FormText text = createFormText(composite, "<form><p>To learn more about how this data will be used by the Eclipse Foundation, please review the <a href=\"terms\">Terms of Use</a> on the next page of this wizard.</p></form>");
+		FormText text = createFormText(composite, getTermsText());
 		text.addHyperlinkListener(new HyperlinkAdapter() {
 			@Override
 			public void linkActivated(HyperlinkEvent event) {
@@ -73,6 +75,17 @@ public class SelectActionWizardPage extends WizardPage {
 		});
 	
 		setControl(composite);
+	}
+
+	private String getTermsText() {
+		if (getGatheringSettings().hasUserAcceptedTermsOfUse()) 
+			return "<form><p>To learn more about how this data will be used by the Eclipse Foundation, please review the <a href=\"terms\">Terms of Use</a> on the next page of this wizard.</p></form>";
+		else
+			return "<form><p>Please review the <a href=\"terms\">Terms of Use</a>.</p></form>";
+	}
+
+	private UsageDataCaptureSettings getGatheringSettings() {
+		return Activator.getDefault().getSettings();
 	}
 
 	private void createSpacer(Composite parent) {

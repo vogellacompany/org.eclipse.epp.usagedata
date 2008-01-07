@@ -20,6 +20,7 @@ public class UsageDataCapturePreferenceInitializer extends AbstractPreferenceIni
 	public void initializeDefaultPreferences() {
 		IPreferenceStore preferenceStore = Activator.getDefault().getPreferenceStore();
 		preferenceStore.setDefault(UsageDataCaptureSettings.CAPTURE_ENABLED_KEY, true);
+		preferenceStore.setDefault(UsageDataCaptureSettings.USER_ACCEPTED_TERMS_OF_USE_KEY, false);
 	}
 
 }

@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.epp.usagedata.gathering.settings.UsageDataCaptureSettings;
 import org.eclipse.epp.usagedata.recording.Activator;
 
 /**
@@ -131,7 +132,7 @@ public class BasicUploader extends AbstractUploader {
 	 * @throws IOException 
 	 * @throws HttpException 
 	 */
-	protected UploadResult doUpload(UploadParameters uploadParameters, IProgressMonitor monitor) throws HttpException, IOException {
+	protected UploadResult doUpload(UploadParameters uploadParameters, IProgressMonitor monitor) throws Exception {
 		/*
 		 * The files that we have been provided with were determined while the recorder
 		 * was suspended. We should be safe to work with these files without worrying
@@ -139,6 +140,9 @@ public class BasicUploader extends AbstractUploader {
 		 * processes running outside of our JVM may be messing with these files and
 		 * anticipate errors accordingly.
 		 */
+		
+		// TODO Does it make sense to create a custom exception for this?
+		if (!hasUserAuthorizedUpload()) throw new Exception("User has not authorized upload.");
 	
 		/*
 		 * There appears to be some mechanism on some versions of HttpClient that
@@ -184,6 +188,24 @@ public class BasicUploader extends AbstractUploader {
 		}
 		
 		return new UploadResult(result);
+	}
+
+	/**
+	 * This method sets up a bit of a roadblock to ensure that an upload does
+	 * not occur if the user has not explicitly consented. The user must have
+	 * both enabled the service and agreed to the terms of use.
+	 * 
+	 * @return <code>true</code> if the upload can occur, or
+	 *         <code>false</code> otherwise.
+	 */
+	private boolean hasUserAuthorizedUpload() {
+		if (!getGatheringSettings().isEnabled()) return false;
+		if (!getGatheringSettings().hasUserAcceptedTermsOfUse()) return false;
+		return true;
+	}
+
+	private UsageDataCaptureSettings getGatheringSettings() {
+		return org.eclipse.epp.usagedata.gathering.Activator.getDefault().getSettings();
 	}
 
 	private Part[] getFileParts(UploadParameters uploadParameters) {
