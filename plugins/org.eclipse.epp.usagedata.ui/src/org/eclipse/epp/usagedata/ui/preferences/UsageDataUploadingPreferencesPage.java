@@ -17,6 +17,8 @@ import java.util.Date;
 
 import org.eclipse.epp.usagedata.recording.Activator;
 import org.eclipse.epp.usagedata.recording.settings.UsageDataRecordingSettings;
+import org.eclipse.epp.usagedata.ui.editors.myusage.MyUsageDataEditor;
+import org.eclipse.epp.usagedata.ui.editors.myusage.MyUsageDataEditorInput;
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
@@ -25,10 +27,13 @@ import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -36,7 +41,10 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 
 public class UsageDataUploadingPreferencesPage extends PreferencePage
 	implements IWorkbenchPreferencePage {
@@ -75,6 +83,7 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 		
 		createGeneralInformationArea(composite);
 		createUploadingArea(composite);
+		createButtonsArea(composite);
 		
 		Label filler = new Label(parent, SWT.NONE);
 		filler.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, true, true));
@@ -255,6 +264,54 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 		gridData.horizontalIndent = FieldDecorationRegistry.getDefault().getMaximumDecorationWidth();
 		gridData.horizontalSpan = 2;
 		lastUploadText.setLayoutData(gridData);
+	}
+	
+	private void createButtonsArea(Composite parent) {
+		Composite composite = new Composite(parent, SWT.NONE);
+		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+
+		composite.setLayout(new RowLayout());
+
+		createUploadNowButton(composite);
+		createShowMyUsageButton(composite);
+	}
+
+	private void createShowMyUsageButton(Composite composite) {
+		Button uploadNow = new Button(composite, SWT.PUSH);
+		uploadNow.setText("Show My Usage Data");
+		uploadNow.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				MyUsageDataEditorInput input = new MyUsageDataEditorInput(getSettings().getMyUsageDataUrl());
+				try {
+					getPage().openEditor(input, MyUsageDataEditor.class.getName());
+				} catch (PartInitException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
+	}
+
+	protected IWorkbenchPage getPage() {
+		return PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+	}
+
+
+	protected UsageDataRecordingSettings getSettings() {
+		return Activator.getDefault().getSettings();
+	}
+
+
+	private void createUploadNowButton(Composite composite) {
+		Button uploadNow = new Button(composite, SWT.PUSH);
+		uploadNow.setText("Upload Now");
+		uploadNow.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				Activator.getDefault().getUploadManager().startUpload();
+			}
+		});
 	}
 	
 	private void addOverrideWarning(Control control) {

@@ -8,7 +8,7 @@
  * Contributors:
  *    The Eclipse Foundation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.epp.usagedata.ui.preferences;
+package org.eclipse.epp.usagedata.ui.wizards;
 
 import java.io.IOException;
 import java.net.URL;
@@ -16,42 +16,43 @@ import java.net.URL;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.epp.usagedata.ui.Activator;
-import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.dialogs.IDialogPage;
+import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPreferencePage;
 
-public class UsageDataUploadingTermsOfUsePage extends PreferencePage
-	implements IWorkbenchPreferencePage {
+public class TermsOfUseWizardPage extends WizardPage {
 
-	public UsageDataUploadingTermsOfUsePage() {
-		noDefaultAndApplyButton();
+	public TermsOfUseWizardPage() {
+		super("wizardPage");
+		setTitle("Terms of Use");
+		//setDescription("This wizard uploads captured usage data. Clearly a better description is required.");
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
+
+	/**
+	 * @see IDialogPage#createControl(Composite)
 	 */
-	public void init(IWorkbench workbench) {
-	}
-
-	@Override
-	protected Control createContents(Composite parent) {
-		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
-		composite.setLayout(new FillLayout());
-		
-		Browser browser = new Browser(composite, SWT.NONE);
+	public void createControl(Composite parent) {
+		Composite container = new Composite(parent, SWT.NONE);
+		container.setLayout(new GridLayout());
+		Browser browser = new Browser(container, SWT.BORDER);
+		GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
+		browser.setLayoutData(layoutData);		
 		browser.setUrl(getTermsOfUseUrl());
 		
-		return composite;
+		Button acceptTermsButton = new Button(container, SWT.CHECK);
+		acceptTermsButton.setText("I accept the Terms of Use");
+		GridData gridData = new GridData(SWT.BEGINNING, SWT.FILL, true, false);
+		acceptTermsButton.setLayoutData(gridData);
+		
+		setControl(container);
+		
 	}
-	
+
 	private String getTermsOfUseUrl() {
 		URL terms = FileLocator.find(Activator.getDefault().getBundle(), new Path("terms.html"), null);
 		try {
@@ -62,5 +63,4 @@ public class UsageDataUploadingTermsOfUsePage extends PreferencePage
 		}
 		return null;
 	}
-
 }

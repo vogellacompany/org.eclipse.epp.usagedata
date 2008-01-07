@@ -24,8 +24,18 @@
    <extension
          point="org.eclipse.epp.usagedata.recording.uploader">
       <uploader
-            class="org.eclipse.epp.usagedata.ui.AskUserUploader">
+            class="org.eclipse.epp.usagedata.ui.uploaders.AskUserUploader">
       </uploader>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="org.eclipse.epp.usagedata.ui.editors.myusage.MyUsageDataEditor"
+            contributorClass="org.eclipse.epp.usagedata.ui.editors.myusage.MyUsageDataEditorContributor"
+            icon="icons/usage.gif"
+            id="org.eclipse.epp.usagedata.ui.editors.myusage.MyUsageDataEditor"
+            name="My Usage Data">
+      </editor>
    </extension>
 
 </plugin>
