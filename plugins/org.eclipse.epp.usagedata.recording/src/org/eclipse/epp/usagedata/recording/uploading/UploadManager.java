@@ -22,10 +22,11 @@ import org.eclipse.ui.PlatformUI;
 
 public class UploadManager {
 
-	private static final int UPLOAD_STARTED_OK = 0;
-	private static final int NO_FILES_TO_UPLOAD = 1;
-	private static final int UPLOAD_IN_PROGRESS = 2;
-	private static final int WORKBENCH_IS_CLOSING = 3;
+	public static final int UPLOAD_STARTED_OK = 0;
+	public static final int NO_FILES_TO_UPLOAD = 1;
+	public static final int UPLOAD_IN_PROGRESS = 2;
+	public static final int WORKBENCH_IS_CLOSING = 3;
+	public static final int NO_UPLOADER = 4;
 	
 	private Object lock = new Object();
 	private Uploader uploader;
@@ -47,10 +48,11 @@ public class UploadManager {
 	 * This method returns a status code. The value is
 	 * {@link #UPLOAD_IN_PROGRESS} if an upload is already in progress when the
 	 * request is made, {@link #NO_FILES_TO_UPLOAD} if no files are available
-	 * for upload,  {@link #WORKBENCH_IS_CLOSING} if the workbench is closing,
-	 * or {@value #UPLOAD_STARTED_OK} if a new upload is started.
+	 * for upload, {@link #WORKBENCH_IS_CLOSING} if the workbench is closing at
+	 * the time the request is made, {@link #NO_UPLOADER} if an uploader cannot
+	 * be found, or {@value #UPLOAD_STARTED_OK} if a new upload is started.
 	 * </p>
-	 *
+	 * 
 	 * @return a status code.
 	 */
 	public int startUpload() {
@@ -64,6 +66,7 @@ public class UploadManager {
 			if (usageDataUploadFiles.length == 0) return NO_FILES_TO_UPLOAD;
 			
 			uploader = getUploader();
+			if (uploader == null) return NO_UPLOADER;
 		}
 		
 		getSettings().setLastUploadTime();
