@@ -163,42 +163,42 @@ public class UsageDataService {
 		
 			protected void canceling() {
 				cancelled = true;
-			}
-
-			/**
-			 * This method pauses the current thread until the workbench has
-			 * finished starting. This should provide enough time for bundles
-			 * that are installing usage data event listeners to complete before
-			 * events are dispatched.
-			 */
-			private void waitForWorkbenchToFinishStarting() {
-				/*
-				 * We want the job to pause until after all the bundles that are
-				 * loaded at startup have finished loading. This will give
-				 * bundles that listen to usage data events time to load and
-				 * install listeners before events are fired off (which should
-				 * mean that events won't get lost).
-				 * 
-				 * I had originally tried using Display.syncExec(Runnable) (with
-				 * an "do nothing" Runnable, but this caused some weird classloading
-				 * issues similar to those referenced in Bug 88109.
-				 */
-				while (!EclipseStarter.isRunning()) {
-					try {
-						// It probably doesn't matter too much if we wait too long here.
-						// TODO Is 1 second too long?
-						Thread.sleep(1000);
-					} catch (InterruptedException e) {
-						//  Ignore and loop again!
-					}
-				}
-			}
+			}			
 		};
 		eventConsumerJob.setSystem(true);
 		eventConsumerJob.setPriority(Job.LONG);
 		eventConsumerJob.schedule(1000); // Wait a few minutes before scheduling the job.
 	}
-
+	
+	/**
+	 * This method pauses the current thread until the workbench has
+	 * finished starting. This should provide enough time for bundles
+	 * that are installing usage data event listeners to complete before
+	 * events are dispatched.
+	 */
+	protected void waitForWorkbenchToFinishStarting() {
+		/*
+		 * We want the job to pause until after all the bundles that are
+		 * loaded at startup have finished loading. This will give
+		 * bundles that listen to usage data events time to load and
+		 * install listeners before events are fired off (which should
+		 * mean that events won't get lost).
+		 * 
+		 * I had originally tried using Display.syncExec(Runnable) (with
+		 * an "do nothing" Runnable, but this caused some weird classloading
+		 * issues similar to those referenced in Bug 88109.
+		 */
+		while (!EclipseStarter.isRunning()) {
+			try {
+				// It probably doesn't matter too much if we wait too long here.
+				// TODO Is 1 second too long?
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				//  Ignore and loop again!
+			}
+		}
+	}
+	
 	protected void stopEventConsumerJob() {
 		eventConsumerJob.cancel();
 		
