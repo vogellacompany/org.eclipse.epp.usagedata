@@ -50,7 +50,7 @@ public class UsageDataEvent {
 	 * The {@link #bundleVersion} field contains the version of the bundle
 	 * that owns the thing that caused the event.
 	 */
-	public final String bundleVersion;
+	public String bundleVersion;
 	
 	/**
 	 * The {@link #when} field contains a time stamp, expressed as

@@ -28,8 +28,33 @@ import org.eclipse.epp.usagedata.gathering.events.UsageDataEvent;
 import org.eclipse.epp.usagedata.gathering.events.UsageDataEventListener;
 import org.eclipse.epp.usagedata.gathering.monitors.UsageMonitor;
 
+/**
+ * The {@link UsageDataService} class is registered as an OSGi service by the
+ * bundle activator on startup. It is responsible for installing monitors
+ * registered via the {@value #MONITORS_EXTENSION_POINT} extension point. These
+ * monitors all feed information back into the instance which is responsible for
+ * dispatching those events to event listeners registered via the
+ * {@link #addUsageDataEventListener(UsageDataEventListener)} method.
+ * <p>
+ * The instance starts monitoring activities immediately after it is started,
+ * but does not dispatch the resulting events until after the workbench is
+ * running (as reported by the {@link EclipseStarter#isRunning()} method.
+ * </p>
+ * <p>
+ * Efforts have been taken to try and keep the impact on the user
+ * experience&mdash;performance in particular&mdash;to a minimum. Any decision
+ * balancing absolute correctness of data capture and user experience is made in
+ * favour of preserving positive user experience and reducing any negative
+ * impact on performance. In that regard, for example, cancel really means
+ * cancel to the {@link #eventConsumerJob} and may leave some events
+ * undispatched to the listeners.
+ * 
+ * @author Wayne Beaton
+ */
 @SuppressWarnings("restriction")
 public class UsageDataService {
+	private static final String MONITORS_EXTENSION_POINT = "org.eclipse.epp.usagedata.gathering.monitors";
+
 	private boolean monitoring = false;
 
 	/**
@@ -59,6 +84,7 @@ public class UsageDataService {
 	 * A temporary home for events as they are generated. As they are created, 
 	 * events are dropped into the queue by the source thread. Events are consumed
 	 * from the queue by the {@link #eventConsumerJob}.
+	 * @see #startEventConsumerJob()
 	 */
 	protected LinkedBlockingQueue<UsageDataEvent> events = new LinkedBlockingQueue<UsageDataEvent>();
 
@@ -66,6 +92,7 @@ public class UsageDataService {
 	 * This field maps the symbolic name of bundles to the last loaded version.
 	 * This information is handy for filling in missing bundle version information
 	 * for singleton bundles.
+	 * @see #registerBundleVersion(UsageDataEvent)
 	 */
 	private Map<String, String> bundleVersionMap = new HashMap<String, String>();
 
@@ -155,8 +182,6 @@ public class UsageDataService {
 				 * I had originally tried using Display.syncExec(Runnable) (with
 				 * an "do nothing" Runnable, but this caused some weird classloading
 				 * issues similar to those referenced in Bug 88109.
-				 * 	
-				 * TODO Re-evaluate use of restricted access code.
 				 */
 				while (!EclipseStarter.isRunning()) {
 					try {
@@ -213,7 +238,7 @@ public class UsageDataService {
 	 */
 	public void recordEvent(String what, String kind, String description,
 			String bundleId) {
-		recordEvent(what, kind, description, bundleId, getBundleVersion(bundleId));
+		recordEvent(what, kind, description, bundleId, null);
 	}
 	
 	/**
@@ -240,7 +265,6 @@ public class UsageDataService {
 			String bundleId, String bundleVersion) {
 		UsageDataEvent event = new UsageDataEvent(what, kind, description, bundleId,
 				bundleVersion, System.currentTimeMillis());
-		registerBundleVersion(event);
 		recordEvent(event);
 
 	}
@@ -252,50 +276,6 @@ public class UsageDataService {
 		 */
 		events.add(event);
 	}
-
-	/**
-	 * If the event represents a bundle activation, record a mapping between the
-	 * bundleId and bundleVersion. This information is used to fill in missing
-	 * information when an event comes in with just a bundleId and no version
-	 * information. This assumes that the bundle is a singleton. That is, there
-	 * is no provision here for dealing with multiple versions of bundles. If
-	 * the event is a result of something that may come from a non-singleton
-	 * bundle, then it is the responsibility of the event source to determine
-	 * the appropriate version.
-	 * 
-	 * @param event
-	 *            instance of {@link UsageDataEvent}.
-	 */
-	private void registerBundleVersion(UsageDataEvent event) {
-		if (!("bundle".equals(event.kind))) return;
-		if (!("started".equals(event.what))) return;
-		
-		synchronized (bundleVersionMap) {
-			bundleVersionMap.put(event.bundleId, event.bundleVersion);
-		}
-	}
-
-	/**
-	 * <p>
-	 * This method returns the version of the bundle with id bundleId. This
-	 * assumes that the bundle is a singleton. That is, there is no provision
-	 * here for dealing with multiple versions of bundles. If the event is a
-	 * result of something that may come from a non-singleton bundle, then it is
-	 * the responsibility of the event source to determine the appropriate
-	 * version.
-	 * </p>
-	 * 
-	 * @param bundleId
-	 *            the symbolic name of a bundle.
-	 * 
-	 * @return the id of the last bundle started with the given id.
-	 */
-	private String getBundleVersion(String bundleId) {
-		if (bundleId == null) return null;
-		synchronized (bundleVersionMap) {
-			return bundleVersionMap.get(bundleId);
-		}
-	}
 	
 	/**
 	 * This method dispatches <code>event</code> to the registered event
@@ -305,6 +285,8 @@ public class UsageDataService {
 	 *            the {@link UsageDataEvent} to dispatch.
 	 */
 	private void dispatchEvent(UsageDataEvent event) {
+		registerBundleVersion(event);
+		if (event.bundleVersion == null) event.bundleVersion = getBundleVersion(event.bundleId);
 		Object[] listeners = eventListeners.getListeners();
 		for (int index = 0; index < listeners.length; index++) {
 			UsageDataEventListener listener = (UsageDataEventListener) listeners[index];
@@ -327,11 +309,63 @@ public class UsageDataService {
 			Activator.getDefault().logException("The listener (" + listener.getClass() + ") threw an exception", e);
 		}
 	}
+	
+	/**
+	 * If the event represents a bundle activation, record a mapping between the
+	 * bundleId and bundleVersion. This information is used to fill in missing
+	 * information when an event comes in with just a bundleId and no version
+	 * information. This assumes that the bundle is a singleton. That is, there
+	 * is no provision here for dealing with multiple versions of bundles. If
+	 * the event is a result of something that may come from a non-singleton
+	 * bundle, then it is the responsibility of the event source to determine
+	 * the appropriate version.
+	 * 
+	 * @param event
+	 *            instance of {@link UsageDataEvent}.
+	 */
+	private void registerBundleVersion(UsageDataEvent event) {
+		/*
+		 * This is a bit of a hack since we're using inside knowledge about a
+		 * particular type of event (that we're pretty well decoupled
+		 * from--though this knowledge does constitute a relatively tight
+		 * form of coupling). If the event tells us that a bundle has been
+		 * started, we'll move on; otherwise, we bail out. We're not interested
+		 * in other bundle events (like stops, etc.), since these
+		 * events will be relatively rare for the kinds of bundles we actually
+		 * care about. 
+		 */
+		if (!("bundle".equals(event.kind))) return;
+		if (!("started".equals(event.what))) return;
+		
+		synchronized (bundleVersionMap) {
+			bundleVersionMap.put(event.bundleId, event.bundleVersion);
+		}
+	}
+
+	/**
+	 * This method returns the version of the bundle with id bundleId. This
+	 * assumes that the bundle is a singleton. That is, there is no provision
+	 * here for dealing with multiple versions of bundles. If the event is a
+	 * result of something that may come from a non-singleton bundle, then it is
+	 * the responsibility of the event source to determine the appropriate
+	 * version.
+	 * 
+	 * @param bundleId
+	 *            the symbolic name of a bundle.
+	 * 
+	 * @return the id of the last bundle started with the given id.
+	 */
+	private String getBundleVersion(String bundleId) {
+		if (bundleId == null) return null;
+		synchronized (bundleVersionMap) {
+			return bundleVersionMap.get(bundleId);
+		}
+	}
 
 	protected void startMonitors() {
 		IConfigurationElement[] elements = Platform.getExtensionRegistry()
 				.getConfigurationElementsFor(
-						"org.eclipse.epp.usagedata.gathering.monitors");
+						MONITORS_EXTENSION_POINT);
 		for (IConfigurationElement element : elements) {
 			if ("monitor".equals(element.getName())) {
 
