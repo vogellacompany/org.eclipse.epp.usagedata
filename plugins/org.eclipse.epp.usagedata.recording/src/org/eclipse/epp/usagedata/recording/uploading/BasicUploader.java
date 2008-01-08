@@ -142,7 +142,7 @@ public class BasicUploader extends AbstractUploader {
 		 */
 		
 		// TODO Does it make sense to create a custom exception for this?
-		if (!hasUserAuthorizedUpload()) throw new Exception("User has not authorized upload.");
+		if (!hasUserAuthorizedUpload(uploadParameters)) throw new Exception("User has not authorized upload.");
 	
 		/*
 		 * There appears to be some mechanism on some versions of HttpClient that
@@ -194,18 +194,15 @@ public class BasicUploader extends AbstractUploader {
 	 * This method sets up a bit of a roadblock to ensure that an upload does
 	 * not occur if the user has not explicitly consented. The user must have
 	 * both enabled the service and agreed to the terms of use.
+	 * @param uploadParameters 
 	 * 
 	 * @return <code>true</code> if the upload can occur, or
 	 *         <code>false</code> otherwise.
 	 */
-	private boolean hasUserAuthorizedUpload() {
-		if (!getGatheringSettings().isEnabled()) return false;
-		if (!getGatheringSettings().hasUserAcceptedTermsOfUse()) return false;
+	private boolean hasUserAuthorizedUpload(UploadParameters uploadParameters) {
+		if (!uploadParameters.getSettings().isEnabled()) return false;
+		if (!uploadParameters.getSettings().hasUserAcceptedTermsOfUse()) return false;
 		return true;
-	}
-
-	private UsageDataCaptureSettings getGatheringSettings() {
-		return org.eclipse.epp.usagedata.gathering.Activator.getDefault().getSettings();
 	}
 
 	private Part[] getFileParts(UploadParameters uploadParameters) {
