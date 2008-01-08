@@ -38,11 +38,17 @@ public class AskUserUploader extends AbstractUploader {
 
 	public void startUpload(UploadParameters parameters) {
 		this.parameters = parameters;
-		if (getSettings().shouldAskBeforeUploading()) {
+		if (needToOpenWizard()) {
 			openUploadWizard();
 		} else {
 			startBasicUpload();
 		}
+	}
+
+	protected boolean needToOpenWizard() {
+		if (getSettings().shouldAskBeforeUploading()) return true;
+		if (!getSettings().hasUserAcceptedTermsOfUse()) return true;		
+		return false;
 	}
 
 	private void openUploadWizard() {
@@ -66,7 +72,7 @@ public class AskUserUploader extends AbstractUploader {
 
 	private int getDefaultAction() {
 		if (getSettings().isEnabled()) {
-			if (getSettings().shouldAskBeforeUploading()) {
+			if (needToOpenWizard()) {
 				return UPLOAD_NOW;
 			} else {
 				return UPLOAD_ALWAYS;

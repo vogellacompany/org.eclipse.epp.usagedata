@@ -16,11 +16,14 @@ import java.net.URL;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.epp.usagedata.ui.Activator;
+import org.eclipse.epp.usagedata.gathering.settings.UsageDataCaptureSettings;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbench;
@@ -28,6 +31,8 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 
 public class UsageDataUploadingTermsOfUsePage extends PreferencePage
 	implements IWorkbenchPreferencePage {
+
+	private Button acceptTermsButton;
 
 	public UsageDataUploadingTermsOfUsePage() {
 		noDefaultAndApplyButton();
@@ -42,14 +47,27 @@ public class UsageDataUploadingTermsOfUsePage extends PreferencePage
 	@Override
 	protected Control createContents(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
-		composite.setLayout(new FillLayout());
-		
-		Browser browser = new Browser(composite, SWT.NONE);
+		composite.setLayout(new GridLayout());
+		Browser browser = new Browser(composite, SWT.BORDER);
+		GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
+		browser.setLayoutData(layoutData);		
 		browser.setUrl(getTermsOfUseUrl());
 		
+		acceptTermsButton = new Button(composite, SWT.CHECK);
+		acceptTermsButton.setText("I accept the Terms of Use");
+		GridData gridData = new GridData(SWT.BEGINNING, SWT.FILL, true, false);
+		acceptTermsButton.setLayoutData(gridData);		
+		
+		acceptTermsButton.setSelection(getCapturePreferences().getBoolean(UsageDataCaptureSettings.USER_ACCEPTED_TERMS_OF_USE_KEY));
+		
 		return composite;
+	}
+	
+	@Override
+	public boolean performOk() {
+		getCapturePreferences().setValue(UsageDataCaptureSettings.USER_ACCEPTED_TERMS_OF_USE_KEY, acceptTermsButton.getSelection());
+		
+		return super.performOk();
 	}
 	
 	private String getTermsOfUseUrl() {
@@ -63,4 +81,7 @@ public class UsageDataUploadingTermsOfUsePage extends PreferencePage
 		return null;
 	}
 
+	private IPreferenceStore getCapturePreferences() {
+		return org.eclipse.epp.usagedata.gathering.Activator.getDefault().getPreferenceStore();
+	}
 }

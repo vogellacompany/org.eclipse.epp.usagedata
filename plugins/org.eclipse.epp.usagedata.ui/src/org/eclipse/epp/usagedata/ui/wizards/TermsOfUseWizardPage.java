@@ -54,6 +54,7 @@ public class TermsOfUseWizardPage extends WizardPage {
 		acceptTermsButton.setText("I accept the Terms of Use");
 		GridData gridData = new GridData(SWT.BEGINNING, SWT.FILL, true, false);
 		acceptTermsButton.setLayoutData(gridData);
+		acceptTermsButton.setSelection(uploader.hasUserAcceptedTermsOfUse());
 		acceptTermsButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent event) {

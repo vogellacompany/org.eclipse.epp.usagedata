@@ -112,6 +112,13 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 		
 		return super.performOk();
 	}
+	
+	@Override
+	public boolean isValid() {
+		if (!isValidUploadUrl(uploadUrlText.getText())) return false;
+		if (!isValidUploadPeriod(uploadPeriodText.getText())) return false;
+		return true;
+	}
 
 	@Override
 	protected void performDefaults() {
@@ -176,6 +183,8 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 					errorDecoration.hide();
 				else
 					errorDecoration.show();
+				updateApplyButton();
+				getContainer().updateButtons();
 			}
 		});
 		
@@ -229,6 +238,8 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 				else {
 					rangeErrorDecoration.show();
 				}
+				updateApplyButton();
+				getContainer().updateButtons();
 			}
 		});
 		if (System.getProperty(UsageDataRecordingSettings.UPLOAD_PERIOD_KEY) != null) {
