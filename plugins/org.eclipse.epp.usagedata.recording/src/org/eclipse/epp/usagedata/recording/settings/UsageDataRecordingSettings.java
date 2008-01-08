@@ -22,6 +22,7 @@ import java.util.UUID;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.epp.usagedata.gathering.settings.UsageDataCaptureSettings;
 import org.eclipse.epp.usagedata.recording.Activator;
 import org.eclipse.epp.usagedata.recording.filtering.AcceptAllEventsFilter;
 import org.eclipse.epp.usagedata.recording.filtering.UsageDataEventFilter;
@@ -357,4 +358,29 @@ public class UsageDataRecordingSettings {
 	public UsageDataEventFilter getFilter() {
 		return new AcceptAllEventsFilter();
 	}
+
+	public boolean hasUserAcceptedTermsOfUse() {
+		return getCaptureSettings().hasUserAcceptedTermsOfUse();
+	}
+
+	public void setUserAcceptedTermsOfUse(boolean value) {
+		getCaptureSettings().setUserAcceptedTermsOfUse(value);
+	}
+	
+	private UsageDataCaptureSettings getCaptureSettings() {
+		return org.eclipse.epp.usagedata.gathering.Activator.getDefault().getSettings();
+	}
+
+	public boolean isEnabled() {
+		return getCaptureSettings().isEnabled();
+	}
+
+	public void setAskBeforeUploading(boolean value) {
+		getPreferencesStore().setValue(ASK_TO_UPLOAD_KEY, value);
+	}
+
+	public void setEnabled(boolean value) {
+		getCaptureSettings().setEnabled(value);
+	}
+
 }

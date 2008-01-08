@@ -48,4 +48,8 @@ public class UsageDataCaptureSettings {
 	public boolean hasUserAcceptedTermsOfUse() {
 		return getPreferencesStore().getBoolean(USER_ACCEPTED_TERMS_OF_USE_KEY);
 	}
+
+	public void setUserAcceptedTermsOfUse(boolean value) {
+		getPreferencesStore().setValue(USER_ACCEPTED_TERMS_OF_USE_KEY, value);
+	}
 }

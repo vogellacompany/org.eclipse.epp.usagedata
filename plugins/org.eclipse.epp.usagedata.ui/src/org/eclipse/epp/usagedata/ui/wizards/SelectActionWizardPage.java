@@ -121,8 +121,8 @@ public class SelectActionWizardPage extends WizardPage {
 		radio.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				getContainer().updateButtons();
 				uploader.setAction(action);
+				getContainer().updateButtons();
 			}
 		});
 		radio.setSelection(uploader.getAction() == action);

@@ -30,12 +30,17 @@ public class AskUserUploaderWizard extends Wizard implements INewWizard {
 	
 	public void addPages() {
 		addPage(new SelectActionWizardPage(uploader));
-		termsPage = new TermsOfUseWizardPage();
+		termsPage = new TermsOfUseWizardPage(uploader);
 		addPage(termsPage);
 		//addPage(new FilterPage(uploader));
-		
 	}
-
+	
+	@Override
+	public boolean canFinish() {
+		if (!uploader.hasUploadAction()) return true;
+		return uploader.hasUserAcceptedTermsOfUse();
+	}
+	
 	@Override
 	public boolean performCancel() {
 		uploader.cancel();

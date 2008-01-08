@@ -34,6 +34,7 @@ public class AskUserUploader extends AbstractUploader {
 	private WizardDialog dialog;
 
 	private int action = UPLOAD_NOW;
+	private boolean userAcceptedTermsOfUse;
 
 	public void startUpload(UploadParameters parameters) {
 		this.parameters = parameters;
@@ -45,7 +46,10 @@ public class AskUserUploader extends AbstractUploader {
 	}
 
 	private void openUploadWizard() {
-		final AskUserUploaderWizard wizard = new AskUserUploaderWizard(AskUserUploader.this);
+		action = getDefaultAction();
+		userAcceptedTermsOfUse = getSettings().hasUserAcceptedTermsOfUse();
+		
+		final AskUserUploaderWizard wizard = new AskUserUploaderWizard(this);
 		Display.getDefault().syncExec(new Runnable() {
 
 			public void run() {
@@ -58,6 +62,18 @@ public class AskUserUploader extends AbstractUploader {
 				return PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 			}
 		});
+	}
+
+	private int getDefaultAction() {
+		if (getSettings().isEnabled()) {
+			if (getSettings().shouldAskBeforeUploading()) {
+				return UPLOAD_NOW;
+			} else {
+				return UPLOAD_ALWAYS;
+			}
+		} else {
+			return NEVER_UPLOAD;
+		}
 	}
 
 	private UsageDataRecordingSettings getSettings() {
@@ -84,7 +100,16 @@ public class AskUserUploader extends AbstractUploader {
 
 	public synchronized void execute() {
 		dialog = null;
-		startBasicUpload();
+		
+		getSettings().setAskBeforeUploading(action != UPLOAD_ALWAYS);
+		getSettings().setEnabled(action != NEVER_UPLOAD);
+		getSettings().setUserAcceptedTermsOfUse(userAcceptedTermsOfUse);
+		
+		if (action == UPLOAD_ALWAYS || action == UPLOAD_NOW) {
+			startBasicUpload();
+		} else {
+			fireUploadComplete(new UploadResult(UploadResult.CANCELLED));
+		}
 	}
 	
 	private void startBasicUpload() {
@@ -104,5 +129,19 @@ public class AskUserUploader extends AbstractUploader {
 
 	public int getAction() {
 		return action;
+	}
+
+	public boolean hasUserAcceptedTermsOfUse() {
+		return userAcceptedTermsOfUse;
+	}
+
+	public void setUserAcceptedTermsOfUse(boolean value) {
+		userAcceptedTermsOfUse = value;
+	}
+
+	public boolean hasUploadAction() {
+		if (action == UPLOAD_ALWAYS) return true;
+		if (action == UPLOAD_NOW) return true;
+		return false;
 	}
 }
