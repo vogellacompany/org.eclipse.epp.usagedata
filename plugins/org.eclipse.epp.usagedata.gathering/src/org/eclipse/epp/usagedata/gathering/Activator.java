@@ -38,6 +38,8 @@ public class Activator extends AbstractUIPlugin implements IStartup {
 	private ServiceTracker usageDataServiceTracker;
 
 	private UsageDataCaptureSettings settings;
+
+	private BundleContext context;
 	
 	/*
 	 * (non-Javadoc)
@@ -89,6 +91,7 @@ public class Activator extends AbstractUIPlugin implements IStartup {
 	 * @see org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
 	 */
 	public void stop(BundleContext context) throws Exception {		
+		this.context = context;
 		UsageDataService service = getUsageDataCaptureService();
 		if (service != null) service.stopMonitoring();
 		
@@ -142,5 +145,9 @@ public class Activator extends AbstractUIPlugin implements IStartup {
 	 */
 	public UsageDataCaptureSettings getSettings() {
 		return settings;
+	}
+
+	public BundleContext getContext() {
+		return context;
 	}
 }
