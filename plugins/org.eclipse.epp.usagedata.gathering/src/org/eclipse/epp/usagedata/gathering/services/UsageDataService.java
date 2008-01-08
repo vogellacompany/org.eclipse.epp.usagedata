@@ -78,7 +78,7 @@ public class UsageDataService {
 	 * in anticipation of performance issues (see {@link #startEventConsumerJob()}
 	 * for discussion.
 	 */
-	private Job eventConsumerJob;	
+	Job eventConsumerJob;	
 	
 	/**
 	 * A temporary home for events as they are generated. As they are created, 

@@ -48,6 +48,7 @@ public class Activator extends AbstractUIPlugin implements IStartup {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
+		this.context = context;
 		
 		settings = new UsageDataCaptureSettings();
 		
