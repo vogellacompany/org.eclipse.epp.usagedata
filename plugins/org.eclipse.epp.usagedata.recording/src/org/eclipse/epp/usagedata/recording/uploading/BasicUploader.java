@@ -94,7 +94,7 @@ public class BasicUploader extends AbstractUploader {
 		job.schedule();
 	}
 	
-	protected UploadResult upload(UploadParameters uploadParameters, IProgressMonitor monitor) {
+	UploadResult upload(UploadParameters uploadParameters, IProgressMonitor monitor) {
 		UploadResult result = null;
 		
 		try {
@@ -131,7 +131,7 @@ public class BasicUploader extends AbstractUploader {
 	 * @throws IOException 
 	 * @throws HttpException 
 	 */
-	protected UploadResult doUpload(UploadParameters uploadParameters, IProgressMonitor monitor) throws Exception {
+	UploadResult doUpload(UploadParameters uploadParameters, IProgressMonitor monitor) throws Exception {
 		/*
 		 * The files that we have been provided with were determined while the recorder
 		 * was suspended. We should be safe to work with these files without worrying
@@ -198,13 +198,13 @@ public class BasicUploader extends AbstractUploader {
 	 * @return <code>true</code> if the upload can occur, or
 	 *         <code>false</code> otherwise.
 	 */
-	private boolean hasUserAuthorizedUpload(UploadParameters uploadParameters) {
+	boolean hasUserAuthorizedUpload(UploadParameters uploadParameters) {
 		if (!uploadParameters.getSettings().isEnabled()) return false;
 		if (!uploadParameters.getSettings().hasUserAcceptedTermsOfUse()) return false;
 		return true;
 	}
 
-	private Part[] getFileParts(UploadParameters uploadParameters) {
+	Part[] getFileParts(UploadParameters uploadParameters) {
 		List<Part> fileParts = new ArrayList<Part>();
 		for (File file : uploadParameters.getFiles()) {
 			try {
