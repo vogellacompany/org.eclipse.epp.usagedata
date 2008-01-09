@@ -102,7 +102,11 @@ public class BasicUploader extends AbstractUploader {
 			result = doUpload(uploadParameters, monitor);
 			long duration = System.currentTimeMillis() - start;
 			
-			Activator.getDefault().log(IStatus.INFO, "Usage data uploaded to %1$s in %2$s milliseconds.", uploadParameters.getSettings().getUploadUrl(), duration);
+			if (result.isSuccess()) {
+				Activator.getDefault().log(IStatus.INFO, "Usage data uploaded to %1$s in %2$s milliseconds.", uploadParameters.getSettings().getUploadUrl(), duration);
+			} else {
+				Activator.getDefault().log(IStatus.INFO, "Usage data upload to %1$s failed with error code %2$s.", uploadParameters.getSettings().getUploadUrl(), result.getReturnCode());
+			}
 			
 		} catch (IllegalStateException e) {
 			Activator.getDefault().log(IStatus.WARNING, e, "The URL provided for usage data upload, %1$s, is invalid.", uploadParameters.getSettings().getUploadUrl());

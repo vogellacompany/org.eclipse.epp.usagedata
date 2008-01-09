@@ -30,4 +30,8 @@ public class UploadResult {
 		return returnCode;
 	}
 
+	public boolean isSuccess() {
+		return returnCode == 200;
+	}
+
 }
