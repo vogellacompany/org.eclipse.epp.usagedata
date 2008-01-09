@@ -154,7 +154,8 @@ public class BasicUploader extends AbstractUploader {
 		post.setRequestHeader(HTTP_WORKSPACEID, uploadParameters.getSettings().getWorkspaceId());
 		post.setRequestHeader(HTTP_TIME, String.valueOf(System.currentTimeMillis()));
 		// TODO Set the user agent header
-		if (uploadParameters.getSettings().isLoggingServerActivity()) {
+		boolean loggingServerActivity = uploadParameters.getSettings().isLoggingServerActivity();
+		if (loggingServerActivity) {
 			post.setRequestHeader("LOGGING", "true");
 		}
 		post.setRequestEntity(new MultipartRequestEntity(getFileParts(uploadParameters), post.getParams()));
@@ -170,7 +171,7 @@ public class BasicUploader extends AbstractUploader {
 		try {
 			// TODO Remove this useful-for-debugging hack. 
 			String response = post.getResponseBodyAsString();
-			if (response != null) System.out.println(response);
+			if (response != null && loggingServerActivity) System.out.println(response);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
