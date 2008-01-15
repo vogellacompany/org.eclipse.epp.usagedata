@@ -11,5 +11,6 @@ Require-Bundle: org.eclipse.ui,
 Eclipse-LazyStart: true
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: org.eclipse.epp.usagedata.recording,
+ org.eclipse.epp.usagedata.recording.filtering,
  org.eclipse.epp.usagedata.recording.settings,
  org.eclipse.epp.usagedata.recording.uploading
