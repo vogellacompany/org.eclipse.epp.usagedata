@@ -17,8 +17,6 @@ import java.util.Date;
 
 import org.eclipse.epp.usagedata.recording.Activator;
 import org.eclipse.epp.usagedata.recording.settings.UsageDataRecordingSettings;
-import org.eclipse.epp.usagedata.ui.editors.myusage.MyUsageDataEditor;
-import org.eclipse.epp.usagedata.ui.editors.myusage.MyUsageDataEditorInput;
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
@@ -43,7 +41,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
 public class UsageDataUploadingPreferencesPage extends PreferencePage
@@ -284,24 +281,6 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 		composite.setLayout(new RowLayout());
 
 		createUploadNowButton(composite);
-		createShowMyUsageButton(composite);
-	}
-
-	private void createShowMyUsageButton(Composite composite) {
-		Button uploadNow = new Button(composite, SWT.PUSH);
-		uploadNow.setText("Show My Usage Data");
-		uploadNow.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				MyUsageDataEditorInput input = new MyUsageDataEditorInput(getSettings().getMyUsageDataUrl());
-				try {
-					getPage().openEditor(input, MyUsageDataEditor.class.getName());
-				} catch (PartInitException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-			}
-		});
 	}
 
 	protected IWorkbenchPage getPage() {
