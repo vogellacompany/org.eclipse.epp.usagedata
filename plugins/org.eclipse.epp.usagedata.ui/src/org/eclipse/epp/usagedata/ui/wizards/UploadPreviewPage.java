@@ -13,7 +13,6 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.epp.usagedata.gathering.events.UsageDataEvent;
 import org.eclipse.epp.usagedata.recording.uploading.UsageDataFileReader;
 import org.eclipse.epp.usagedata.ui.uploaders.AskUserUploader;
-import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.OwnerDrawLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
@@ -39,11 +38,10 @@ public class UploadPreviewPage extends WizardPage {
 	private static final Comparator<UsageDataEvent> sortByTimeStampComparator = new Comparator<UsageDataEvent>() {
 		public int compare(UsageDataEvent event1, UsageDataEvent event2) {
 			if (event1.when == event2.when) return 0;
-			return event1.when < event2.when ? 1 : -1;
+			return event1.when > event2.when ? 1 : -1;
 		}
 		
 	};
-	private TableViewerColumn bundleIdColumn;
 
 	public UploadPreviewPage(AskUserUploader uploader) {
 		super("wizardPage");
@@ -62,76 +60,12 @@ public class UploadPreviewPage extends WizardPage {
 		
 		OwnerDrawLabelProvider.setUpOwnerDraw(viewer);
 		
-		TableViewerColumn whatColumn = new TableViewerColumn(viewer, SWT.LEFT);
-		whatColumn.getColumn().setText("What");
-		whatColumn.getColumn().setWidth(100);
-		whatColumn.setLabelProvider(new ColumnLabelProvider() {
-			@Override
-			public String getText(Object event) {
-				return ((UsageDataEvent)event).what;
-			}
-		});
-		
-		TableViewerColumn kindColumn = new TableViewerColumn(viewer, SWT.LEFT);
-		kindColumn.getColumn().setText("Kind");
-		kindColumn.getColumn().setWidth(100);
-		kindColumn.setLabelProvider(new ColumnLabelProvider() {
-			@Override
-			public String getText(Object event) {
-				return ((UsageDataEvent)event).kind;
-			}
-		});
-		
-		TableViewerColumn descriptionColumn = new TableViewerColumn(viewer, SWT.LEFT);
-		descriptionColumn.getColumn().setText("Description");
-		descriptionColumn.getColumn().setWidth(100);
-		descriptionColumn.setLabelProvider(new ColumnLabelProvider() {
-			@Override
-			public String getText(Object event) {
-				return ((UsageDataEvent)event).description;
-			}
-		});
-		
-		bundleIdColumn = new TableViewerColumn(viewer, SWT.LEFT);
-		bundleIdColumn.getColumn().setText("Bundle Id");
-		bundleIdColumn.getColumn().setWidth(100);
-		bundleIdColumn.setLabelProvider(new OwnerDrawLabelProvider() {
-
-			@Override
-			protected void measure(Event event, Object element) {
-				if (element == null) return;
-				Point extent = event.gc.textExtent(((UsageDataEvent)element).bundleId);
-				event.height = extent.y + 4;
-				int width = extent.x + 2;
-				
-				if (width > bundleIdColumn.getColumn().getWidth()) bundleIdColumn.getColumn().setWidth(width);
-			}
-
-			@Override
-			protected void paint(Event event, Object element) {
-				event.gc.drawText(((UsageDataEvent)element).bundleId, event.x, event.y + 2);
-			}
-		});
-		
-		TableViewerColumn bundleVersionColumn = new TableViewerColumn(viewer, SWT.LEFT);
-		bundleVersionColumn.getColumn().setText("Version");
-		bundleVersionColumn.getColumn().setWidth(100);
-		bundleVersionColumn.setLabelProvider(new ColumnLabelProvider() {
-			@Override
-			public String getText(Object event) {
-				return ((UsageDataEvent)event).bundleVersion;
-			}
-		});
-
-		TableViewerColumn timestampColumn = new TableViewerColumn(viewer, SWT.LEFT);
-		timestampColumn.getColumn().setText("When");
-		timestampColumn.getColumn().setWidth(100);
-		timestampColumn.setLabelProvider(new ColumnLabelProvider() {
-			@Override
-			public String getText(Object event) {
-				return dateFormat.format(new Date(((UsageDataEvent)event).when));
-			}
-		});
+		createWhatColumn();		
+		createKindColumn();		
+		createDescriptionColumn();
+		createBundleIdColumn();		
+		createBundleVersionColumn();
+		createTimestampColumn();
 		
 		DeferredContentProvider provider = new DeferredContentProvider(sortByTimeStampComparator);
 		viewer.setContentProvider(provider);
@@ -140,6 +74,79 @@ public class UploadPreviewPage extends WizardPage {
 		setControl(container);
 		
 		startContentJob();
+	}
+
+	private void createWhatColumn() {
+		TableViewerColumn whatColumn = new TableViewerColumn(viewer, SWT.LEFT);
+		whatColumn.getColumn().setText("What");
+		whatColumn.getColumn().setWidth(100);
+		whatColumn.setLabelProvider(new UsageDataColumnProvider(whatColumn) {
+			@Override
+			public String getText(UsageDataEvent event) {
+				return event.what;
+			}
+		});
+	}
+
+	private void createKindColumn() {
+		TableViewerColumn kindColumn = new TableViewerColumn(viewer, SWT.LEFT);
+		kindColumn.getColumn().setText("Kind");
+		kindColumn.getColumn().setWidth(100);
+		kindColumn.setLabelProvider(new UsageDataColumnProvider(kindColumn) {
+			@Override
+			public String getText(UsageDataEvent event) {
+				return event.kind;
+			}
+		});
+	}
+
+	private void createDescriptionColumn() {
+		TableViewerColumn descriptionColumn = new TableViewerColumn(viewer, SWT.LEFT);
+		descriptionColumn.getColumn().setText("Description");
+		descriptionColumn.getColumn().setWidth(100);
+		descriptionColumn.setLabelProvider(new UsageDataColumnProvider(descriptionColumn) {
+			@Override
+			public String getText(UsageDataEvent event) {
+				return event.description;
+			}
+		});
+	}
+
+	private void createBundleIdColumn() {
+		TableViewerColumn bundleIdColumn = new TableViewerColumn(viewer, SWT.LEFT);
+		bundleIdColumn.getColumn().setText("Bundle Id");
+		bundleIdColumn.getColumn().setWidth(100);
+		bundleIdColumn.setLabelProvider(new UsageDataColumnProvider(bundleIdColumn) {
+			@Override
+			public String getText(UsageDataEvent event) {
+				return event.bundleId;
+			}
+			
+		});
+	}
+
+	private void createBundleVersionColumn() {
+		TableViewerColumn bundleVersionColumn = new TableViewerColumn(viewer, SWT.LEFT);
+		bundleVersionColumn.getColumn().setText("Version");
+		bundleVersionColumn.getColumn().setWidth(100);
+		bundleVersionColumn.setLabelProvider(new UsageDataColumnProvider(bundleVersionColumn) {
+			@Override
+			public String getText(UsageDataEvent event) {
+				return event.bundleVersion;
+			}
+		});
+	}
+
+	private void createTimestampColumn() {
+		TableViewerColumn timestampColumn = new TableViewerColumn(viewer, SWT.LEFT);
+		timestampColumn.getColumn().setText("When");
+		timestampColumn.getColumn().setWidth(100);
+		timestampColumn.setLabelProvider(new UsageDataColumnProvider(timestampColumn) {
+			@Override
+			public String getText(UsageDataEvent event) {
+				return dateFormat.format(new Date(event.when));
+			}
+		});
 	}
 
 	private void startContentJob() {
@@ -189,5 +196,41 @@ public class UploadPreviewPage extends WizardPage {
 
 	private void addEvent(final UsageDataEvent event) { 
 		events.addAll(new Object[] {event});
+//		if (isDisposed()) return;
+//		viewer.getTable().getDisplay().syncExec(new Runnable() {
+//			public void run() {
+//				viewer.refresh();
+//			}
+//		});
+	}
+}
+
+abstract class UsageDataColumnProvider extends OwnerDrawLabelProvider {
+	private final TableViewerColumn column;
+
+	public UsageDataColumnProvider(TableViewerColumn column) {
+		this.column = column;
+	}
+	
+	@Override
+	protected void measure(Event event, Object element) {
+		if (element == null) return;
+		Point extent = event.gc.textExtent(getText((UsageDataEvent)element));
+		event.height = extent.y + 4;
+		event.width = extent.x + 4;
+		
+//		int width = extent.x + 4;		
+//		if (width > column.getColumn().getWidth()) 
+//			column.getColumn().setWidth(width);
+	}
+
+	public abstract String getText(UsageDataEvent element);
+
+	@Override
+	protected void paint(Event event, Object element) {
+		if (element == null) 
+			event.gc.drawRectangle(event.x, event.y, event.width, event.height);
+		else
+			event.gc.drawText(getText((UsageDataEvent)element), event.x, event.y + 2);
 	}
 }
