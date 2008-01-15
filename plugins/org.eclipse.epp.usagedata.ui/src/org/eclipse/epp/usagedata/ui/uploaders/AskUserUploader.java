@@ -13,6 +13,8 @@ package org.eclipse.epp.usagedata.ui.uploaders;
 import java.io.File;
 
 import org.eclipse.epp.usagedata.recording.Activator;
+import org.eclipse.epp.usagedata.recording.filtering.AcceptAllEventsFilter;
+import org.eclipse.epp.usagedata.recording.filtering.UsageDataEventFilter;
 import org.eclipse.epp.usagedata.recording.settings.UsageDataRecordingSettings;
 import org.eclipse.epp.usagedata.recording.uploading.AbstractUploader;
 import org.eclipse.epp.usagedata.recording.uploading.BasicUploader;
@@ -37,6 +39,7 @@ public class AskUserUploader extends AbstractUploader {
 
 	private int action = UPLOAD_NOW;
 	private boolean userAcceptedTermsOfUse;
+	private UsageDataEventFilter filter = new AcceptAllEventsFilter();
 
 	public void startUpload(UploadParameters parameters) {
 		this.parameters = parameters;
@@ -156,4 +159,9 @@ public class AskUserUploader extends AbstractUploader {
 	public File[] getFiles() {
 		return parameters.getFiles();
 	}
+
+	public UsageDataEventFilter getFilter() {
+		return filter;
+	}
+
 }

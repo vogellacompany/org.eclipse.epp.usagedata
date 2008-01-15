@@ -10,7 +10,12 @@
  *******************************************************************************/
 package org.eclipse.epp.usagedata.recording.filtering;
 
+import org.eclipse.epp.usagedata.gathering.events.UsageDataEvent;
 
 public class AcceptAllEventsFilter implements UsageDataEventFilter {
+
+	public boolean includes(UsageDataEvent element) {
+		return true;
+	}
 
 }

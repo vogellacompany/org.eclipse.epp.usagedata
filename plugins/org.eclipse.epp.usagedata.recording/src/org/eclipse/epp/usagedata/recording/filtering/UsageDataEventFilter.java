@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.epp.usagedata.recording.filtering;
 
+import org.eclipse.epp.usagedata.gathering.events.UsageDataEvent;
+
 public interface UsageDataEventFilter {
+
+	boolean includes(UsageDataEvent element);
 
 }
