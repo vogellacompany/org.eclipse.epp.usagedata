@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.epp.usagedata.ui.uploaders;
 
+import java.io.File;
+
 import org.eclipse.epp.usagedata.recording.Activator;
 import org.eclipse.epp.usagedata.recording.settings.UsageDataRecordingSettings;
 import org.eclipse.epp.usagedata.recording.uploading.AbstractUploader;
@@ -149,5 +151,9 @@ public class AskUserUploader extends AbstractUploader {
 		if (action == UPLOAD_ALWAYS) return true;
 		if (action == UPLOAD_NOW) return true;
 		return false;
+	}
+
+	public File[] getFiles() {
+		return parameters.getFiles();
 	}
 }

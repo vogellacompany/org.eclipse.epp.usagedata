@@ -32,6 +32,7 @@ public class AskUserUploaderWizard extends Wizard implements INewWizard {
 		addPage(new SelectActionWizardPage(uploader));
 		termsPage = new TermsOfUseWizardPage(uploader);
 		addPage(termsPage);
+		addPage(new UploadPreviewPage(uploader));
 		//addPage(new FilterPage(uploader));
 	}
 	
