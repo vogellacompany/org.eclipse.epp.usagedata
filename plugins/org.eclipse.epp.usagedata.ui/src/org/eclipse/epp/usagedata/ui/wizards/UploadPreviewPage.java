@@ -173,10 +173,15 @@ public class UploadPreviewPage extends WizardPage {
 		timestampColumn.setSorter(sortByTimeStampComparator);
 	}
 
+	/**
+	 * This method starts the job that populates the list of
+	 * events.
+	 */
 	private void startContentJob() {
 		contentJob = new Job("Generate Usage Data Upload Preview") {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
+				// TODO Consider actually using the monitor
 				File[] files = uploader.getFiles();
 				for (File file : files) {
 					if (isDisposed()) break; 
@@ -189,8 +194,18 @@ public class UploadPreviewPage extends WizardPage {
 		contentJob.schedule();
 	}
 
-	// TODO Add a progress bar to the page?
+	/**
+	 * This method extracts the events found in a {@link File}
+	 * and adds them to the list of events displayed by the
+	 * receiver. Events are batched into groups to reduce
+	 * the number of times the viewer will have to update.
+	 * 
+	 * @param file the {@link File} to process.
+	 * @param monitor the monitor.
+	 */
 	void processFile(File file, IProgressMonitor monitor) {
+		// TODO Add a progress bar to the page?
+		// TODO Actually use the monitor? May not be worth it.
 		List<UsageDataEvent> events = new ArrayList<UsageDataEvent>();
 		UsageDataFileReader reader = null;
 		try {
@@ -218,26 +233,26 @@ public class UploadPreviewPage extends WizardPage {
 		}
 	}
 
-	private boolean isDisposed() {
+	boolean isDisposed() {
 		if (viewer == null) return true;
 		if (viewer.getTable() == null) return true;
 		return viewer.getTable().isDisposed();
 	}
 
-	private void addEvents(List<UsageDataEvent> events) { 
+	void addEvents(List<UsageDataEvent> events) { 
 		this.events.addAll(events);
 		resizeColumns();
 	}
 
-	/**
+	/*
 	 * Oddly enough, this method resizes the columns. In order to figure out how
-	 * wide to make the columns, we need to use a GC (specifially, the
+	 * wide to make the columns, we need to use a GC (specifically, the
 	 * {@link GC#textExtent(String)} method). To avoid creating too many of
 	 * them, we create one in this method and pass it into the helper method
 	 * {@link #resizeColumn(GC, UsageDataTableViewerColumn)} which does most of
 	 * the heavy lifting.
 	 */
-	private void resizeColumns() {
+	void resizeColumns() {
 		viewer.getTable().getDisplay().asyncExec(new Runnable() {
 			@Override
 			public void run() {
@@ -254,7 +269,7 @@ public class UploadPreviewPage extends WizardPage {
 		});
 	}
 
-	private void resizeColumn(GC gc, UsageDataTableViewerColumn column) {
+	void resizeColumn(GC gc, UsageDataTableViewerColumn column) {
 		column.resize(gc, events.getElements());
 	}
 
@@ -284,6 +299,11 @@ public class UploadPreviewPage extends WizardPage {
 			}	
 		};
 		private SelectionListener selectionListener = new SelectionAdapter() {
+			/**
+			 * When the column is selected (clicked on by the
+			 * the user, sort the table based on the value 
+			 * presented in that column.
+			 */
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				getTable().setSortColumn(getColumn());
@@ -338,7 +358,23 @@ public class UploadPreviewPage extends WizardPage {
 		}
 	}
 	
+	/**
+	 * The {@link UsageDataColumnProvider} is a column label provider
+	 * that includes some convenience methods. 
+	 */
 	abstract class UsageDataColumnProvider extends ColumnLabelProvider {
+		/**
+		 * This convenience method is used to determine an appropriate
+		 * width for the column based on the collection of event objects.
+		 * The returned value is the maximum width (in pixels) of the
+		 * text the receiver associates with each of the events. The
+		 * events are provided as Object[] because converting them to
+		 * UsageDataEvent[] would be an unnecessary expense.
+		 * 
+		 * @param gc a {@link GC} loaded with the font used to display the events.
+		 * @param events an array of {@link UsageDataEvent} instances.
+		 * @return the width of the widest event
+		 */
 		public int getMaximumWidth(GC gc, Object[] events) {
 			int width = 0;
 			for (Object event : events) {
@@ -348,12 +384,17 @@ public class UploadPreviewPage extends WizardPage {
 			return width;
 		}
 			
+		/**
+		 * This method provides a foreground colour for the cell.
+		 * The cell will be black if the filter includes the
+		 * includes the provided {@link UsageDataEvent}, or gray if the filter
+		 * excludes it.
+		 */
 		@Override
 		public Color getForeground(Object element) {
 			if (uploader.getFilter().includes((UsageDataEvent)element)) {
 				return colorBlack;
-			}
-			else {
+			} else {
 				return colorGray;
 			}
 		}
