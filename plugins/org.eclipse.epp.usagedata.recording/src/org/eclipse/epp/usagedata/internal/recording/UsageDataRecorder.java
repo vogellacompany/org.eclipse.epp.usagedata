@@ -8,7 +8,7 @@
  * Contributors:
  *    The Eclipse Foundation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.epp.usagedata.recording;
+package org.eclipse.epp.usagedata.internal.recording;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -20,9 +20,9 @@ import java.util.List;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.epp.usagedata.gathering.events.UsageDataEvent;
 import org.eclipse.epp.usagedata.gathering.events.UsageDataEventListener;
-import org.eclipse.epp.usagedata.recording.settings.UsageDataRecordingSettings;
-import org.eclipse.epp.usagedata.recording.uploading.UploadManager;
-import org.eclipse.epp.usagedata.recording.uploading.BasicUploader;
+import org.eclipse.epp.usagedata.internal.recording.settings.UsageDataRecordingSettings;
+import org.eclipse.epp.usagedata.internal.recording.uploading.BasicUploader;
+import org.eclipse.epp.usagedata.internal.recording.uploading.UploadManager;
 
 public class UsageDataRecorder implements UsageDataEventListener {
 	

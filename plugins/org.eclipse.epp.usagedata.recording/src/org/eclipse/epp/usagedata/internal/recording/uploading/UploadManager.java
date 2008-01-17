@@ -8,7 +8,7 @@
  * Contributors:
  *    The Eclipse Foundation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.epp.usagedata.recording.uploading;
+package org.eclipse.epp.usagedata.internal.recording.uploading;
 
 import java.io.File;
 
@@ -16,8 +16,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.epp.usagedata.recording.Activator;
-import org.eclipse.epp.usagedata.recording.settings.UsageDataRecordingSettings;
+import org.eclipse.epp.usagedata.internal.recording.Activator;
+import org.eclipse.epp.usagedata.internal.recording.settings.UsageDataRecordingSettings;
 import org.eclipse.ui.PlatformUI;
 
 public class UploadManager {

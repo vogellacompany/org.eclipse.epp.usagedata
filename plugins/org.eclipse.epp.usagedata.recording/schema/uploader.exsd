@@ -50,7 +50,7 @@
                   
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn=":org.eclipse.epp.usagedata.recording.uploading.UploadDelegate"/>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.epp.usagedata.internal.recording.uploading.UploadDelegate"/>
                </appInfo>
             </annotation>
          </attribute>

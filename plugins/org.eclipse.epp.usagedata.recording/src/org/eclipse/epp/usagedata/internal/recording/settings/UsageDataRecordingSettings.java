@@ -8,7 +8,7 @@
  * Contributors:
  *    The Eclipse Foundation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.epp.usagedata.recording.settings;
+package org.eclipse.epp.usagedata.internal.recording.settings;
 
 import java.io.File;
 import java.io.FileReader;
@@ -23,9 +23,9 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.epp.usagedata.gathering.settings.UsageDataCaptureSettings;
-import org.eclipse.epp.usagedata.recording.Activator;
-import org.eclipse.epp.usagedata.recording.filtering.AcceptAllEventsFilter;
-import org.eclipse.epp.usagedata.recording.filtering.UsageDataEventFilter;
+import org.eclipse.epp.usagedata.internal.recording.Activator;
+import org.eclipse.epp.usagedata.internal.recording.filtering.AcceptAllEventsFilter;
+import org.eclipse.epp.usagedata.internal.recording.filtering.UsageDataEventFilter;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.PlatformUI;
 

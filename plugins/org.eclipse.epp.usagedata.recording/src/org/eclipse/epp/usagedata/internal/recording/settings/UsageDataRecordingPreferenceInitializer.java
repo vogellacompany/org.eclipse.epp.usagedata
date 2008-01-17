@@ -8,10 +8,10 @@
  * Contributors:
  *    The Eclipse Foundation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.epp.usagedata.recording.settings;
+package org.eclipse.epp.usagedata.internal.recording.settings;
 
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
-import org.eclipse.epp.usagedata.recording.Activator;
+import org.eclipse.epp.usagedata.internal.recording.Activator;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 public class UsageDataRecordingPreferenceInitializer extends AbstractPreferenceInitializer {

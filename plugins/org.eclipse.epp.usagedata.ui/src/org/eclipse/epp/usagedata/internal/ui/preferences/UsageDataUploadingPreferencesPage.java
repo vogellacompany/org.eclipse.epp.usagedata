@@ -15,8 +15,8 @@ import java.net.URL;
 import java.text.MessageFormat;
 import java.util.Date;
 
-import org.eclipse.epp.usagedata.recording.Activator;
-import org.eclipse.epp.usagedata.recording.settings.UsageDataRecordingSettings;
+import org.eclipse.epp.usagedata.internal.recording.Activator;
+import org.eclipse.epp.usagedata.internal.recording.settings.UsageDataRecordingSettings;
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;

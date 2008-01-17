@@ -8,12 +8,12 @@
  * Contributors:
  *    The Eclipse Foundation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.epp.usagedata.recording;
+package org.eclipse.epp.usagedata.internal.recording;
 
 import org.eclipse.core.runtime.Status;
 import org.eclipse.epp.usagedata.gathering.services.UsageDataService;
-import org.eclipse.epp.usagedata.recording.settings.UsageDataRecordingSettings;
-import org.eclipse.epp.usagedata.recording.uploading.UploadManager;
+import org.eclipse.epp.usagedata.internal.recording.settings.UsageDataRecordingSettings;
+import org.eclipse.epp.usagedata.internal.recording.uploading.UploadManager;
 import org.eclipse.ui.IStartup;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;

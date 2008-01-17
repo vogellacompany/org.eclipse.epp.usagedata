@@ -8,7 +8,7 @@
  * Contributors:
  *    The Eclipse Foundation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.epp.usagedata.recording.uploading;
+package org.eclipse.epp.usagedata.internal.recording.uploading;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -30,7 +30,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.epp.usagedata.recording.Activator;
+import org.eclipse.epp.usagedata.internal.recording.Activator;
 
 /**
  * Instances of the {@link BasicUploader} class are responsible for

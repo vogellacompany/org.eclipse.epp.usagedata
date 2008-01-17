@@ -8,12 +8,15 @@
  * Contributors:
  *    The Eclipse Foundation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.epp.usagedata.recording.filtering;
+package org.eclipse.epp.usagedata.internal.recording.uploading;
 
-import org.eclipse.epp.usagedata.gathering.events.UsageDataEvent;
 
-public interface UsageDataEventFilter {
+public interface Uploader {
+	boolean isUploadInProgress();
 
-	boolean includes(UsageDataEvent element);
-
+	void startUpload(UploadParameters uploadParameters);
+	
+	void addUploadListener(UploadListener listener);
+	
+	void removeUploadListener(UploadListener listener);
 }

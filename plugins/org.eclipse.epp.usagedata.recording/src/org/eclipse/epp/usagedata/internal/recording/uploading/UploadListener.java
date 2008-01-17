@@ -8,30 +8,8 @@
  * Contributors:
  *    The Eclipse Foundation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.epp.usagedata.recording.uploading;
+package org.eclipse.epp.usagedata.internal.recording.uploading;
 
-public class UploadResult {
-
-	public static final int CANCELLED = 0;
-
-	private final int returnCode;
-
-	/**
-	 * 
-	 * @param returnCode
-	 *            code describing result of operation; typically an HTTP return
-	 *            code that results from the upload operation.
-	 */
-	public UploadResult(int returnCode) {
-		this.returnCode = returnCode;
-	}
-
-	public int getReturnCode() {
-		return returnCode;
-	}
-
-	public boolean isSuccess() {
-		return returnCode == 200;
-	}
-
+public interface UploadListener {
+	void uploadComplete(UploadResult result);
 }

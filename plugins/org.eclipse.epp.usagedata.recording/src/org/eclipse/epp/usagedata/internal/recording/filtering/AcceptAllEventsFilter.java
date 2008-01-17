@@ -8,7 +8,7 @@
  * Contributors:
  *    The Eclipse Foundation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.epp.usagedata.recording.filtering;
+package org.eclipse.epp.usagedata.internal.recording.filtering;
 
 import org.eclipse.epp.usagedata.gathering.events.UsageDataEvent;
 
