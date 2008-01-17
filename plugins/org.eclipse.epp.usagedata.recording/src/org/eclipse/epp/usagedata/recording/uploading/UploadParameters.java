@@ -12,6 +12,7 @@ package org.eclipse.epp.usagedata.recording.uploading;
 
 import java.io.File;
 
+import org.eclipse.epp.usagedata.recording.filtering.UsageDataEventFilter;
 import org.eclipse.epp.usagedata.recording.settings.UsageDataRecordingSettings;
 
 public class UploadParameters {
@@ -42,5 +43,9 @@ public class UploadParameters {
 
 	public File[] getFiles() {
 		return files;
+	}
+
+	public UsageDataEventFilter getFilter() {
+		return settings.getFilter();
 	}
 }

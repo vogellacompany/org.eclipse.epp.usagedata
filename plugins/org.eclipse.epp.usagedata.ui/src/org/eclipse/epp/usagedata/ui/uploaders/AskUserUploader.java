@@ -164,4 +164,8 @@ public class AskUserUploader extends AbstractUploader {
 		return filter;
 	}
 
+	public UploadParameters getUploadParameters() {
+		return parameters;
+	}
+
 }
