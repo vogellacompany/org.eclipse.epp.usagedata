@@ -8,34 +8,30 @@
  * Contributors:
  *    The Eclipse Foundation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.epp.usagedata.ui.preferences;
+package org.eclipse.epp.usagedata.internal.ui.preferences;
 
-import java.io.IOException;
-import java.net.URL;
-
-import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.epp.usagedata.ui.Activator;
+import org.eclipse.epp.usagedata.gathering.Activator;
 import org.eclipse.epp.usagedata.gathering.settings.UsageDataCaptureSettings;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-public class UsageDataUploadingTermsOfUsePage extends PreferencePage
+public class UsageDataCapturePreferencesPage extends PreferencePage
 	implements IWorkbenchPreferencePage {
+	
+	private Button captureEnabledCheckbox;
 
-	private Button acceptTermsButton;
-
-	public UsageDataUploadingTermsOfUsePage() {
-		noDefaultAndApplyButton();
+	public UsageDataCapturePreferencesPage() {
+		setDescription("Usage data collection");
+		setPreferenceStore(Activator.getDefault().getPreferenceStore());
 	}
 	
 	/* (non-Javadoc)
@@ -47,39 +43,48 @@ public class UsageDataUploadingTermsOfUsePage extends PreferencePage
 	@Override
 	protected Control createContents(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
+		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		
 		composite.setLayout(new GridLayout());
-		Browser browser = new Browser(composite, SWT.BORDER);
-		GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
-		browser.setLayoutData(layoutData);		
-		browser.setUrl(getTermsOfUseUrl());
 		
-		acceptTermsButton = new Button(composite, SWT.CHECK);
-		acceptTermsButton.setText("I accept the Terms of Use");
-		GridData gridData = new GridData(SWT.BEGINNING, SWT.FILL, true, false);
-		acceptTermsButton.setLayoutData(gridData);		
+		createGeneralInformationArea(composite);
 		
-		acceptTermsButton.setSelection(getCapturePreferences().getBoolean(UsageDataCaptureSettings.USER_ACCEPTED_TERMS_OF_USE_KEY));
+		Label filler = new Label(parent, SWT.NONE);
+		filler.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, true, true));
+		
+		initialize();
 		
 		return composite;
 	}
-	
+
+	private void initialize() {
+		captureEnabledCheckbox.setSelection(getCapturePreferences().getBoolean(UsageDataCaptureSettings.CAPTURE_ENABLED_KEY));
+	}
+
 	@Override
 	public boolean performOk() {
-		getCapturePreferences().setValue(UsageDataCaptureSettings.USER_ACCEPTED_TERMS_OF_USE_KEY, acceptTermsButton.getSelection());
-		
+		getCapturePreferences().setValue(UsageDataCaptureSettings.CAPTURE_ENABLED_KEY, captureEnabledCheckbox.getSelection());
+	
 		return super.performOk();
 	}
-	
-	private String getTermsOfUseUrl() {
-		URL terms = FileLocator.find(Activator.getDefault().getBundle(), new Path("terms.html"), null);
-		try {
-			return FileLocator.toFileURL(terms).toString();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
+
+	@Override
+	protected void performDefaults() {
+		captureEnabledCheckbox.setSelection(getCapturePreferences().getDefaultBoolean(UsageDataCaptureSettings.CAPTURE_ENABLED_KEY));
+
+		super.performDefaults();
 	}
+
+	private void createGeneralInformationArea(Composite parent) {
+		Composite composite = new Composite(parent, SWT.NONE);
+		composite.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, true, false));
+		
+		composite.setLayout(new GridLayout());
+		
+		captureEnabledCheckbox = new Button(composite, SWT.CHECK | SWT.LEFT);
+		captureEnabledCheckbox.setText("Enable capture"); 
+	}
+
 
 	private IPreferenceStore getCapturePreferences() {
 		return org.eclipse.epp.usagedata.gathering.Activator.getDefault().getPreferenceStore();

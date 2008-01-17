@@ -8,10 +8,11 @@
  * Contributors:
  *    The Eclipse Foundation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.epp.usagedata.ui.uploaders;
+package org.eclipse.epp.usagedata.internal.ui.uploaders;
 
 import java.io.File;
 
+import org.eclipse.epp.usagedata.internal.ui.wizards.AskUserUploaderWizard;
 import org.eclipse.epp.usagedata.recording.Activator;
 import org.eclipse.epp.usagedata.recording.filtering.AcceptAllEventsFilter;
 import org.eclipse.epp.usagedata.recording.filtering.UsageDataEventFilter;
@@ -21,7 +22,6 @@ import org.eclipse.epp.usagedata.recording.uploading.BasicUploader;
 import org.eclipse.epp.usagedata.recording.uploading.UploadListener;
 import org.eclipse.epp.usagedata.recording.uploading.UploadParameters;
 import org.eclipse.epp.usagedata.recording.uploading.UploadResult;
-import org.eclipse.epp.usagedata.ui.wizards.AskUserUploaderWizard;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;

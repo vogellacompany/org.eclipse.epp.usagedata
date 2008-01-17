@@ -8,15 +8,15 @@
  * Contributors:
  *    The Eclipse Foundation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.epp.usagedata.ui.wizards;
+package org.eclipse.epp.usagedata.internal.ui.wizards;
 
 import java.io.IOException;
 import java.net.URL;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.epp.usagedata.ui.Activator;
-import org.eclipse.epp.usagedata.ui.uploaders.AskUserUploader;
+import org.eclipse.epp.usagedata.internal.ui.Activator;
+import org.eclipse.epp.usagedata.internal.ui.uploaders.AskUserUploader;
 import org.eclipse.jface.dialogs.IDialogPage;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;

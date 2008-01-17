@@ -8,7 +8,7 @@
  * Contributors:
  *    The Eclipse Foundation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.epp.usagedata.ui;
+package org.eclipse.epp.usagedata.internal.ui;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -20,7 +20,7 @@ import org.osgi.framework.BundleContext;
 public class Activator extends AbstractUIPlugin {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "org.eclipse.epp.usagedata.ui";
+	public static final String PLUGIN_ID = "org.eclipse.epp.usagedata.internal.ui";
 
 	// The shared instance
 	private static Activator plugin;

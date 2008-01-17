@@ -8,9 +8,9 @@
  * Contributors:
  *    The Eclipse Foundation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.epp.usagedata.ui.wizards;
+package org.eclipse.epp.usagedata.internal.ui.wizards;
 
-import org.eclipse.epp.usagedata.ui.uploaders.AskUserUploader;
+import org.eclipse.epp.usagedata.internal.ui.uploaders.AskUserUploader;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;

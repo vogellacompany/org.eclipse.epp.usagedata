@@ -8,7 +8,7 @@
  * Contributors:
  *    The Eclipse Foundation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.epp.usagedata.ui.preferences;
+package org.eclipse.epp.usagedata.internal.ui.preferences;
 
 import java.net.MalformedURLException;
 import java.net.URL;
