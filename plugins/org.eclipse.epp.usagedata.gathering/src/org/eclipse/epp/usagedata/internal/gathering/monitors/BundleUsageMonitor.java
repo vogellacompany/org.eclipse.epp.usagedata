@@ -8,10 +8,10 @@
  * Contributors:
  *    The Eclipse Foundation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.epp.usagedata.gathering.monitors;
+package org.eclipse.epp.usagedata.internal.gathering.monitors;
 
-import org.eclipse.epp.usagedata.gathering.Activator;
-import org.eclipse.epp.usagedata.gathering.services.UsageDataService;
+import org.eclipse.epp.usagedata.internal.gathering.Activator;
+import org.eclipse.epp.usagedata.internal.gathering.services.UsageDataService;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;

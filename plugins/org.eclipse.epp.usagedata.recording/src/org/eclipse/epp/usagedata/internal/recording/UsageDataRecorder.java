@@ -18,8 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.epp.usagedata.gathering.events.UsageDataEvent;
-import org.eclipse.epp.usagedata.gathering.events.UsageDataEventListener;
+import org.eclipse.epp.usagedata.internal.gathering.events.UsageDataEvent;
+import org.eclipse.epp.usagedata.internal.gathering.events.UsageDataEventListener;
 import org.eclipse.epp.usagedata.internal.recording.settings.UsageDataRecordingSettings;
 import org.eclipse.epp.usagedata.internal.recording.uploading.BasicUploader;
 import org.eclipse.epp.usagedata.internal.recording.uploading.UploadManager;

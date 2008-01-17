@@ -11,7 +11,7 @@
 package org.eclipse.epp.usagedata.internal.recording;
 
 import org.eclipse.core.runtime.Status;
-import org.eclipse.epp.usagedata.gathering.services.UsageDataService;
+import org.eclipse.epp.usagedata.internal.gathering.services.UsageDataService;
 import org.eclipse.epp.usagedata.internal.recording.settings.UsageDataRecordingSettings;
 import org.eclipse.epp.usagedata.internal.recording.uploading.UploadManager;
 import org.eclipse.ui.IStartup;

@@ -50,7 +50,7 @@
                   
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn=":org.eclipse.epp.usagedata.gathering.monitors.UsageMonitor"/>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.epp.usagedata.internal.gathering.monitors.UsageMonitor"/>
                </appInfo>
             </annotation>
          </attribute>

@@ -8,7 +8,7 @@
  * Contributors:
  *    The Eclipse Foundation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.epp.usagedata.gathering.monitors;
+package org.eclipse.epp.usagedata.internal.gathering.monitors;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,8 +19,8 @@ import org.eclipse.core.commands.IExecutionListener;
 import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.epp.usagedata.gathering.Activator;
-import org.eclipse.epp.usagedata.gathering.services.UsageDataService;
+import org.eclipse.epp.usagedata.internal.gathering.Activator;
+import org.eclipse.epp.usagedata.internal.gathering.services.UsageDataService;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.osgi.framework.BundleContext;

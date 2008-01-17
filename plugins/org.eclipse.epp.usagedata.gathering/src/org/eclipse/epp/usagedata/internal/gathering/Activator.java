@@ -8,12 +8,12 @@
  * Contributors:
  *    The Eclipse Foundation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.epp.usagedata.gathering;
+package org.eclipse.epp.usagedata.internal.gathering;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.epp.usagedata.gathering.services.UsageDataService;
-import org.eclipse.epp.usagedata.gathering.settings.UsageDataCaptureSettings;
+import org.eclipse.epp.usagedata.internal.gathering.services.UsageDataService;
+import org.eclipse.epp.usagedata.internal.gathering.settings.UsageDataCaptureSettings;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.IStartup;

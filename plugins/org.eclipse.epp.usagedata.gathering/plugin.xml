@@ -10,19 +10,19 @@
    <extension
          point="org.eclipse.epp.usagedata.gathering.monitors">
       <monitor
-            class="org.eclipse.epp.usagedata.gathering.monitors.PartUsageMonitor">
+            class="org.eclipse.epp.usagedata.internal.gathering.monitors.PartUsageMonitor">
       </monitor>
       <monitor
-            class="org.eclipse.epp.usagedata.gathering.monitors.BundleUsageMonitor">
+            class="org.eclipse.epp.usagedata.internal.gathering.monitors.BundleUsageMonitor">
       </monitor>
       <monitor
-            class="org.eclipse.epp.usagedata.gathering.monitors.CommandUsageMonitor">
+            class="org.eclipse.epp.usagedata.internal.gathering.monitors.CommandUsageMonitor">
       </monitor>
    </extension>
    <extension
          point="org.eclipse.core.runtime.preferences">
       <initializer
-            class="org.eclipse.epp.usagedata.gathering.settings.UsageDataCapturePreferenceInitializer">
+            class="org.eclipse.epp.usagedata.internal.gathering.settings.UsageDataCapturePreferenceInitializer">
       </initializer>
    </extension>
 

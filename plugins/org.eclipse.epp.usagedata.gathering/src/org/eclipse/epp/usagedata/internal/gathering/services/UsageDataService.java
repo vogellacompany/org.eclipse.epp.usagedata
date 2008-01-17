@@ -8,7 +8,7 @@
  * Contributors:
  *    The Eclipse Foundation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.epp.usagedata.gathering.services;
+package org.eclipse.epp.usagedata.internal.gathering.services;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,10 +23,10 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.adaptor.EclipseStarter;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.epp.usagedata.gathering.Activator;
-import org.eclipse.epp.usagedata.gathering.events.UsageDataEvent;
-import org.eclipse.epp.usagedata.gathering.events.UsageDataEventListener;
-import org.eclipse.epp.usagedata.gathering.monitors.UsageMonitor;
+import org.eclipse.epp.usagedata.internal.gathering.Activator;
+import org.eclipse.epp.usagedata.internal.gathering.events.UsageDataEvent;
+import org.eclipse.epp.usagedata.internal.gathering.events.UsageDataEventListener;
+import org.eclipse.epp.usagedata.internal.gathering.monitors.UsageMonitor;
 
 /**
  * The {@link UsageDataService} class is registered as an OSGi service by the
@@ -53,7 +53,7 @@ import org.eclipse.epp.usagedata.gathering.monitors.UsageMonitor;
  */
 @SuppressWarnings("restriction")
 public class UsageDataService {
-	private static final String MONITORS_EXTENSION_POINT = "org.eclipse.epp.usagedata.gathering.monitors";
+	private static final String MONITORS_EXTENSION_POINT = Activator.PLUGIN_ID + ".monitors";
 
 	private boolean monitoring = false;
 

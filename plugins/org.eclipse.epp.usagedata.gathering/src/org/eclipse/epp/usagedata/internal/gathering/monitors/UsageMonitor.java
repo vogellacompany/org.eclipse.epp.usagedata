@@ -8,24 +8,14 @@
  * Contributors:
  *    The Eclipse Foundation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.epp.usagedata.gathering.events;
+package org.eclipse.epp.usagedata.internal.gathering.monitors;
 
-import org.eclipse.epp.usagedata.gathering.services.UsageDataService;
+import org.eclipse.epp.usagedata.internal.gathering.services.UsageDataService;
 
-/**
- * Implementors of this interface subscribe to the {@link UsageDataService} for
- * notification of usage data events.
- * 
- * @author Wayne Beaton
- *
- */
-public interface UsageDataEventListener {
+public interface UsageMonitor {
 
-	/**
-	 * This method is invoked to deliver an event
-	 * to the receiver. 
-	 * 
-	 * @param event instance of {@link UsageDataEvent}.
-	 */
-	void accept(UsageDataEvent event);
+	public abstract void startMonitoring(UsageDataService usageDataService);
+
+	public abstract void stopMonitoring();
+
 }

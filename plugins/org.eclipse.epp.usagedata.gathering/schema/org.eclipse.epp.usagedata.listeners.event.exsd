@@ -3,7 +3,7 @@
 <schema targetNamespace="org.eclipse.epp.usagedata.gathering">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.epp.usagedata.gathering" id="org.eclipse.epp.usagedata.listeners.event" name="Event Listener"/>
+         <meta.schema plugin="org.eclipse.epp.usagedata.gathering" id="org.eclipse.epp.usagedata.event" name="Event Listener"/>
       </appInfo>
       <documentation>
          [Enter description of this extension point.]
@@ -50,7 +50,7 @@
                   
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn=":org.eclipse.epp.usagedata.gathering.events.UsageDataEventListener"/>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.epp.usagedata.internal.gathering.events.UsageDataEventListener"/>
                </appInfo>
             </annotation>
          </attribute>

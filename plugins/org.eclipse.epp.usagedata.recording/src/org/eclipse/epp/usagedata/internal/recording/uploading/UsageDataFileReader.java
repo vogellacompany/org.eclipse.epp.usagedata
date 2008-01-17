@@ -8,7 +8,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
-import org.eclipse.epp.usagedata.gathering.events.UsageDataEvent;
+import org.eclipse.epp.usagedata.internal.gathering.events.UsageDataEvent;
 
 public class UsageDataFileReader {
 	private final BufferedReader reader;

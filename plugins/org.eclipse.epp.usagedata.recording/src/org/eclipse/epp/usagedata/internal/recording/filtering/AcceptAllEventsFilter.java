@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.epp.usagedata.internal.recording.filtering;
 
-import org.eclipse.epp.usagedata.gathering.events.UsageDataEvent;
+import org.eclipse.epp.usagedata.internal.gathering.events.UsageDataEvent;
 
 public class AcceptAllEventsFilter implements UsageDataEventFilter {
 

@@ -8,7 +8,7 @@
  * Contributors:
  *    The Eclipse Foundation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.epp.usagedata.gathering.events;
+package org.eclipse.epp.usagedata.internal.gathering.events;
 
 /**
  * The {@link UsageDataEvent} class captures information about a single

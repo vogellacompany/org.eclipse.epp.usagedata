@@ -8,9 +8,9 @@
  * Contributors:
  *    The Eclipse Foundation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.epp.usagedata.gathering.monitors;
+package org.eclipse.epp.usagedata.internal.gathering.monitors;
 
-import org.eclipse.epp.usagedata.gathering.services.UsageDataService;
+import org.eclipse.epp.usagedata.internal.gathering.services.UsageDataService;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPartListener;
@@ -117,7 +117,7 @@ public class PartUsageMonitor implements UsageMonitor {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.epp.usagedata.gathering.UsageMonitor#register(org.eclipse.epp.usagedata.gathering.UsageDataService)
+	 * @see org.eclipse.epp.usagedata.internal.gathering.UsageMonitor#register(org.eclipse.epp.usagedata.internal.gathering.UsageDataService)
 	 */
 	public void startMonitoring(UsageDataService usageDataService) {
 		this.usageDataService = usageDataService;
@@ -128,7 +128,7 @@ public class PartUsageMonitor implements UsageMonitor {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.epp.usagedata.gathering.UsageMonitor#deregister()
+	 * @see org.eclipse.epp.usagedata.internal.gathering.UsageMonitor#deregister()
 	 */
 	public void stopMonitoring() {
 		final IWorkbench workbench = PlatformUI.getWorkbench();

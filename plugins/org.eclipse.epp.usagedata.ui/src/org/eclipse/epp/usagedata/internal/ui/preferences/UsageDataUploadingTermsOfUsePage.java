@@ -15,7 +15,7 @@ import java.net.URL;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.epp.usagedata.gathering.settings.UsageDataCaptureSettings;
+import org.eclipse.epp.usagedata.internal.gathering.settings.UsageDataCaptureSettings;
 import org.eclipse.epp.usagedata.internal.ui.Activator;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
@@ -82,6 +82,6 @@ public class UsageDataUploadingTermsOfUsePage extends PreferencePage
 	}
 
 	private IPreferenceStore getCapturePreferences() {
-		return org.eclipse.epp.usagedata.gathering.Activator.getDefault().getPreferenceStore();
+		return org.eclipse.epp.usagedata.internal.gathering.Activator.getDefault().getPreferenceStore();
 	}
 }

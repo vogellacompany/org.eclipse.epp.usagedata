@@ -22,7 +22,7 @@ import java.util.UUID;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.epp.usagedata.gathering.settings.UsageDataCaptureSettings;
+import org.eclipse.epp.usagedata.internal.gathering.settings.UsageDataCaptureSettings;
 import org.eclipse.epp.usagedata.internal.recording.Activator;
 import org.eclipse.epp.usagedata.internal.recording.filtering.AcceptAllEventsFilter;
 import org.eclipse.epp.usagedata.internal.recording.filtering.UsageDataEventFilter;
@@ -368,7 +368,7 @@ public class UsageDataRecordingSettings {
 	}
 	
 	private UsageDataCaptureSettings getCaptureSettings() {
-		return org.eclipse.epp.usagedata.gathering.Activator.getDefault().getSettings();
+		return org.eclipse.epp.usagedata.internal.gathering.Activator.getDefault().getSettings();
 	}
 
 	public boolean isEnabled() {

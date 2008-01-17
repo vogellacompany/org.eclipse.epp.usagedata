@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.epp.usagedata.internal.ui.preferences;
 
-import org.eclipse.epp.usagedata.gathering.Activator;
-import org.eclipse.epp.usagedata.gathering.settings.UsageDataCaptureSettings;
+import org.eclipse.epp.usagedata.internal.gathering.Activator;
+import org.eclipse.epp.usagedata.internal.gathering.settings.UsageDataCaptureSettings;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
@@ -87,6 +87,6 @@ public class UsageDataCapturePreferencesPage extends PreferencePage
 
 
 	private IPreferenceStore getCapturePreferences() {
-		return org.eclipse.epp.usagedata.gathering.Activator.getDefault().getPreferenceStore();
+		return org.eclipse.epp.usagedata.internal.gathering.Activator.getDefault().getPreferenceStore();
 	}
 }

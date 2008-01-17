@@ -8,10 +8,10 @@
  * Contributors:
  *    The Eclipse Foundation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.epp.usagedata.gathering.settings;
+package org.eclipse.epp.usagedata.internal.gathering.settings;
 
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
-import org.eclipse.epp.usagedata.gathering.Activator;
+import org.eclipse.epp.usagedata.internal.gathering.Activator;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 public class UsageDataCapturePreferenceInitializer extends AbstractPreferenceInitializer {
