@@ -64,7 +64,7 @@ public class BasicUploaderTests {
 		uploadParameters.setSettings(settings);
 		uploadParameters.setFiles(new File[] {file});
 		
-		UploadResult result = new BasicUploader().doUpload(uploadParameters, null);
+		UploadResult result = new BasicUploader(uploadParameters).doUpload(null);
 
 		assertEquals(200, result.getReturnCode());
 		assertFalse(file.exists());
@@ -82,7 +82,7 @@ public class BasicUploaderTests {
 		uploadParameters.setFiles(new File[] {file});
 		
 		try {
-			new BasicUploader().doUpload(uploadParameters, null);
+			new BasicUploader(uploadParameters).doUpload(null);
 			
 			fail("IllegalStateException expected.");
 		} catch (IllegalStateException e) {
@@ -102,7 +102,7 @@ public class BasicUploaderTests {
 		uploadParameters.setSettings(settings);
 		uploadParameters.setFiles(new File[] {file});
 		
-		UploadResult result = new BasicUploader().doUpload(uploadParameters, null);
+		UploadResult result = new BasicUploader(uploadParameters).doUpload(null);
 		
 		assertEquals(404, result.getReturnCode());
 		assertTrue(file.exists());
@@ -124,7 +124,7 @@ public class BasicUploaderTests {
 		UploadParameters uploadParameters = new UploadParameters(null);
 		uploadParameters.setSettings(settings);
 		
-		assertFalse(new BasicUploader().hasUserAuthorizedUpload(uploadParameters));
+		assertFalse(new BasicUploader(uploadParameters).hasUserAuthorizedUpload());
 	}
 
 	@Test
@@ -143,6 +143,6 @@ public class BasicUploaderTests {
 		UploadParameters uploadParameters = new UploadParameters(null);
 		uploadParameters.setSettings(settings);
 		
-		assertFalse(new BasicUploader().hasUserAuthorizedUpload(uploadParameters));
+		assertFalse(new BasicUploader(uploadParameters).hasUserAuthorizedUpload());
 	}
 }

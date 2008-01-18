@@ -14,9 +14,13 @@ package org.eclipse.epp.usagedata.internal.recording.uploading;
 public interface Uploader {
 	boolean isUploadInProgress();
 
-	void startUpload(UploadParameters uploadParameters);
+	void startUpload();
 	
 	void addUploadListener(UploadListener listener);
 	
 	void removeUploadListener(UploadListener listener);
+
+	void setUploadParameters(UploadParameters uploadParameters);
+	
+	UploadParameters getUploadParameters();
 }

@@ -11,12 +11,15 @@
 package org.eclipse.epp.usagedata.internal.recording.uploading;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.InterruptedIOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.ConnectException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -34,7 +37,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.epp.usagedata.internal.gathering.events.UsageDataEvent;
 import org.eclipse.epp.usagedata.internal.recording.Activator;
+import org.eclipse.epp.usagedata.internal.recording.settings.UsageDataRecordingSettings;
 
 /**
  * Instances of the {@link BasicUploader} class are responsible for
@@ -75,6 +80,11 @@ public class BasicUploader extends AbstractUploader {
 
 	private ListenerList responseListeners = new ListenerList();
 
+	public BasicUploader(UploadParameters uploadParameters) {
+		super();
+		setUploadParameters(uploadParameters);
+	}
+	
 	/**
 	 * Uploads are done with a {@link Job} running in the background
 	 * at a relatively low priority. The intent is to make the user
@@ -84,13 +94,14 @@ public class BasicUploader extends AbstractUploader {
 	 * cannot be modified. The instance is <em>not</em> reusable.
 	 * </p>
 	 */
-	public synchronized void startUpload(final UploadParameters uploadParameters) {
+	public synchronized void startUpload() {
+		checkValues();
 		if (uploadInProgress) return;
 		uploadInProgress = true;
 		Job job = new Job("Uploading usage data...") {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				UploadResult result = upload(uploadParameters, monitor);
+				UploadResult result = upload(monitor);
 				uploadInProgress = false;
 				fireUploadComplete(result);
 				return Status.OK_STATUS;
@@ -100,26 +111,26 @@ public class BasicUploader extends AbstractUploader {
 		job.schedule();
 	}
 	
-	UploadResult upload(UploadParameters uploadParameters, IProgressMonitor monitor) {
+	UploadResult upload(IProgressMonitor monitor) {
 		UploadResult result = null;
 		
 		try {
 			long start = System.currentTimeMillis();
-			result = doUpload(uploadParameters, monitor);
+			result = doUpload(monitor);
 			long duration = System.currentTimeMillis() - start;
 			
 			if (result.isSuccess()) {
-				Activator.getDefault().log(IStatus.INFO, "Usage data uploaded to %1$s in %2$s milliseconds.", uploadParameters.getSettings().getUploadUrl(), duration);
+				Activator.getDefault().log(IStatus.INFO, "Usage data uploaded to %1$s in %2$s milliseconds.", getUploadUrl(), duration);
 			} else {
-				Activator.getDefault().log(IStatus.INFO, "Usage data upload to %1$s failed with error code %2$s.", uploadParameters.getSettings().getUploadUrl(), result.getReturnCode());
+				Activator.getDefault().log(IStatus.INFO, "Usage data upload to %1$s failed with error code %2$s.", getUploadUrl(), result.getReturnCode());
 			}
 			
 		} catch (IllegalStateException e) {
-			Activator.getDefault().log(IStatus.WARNING, e, "The URL provided for usage data upload, %1$s, is invalid.", uploadParameters.getSettings().getUploadUrl());
+			Activator.getDefault().log(IStatus.WARNING, e, "The URL provided for usage data upload, %1$s, is invalid.", getUploadUrl());
 		} catch (UnknownHostException e) {
-			Activator.getDefault().log(IStatus.WARNING, e, "The usage data upload server at %1$s could not be found.", uploadParameters.getSettings().getUploadUrl());
+			Activator.getDefault().log(IStatus.WARNING, e, "The usage data upload server at %1$s could not be found.", getUploadUrl());
 		} catch (ConnectException e) {
-			Activator.getDefault().log(IStatus.WARNING, e, "Could not connect to the usage data upload server at %1$s.", uploadParameters.getSettings().getUploadUrl());
+			Activator.getDefault().log(IStatus.WARNING, e, "Could not connect to the usage data upload server at %1$s.", getUploadUrl());
 		} catch (InterruptedIOException e) {
 			Activator.getDefault().log(IStatus.WARNING, e, "A socket timeout occurred while trying to upload usage data.");			
 		} catch (Exception e) {
@@ -127,6 +138,9 @@ public class BasicUploader extends AbstractUploader {
 		}
 		
 		return result;
+	}
+	private String getUploadUrl() {
+		return getSettings().getUploadUrl();
 	}
 
 	/**
@@ -141,7 +155,7 @@ public class BasicUploader extends AbstractUploader {
 	 * @throws IOException 
 	 * @throws HttpException 
 	 */
-	UploadResult doUpload(UploadParameters uploadParameters, IProgressMonitor monitor) throws Exception {
+	UploadResult doUpload(IProgressMonitor monitor) throws Exception {
 		/*
 		 * The files that we have been provided with were determined while the recorder
 		 * was suspended. We should be safe to work with these files without worrying
@@ -151,24 +165,24 @@ public class BasicUploader extends AbstractUploader {
 		 */
 		
 		// TODO Does it make sense to create a custom exception for this?
-		if (!hasUserAuthorizedUpload(uploadParameters)) throw new Exception("User has not authorized upload.");
+		if (!hasUserAuthorizedUpload()) throw new Exception("User has not authorized upload.");
 	
 		/*
 		 * There appears to be some mechanism on some versions of HttpClient that
 		 * allows the insertion of compression technology. For now, we don't worry
 		 * about compressing our output; we can worry about that later.
 		 */
-		PostMethod post = new PostMethod(uploadParameters.getSettings().getUploadUrl());
+		PostMethod post = new PostMethod(getSettings().getUploadUrl());
 
-		post.setRequestHeader(HTTP_USERID, uploadParameters.getSettings().getUserId());
-		post.setRequestHeader(HTTP_WORKSPACEID, uploadParameters.getSettings().getWorkspaceId());
+		post.setRequestHeader(HTTP_USERID, getSettings().getUserId());
+		post.setRequestHeader(HTTP_WORKSPACEID, getSettings().getWorkspaceId());
 		post.setRequestHeader(HTTP_TIME, String.valueOf(System.currentTimeMillis()));
 		// TODO Set the user agent header
-		boolean loggingServerActivity = uploadParameters.getSettings().isLoggingServerActivity();
+		boolean loggingServerActivity = getSettings().isLoggingServerActivity();
 		if (loggingServerActivity) {
 			post.setRequestHeader("LOGGING", "true");
 		}
-		post.setRequestEntity(new MultipartRequestEntity(getFileParts(uploadParameters), post.getParams()));
+		post.setRequestEntity(new MultipartRequestEntity(getFileParts(), post.getParams()));
 		
 		// Configure the HttpClient to timeout after one minute.
 		HttpClientParams httpParameters = new HttpClientParams();
@@ -183,7 +197,7 @@ public class BasicUploader extends AbstractUploader {
 		
 		// Check the result. HTTP return code of 200 means success.
 		if (result == 200) {
-			for (File file : uploadParameters.getFiles()) {
+			for (File file : getUploadParameters().getFiles()) {
 				// TODO what if file delete fails?
 				if (file.exists()) file.delete();
 			}
@@ -212,6 +226,7 @@ public class BasicUploader extends AbstractUploader {
 	void handleServerResponse(BufferedReader response) throws IOException {
 		while (true) {
 			String line = response.readLine();
+			System.out.println(line);
 			if (line == null) return;
 			int colon = line.indexOf(':'); // first occurrence
 			if (colon != -1) {
@@ -235,23 +250,25 @@ public class BasicUploader extends AbstractUploader {
 	 * This method sets up a bit of a roadblock to ensure that an upload does
 	 * not occur if the user has not explicitly consented. The user must have
 	 * both enabled the service and agreed to the terms of use.
-	 * @param uploadParameters 
 	 * 
 	 * @return <code>true</code> if the upload can occur, or
 	 *         <code>false</code> otherwise.
 	 */
-	boolean hasUserAuthorizedUpload(UploadParameters uploadParameters) {
-		if (!uploadParameters.getSettings().isEnabled()) return false;
-		if (!uploadParameters.getSettings().hasUserAcceptedTermsOfUse()) return false;
+	boolean hasUserAuthorizedUpload() {
+		if (!getSettings().isEnabled()) return false;
+		if (!getSettings().hasUserAcceptedTermsOfUse()) return false;
 		return true;
 	}
+	private UsageDataRecordingSettings getSettings() {
+		return getUploadParameters().getSettings();
+	}
 
-	Part[] getFileParts(UploadParameters uploadParameters) {
+	Part[] getFileParts() {
 		List<Part> fileParts = new ArrayList<Part>();
-		for (File file : uploadParameters.getFiles()) {
+		for (File file : getUploadParameters().getFiles()) {
 			try {
 				// TODO Hook in a custom FilePart that filters contents.
-				fileParts.add(new FilePart("uploads[]", file));
+				fileParts.add(new FilteredFilePart("uploads[]", file));
 			} catch (FileNotFoundException e) {
 				// If an exception occurs while creating the FilePart, 
 				// ignore the error and move on. If this has happened,
@@ -259,6 +276,39 @@ public class BasicUploader extends AbstractUploader {
 			}
 		}
 		return (Part[]) fileParts.toArray(new Part[fileParts.size()]);
+	}
+	
+	class FilteredFilePart extends FilePart {
+		public FilteredFilePart(String name, File file)	throws FileNotFoundException {
+			super(name, file);
+		}
+		
+		@Override
+		protected void sendData(OutputStream out) throws IOException {
+			final BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out));
+			InputStream input = null;
+			try {
+				input = getSource().createInputStream();
+				new UsageDataFileReader(input).iterate(new UsageDataFileReader.Iterator() {
+					public void header(String header) throws Exception {
+						writer.append(header);
+						writer.newLine();
+					}
+					public void event(String line, UsageDataEvent event) throws Exception {
+						if (getUploadParameters().getFilter().includes(event)) {
+							writer.append(line);
+							writer.newLine();
+						}
+					}					
+				});
+				writer.flush();
+			} catch (Exception e) {
+				if (e instanceof IOException) throw (IOException)e;
+				Activator.getDefault().log(IStatus.WARNING, e, e.getMessage());
+			} finally {
+				input.close();
+			}
+		}
 	}
 
 	public synchronized boolean isUploadInProgress() {

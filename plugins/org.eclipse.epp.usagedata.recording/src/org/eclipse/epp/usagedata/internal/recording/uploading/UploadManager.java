@@ -76,6 +76,8 @@ public class UploadManager {
 		uploadParameters.setFiles(usageDataUploadFiles);
 		//request.setFilter(getSettings().getFilter());
 		
+		uploader.setUploadParameters(uploadParameters);
+		
 		/*
 		 * Add a listener to the new uploader so that it will notify
 		 * us when it is complete. Then, we'll notify our own listeners.
@@ -87,7 +89,7 @@ public class UploadManager {
 			}
 		});
 		
-		uploader.startUpload(uploadParameters);
+		uploader.startUpload();
 		
 		return UPLOAD_STARTED_OK;
 	}

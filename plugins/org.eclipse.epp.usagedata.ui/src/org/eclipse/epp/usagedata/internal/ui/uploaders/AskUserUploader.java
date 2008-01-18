@@ -34,15 +34,14 @@ public class AskUserUploader extends AbstractUploader {
 	public static final int NEVER_UPLOAD = 3;
 	
 	private BasicUploader basicUploader;
-	private UploadParameters parameters;
 	private WizardDialog dialog;
 
 	private int action = UPLOAD_NOW;
 	private boolean userAcceptedTermsOfUse;
 	private UsageDataEventFilter filter = new AcceptAllEventsFilter();
 
-	public void startUpload(UploadParameters parameters) {
-		this.parameters = parameters;
+	public void startUpload() {
+		checkValues();
 		if (needToOpenWizard()) {
 			openUploadWizard();
 		} else {
@@ -124,14 +123,14 @@ public class AskUserUploader extends AbstractUploader {
 	}
 	
 	private void startBasicUpload() {
-		basicUploader = new BasicUploader();
+		basicUploader = new BasicUploader(getUploadParameters());
 		basicUploader.addUploadListener(new UploadListener() {
 			public void uploadComplete(UploadResult result) {
 				fireUploadComplete(result);
 				basicUploader = null;
 			}
 		});
-		basicUploader.startUpload(parameters);
+		basicUploader.startUpload();
 	}
 
 	public void setAction(int action) {
@@ -157,15 +156,10 @@ public class AskUserUploader extends AbstractUploader {
 	}
 
 	public File[] getFiles() {
-		return parameters.getFiles();
+		return getUploadParameters().getFiles();
 	}
 
 	public UsageDataEventFilter getFilter() {
 		return filter;
 	}
-
-	public UploadParameters getUploadParameters() {
-		return parameters;
-	}
-
 }
