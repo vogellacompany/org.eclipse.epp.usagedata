@@ -292,13 +292,13 @@ public class BasicUploader extends AbstractUploader {
 				new UsageDataFileReader(input).iterate(new UsageDataFileReader.Iterator() {
 					public void header(String header) throws Exception {
 						writer.append(header);
-						writer.newLine();
+						writer.append('\n');
 					}
 					public void event(String line, UsageDataEvent event) throws Exception {
 						if (getUploadParameters().getFilter().includes(event)) {
 							writer.append(line);
-							writer.newLine();
-						}
+							writer.append('\n');
+						} 
 					}					
 				});
 				writer.flush();
