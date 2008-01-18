@@ -150,8 +150,7 @@ public class UsageDataService {
 		
 		eventConsumerJob = new Job("Usage Data Event consumer") {
 			private boolean cancelled = false;
-			// TODO Sort out why the override is causing compiler errors on build.
-			//@Override
+
 			public IStatus run(IProgressMonitor monitor) {
 				waitForWorkbenchToFinishStarting();
 				while (!cancelled) {

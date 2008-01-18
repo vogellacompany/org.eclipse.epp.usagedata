@@ -53,8 +53,6 @@ public class CommandUsageMonitor implements UsageMonitor {
 	 */
 	private BundleListener bundleListener;
 		
-	// TODO Sort out why this is causing compiler errors.
-	//@Override
 	public void startMonitoring(final UsageDataService usageDataService) {
 		bundleListener = new BundleListener() {
 			public void bundleChanged(BundleEvent event) {
@@ -66,26 +64,18 @@ public class CommandUsageMonitor implements UsageMonitor {
 		getBundleContext().addBundleListener(bundleListener);
 		
 		executionListener = new IExecutionListener() {
-			// TODO Sort out why this is causing compiler errors.
-			//@Override
 			public void notHandled(String commandId, NotHandledException exception) {
 				recordEvent("no handler", usageDataService, commandId);				
 			}
 
-			// TODO Sort out why this is causing compiler errors.
-			//@Override
 			public void postExecuteFailure(String commandId, ExecutionException exception) {
 				recordEvent("failed", usageDataService, commandId);				
 			}
 
-			// TODO Sort out why this is causing compiler errors.
-			//@Override
 			public void postExecuteSuccess(String commandId, Object returnValue) {
 				recordEvent("executed", usageDataService, commandId);				
 			}
 
-			// TODO Sort out why this is causing compiler errors.
-			//@Override
 			public void preExecute(String commandId, ExecutionEvent event) {
 				
 			}			
@@ -97,8 +87,6 @@ public class CommandUsageMonitor implements UsageMonitor {
 		return (ICommandService) PlatformUI.getWorkbench().getAdapter(ICommandService.class);
 	}
 	
-	// TODO Sort out why this is causing compiler errors.
-	//@Override
 	public void stopMonitoring() {
 		ICommandService commandService = getCommandService();
 		if (commandService != null) commandService.removeExecutionListener(executionListener);
