@@ -10,9 +10,12 @@
  *******************************************************************************/
 package org.eclipse.epp.usagedata.internal.recording.uploading;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.InterruptedIOException;
 import java.net.ConnectException;
 import java.net.UnknownHostException;
@@ -28,6 +31,7 @@ import org.apache.commons.httpclient.methods.multipart.Part;
 import org.apache.commons.httpclient.params.HttpClientParams;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.epp.usagedata.internal.recording.Activator;
@@ -68,6 +72,8 @@ public class BasicUploader extends AbstractUploader {
 	private static final String HTTP_TIME = "TIME";
 	
 	private boolean uploadInProgress = false;
+
+	private ListenerList responseListeners = new ListenerList();
 
 	/**
 	 * Uploads are done with a {@link Job} running in the background
@@ -171,15 +177,7 @@ public class BasicUploader extends AbstractUploader {
 		
 		int result = new HttpClient(httpParameters).executeMethod(post);
 		
-		// TODO What do we do with the response?
-		try {
-			// TODO Remove this useful-for-debugging hack. 
-			String response = post.getResponseBodyAsString();
-			if (response != null && loggingServerActivity) System.out.println(response);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		handleServerResponse(post);
 		
 		post.releaseConnection();
 		
@@ -192,6 +190,45 @@ public class BasicUploader extends AbstractUploader {
 		}
 		
 		return new UploadResult(result);
+	}
+
+	void handleServerResponse(PostMethod post) {
+		InputStream response = null;
+		try {
+			response = post.getResponseBodyAsStream();
+			handleServerResponse(new BufferedReader(new InputStreamReader(response)));
+		} catch (IOException e) {
+			Activator.getDefault().log(IStatus.WARNING, e, "Exception raised while parsing the server response");
+		} finally {
+			try {
+				response.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+
+	void handleServerResponse(BufferedReader response) throws IOException {
+		while (true) {
+			String line = response.readLine();
+			if (line == null) return;
+			int colon = line.indexOf(':'); // first occurrence
+			if (colon != -1) {
+				String key = line.substring(0, colon);
+				String value = line.substring(colon + 1);
+				handleServerResponse(key, value);
+			} else {
+				handleServerResponse("", line);
+			}
+		}
+	}
+
+	void handleServerResponse(String key, String value) {
+		BasicUploaderServerResponse response = new BasicUploaderServerResponse(key, value);
+		for(Object listener : responseListeners.getListeners()) {
+			((BasicUploaderResponseListener)listener).handleServerResponse(response);
+		}
 	}
 
 	/**
@@ -227,4 +264,12 @@ public class BasicUploader extends AbstractUploader {
 	public synchronized boolean isUploadInProgress() {
 		return uploadInProgress;
 	}	
+	
+	public void addResponseListener(BasicUploaderResponseListener listener) {
+		responseListeners.add(listener);
+	}
+
+	public void removeResponseListener(BasicUploaderResponseListener listener) {
+		responseListeners.remove(listener);
+	}
 }
