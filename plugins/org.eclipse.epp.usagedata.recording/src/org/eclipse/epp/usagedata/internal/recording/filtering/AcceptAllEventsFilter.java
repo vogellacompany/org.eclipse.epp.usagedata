@@ -14,7 +14,7 @@ import org.eclipse.epp.usagedata.internal.gathering.events.UsageDataEvent;
 
 public class AcceptAllEventsFilter implements UsageDataEventFilter {
 
-	public boolean includes(UsageDataEvent element) {
+	public boolean includes(UsageDataEvent event) {
 		return true;
 	}
 
