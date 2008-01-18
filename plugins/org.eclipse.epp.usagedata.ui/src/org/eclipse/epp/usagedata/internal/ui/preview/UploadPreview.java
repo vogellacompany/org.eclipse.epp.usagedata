@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.epp.usagedata.internal.gathering.events.UsageDataEvent;
+import org.eclipse.epp.usagedata.internal.recording.Activator;
 import org.eclipse.epp.usagedata.internal.recording.uploading.UploadParameters;
 import org.eclipse.epp.usagedata.internal.recording.uploading.UsageDataFileReader;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
@@ -204,29 +205,30 @@ public class UploadPreview  {
 	void processFile(File file, IProgressMonitor monitor) {
 		// TODO Add a progress bar to the page?
 		// TODO Actually use the monitor? May not be worth it.
-		List<UsageDataEvent> events = new ArrayList<UsageDataEvent>();
+		final List<UsageDataEvent> events = new ArrayList<UsageDataEvent>();
 		UsageDataFileReader reader = null;
 		try {
 			reader = new UsageDataFileReader(file);
-			UsageDataEvent event = null;
-			while ((event = reader.next()) != null) {
-				if (isDisposed()) return;
-				if (monitor.isCanceled()) return;
-				events.add(event);
-				if (events.size() > 50) {
-					addEvents(events);
-					events.clear();
+			reader.iterate(monitor, new UsageDataFileReader.Iterator() {
+				public void header(String header) {
+					// Ignore the header.
 				}
-			}
+				
+				public void event(String line, UsageDataEvent event) {
+					events.add(event);
+					if (events.size() > 50) {
+						addEvents(events);
+						events.clear();
+					}
+				}	
+			});
 			addEvents(events);
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			Activator.getDefault().log(IStatus.WARNING, e, "An error occurred while trying to read %1$s", file.getAbsolutePath());
 		} finally {
 			try {
 				reader.close();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
 		}
 	}
@@ -251,6 +253,7 @@ public class UploadPreview  {
 	 * the heavy lifting.
 	 */
 	void resizeColumns() {
+		if (isDisposed()) return;
 		viewer.getTable().getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				GC gc = new GC(viewer.getTable().getDisplay());

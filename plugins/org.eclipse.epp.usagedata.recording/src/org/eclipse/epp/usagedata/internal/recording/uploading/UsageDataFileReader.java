@@ -13,11 +13,14 @@ package org.eclipse.epp.usagedata.internal.recording.uploading;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.epp.usagedata.internal.gathering.events.UsageDataEvent;
 
 public class UsageDataFileReader {
@@ -27,8 +30,19 @@ public class UsageDataFileReader {
 	}
 
 	private final BufferedReader reader;
-	private String header;
  
+	/**
+	 * This constructor creates an instance that will read the data contained in
+	 * the <code>file</code> parameter. Note that if you use this constructor,
+	 * you must explicitly {@link #close()} the resulting instance.
+	 * 
+	 * @param file
+	 *            a {@link File}; the file must exist.
+	 * @throws FileNotFoundException
+	 *             if the file does not exist, or is a directory, or is some
+	 *             other way a foolish choice.
+	 * @throws IOException
+	 */
 	public UsageDataFileReader(File file) throws IOException {
 		this(new FileInputStream(file));
 	}
@@ -43,13 +57,6 @@ public class UsageDataFileReader {
 	
 	public UsageDataFileReader(BufferedReader bufferedReader) throws IOException {
 		reader = bufferedReader;
-		header = reader.readLine(); // Clear out the header line.
-	}
-
-	public UsageDataEvent next() throws IOException {
-		String line = reader.readLine();
-		if (line == null) return null;
-		return createUsageDataEvent(line);
 	}
 
 	private UsageDataEvent createUsageDataEvent(String line) {
@@ -63,12 +70,23 @@ public class UsageDataFileReader {
 	}
 
 	public void iterate(Iterator iterator) throws Exception {
-		iterator.header(header);
-		while (true) {
-			String line = reader.readLine();
-			if (line == null) return;
-			UsageDataEvent event = createUsageDataEvent(line);
-			iterator.event(line, event);
+		iterate(new NullProgressMonitor(), iterator);
+	}
+
+	public void iterate(IProgressMonitor monitor, Iterator iterator) throws Exception {
+		monitor.beginTask("Iterate over usage data file", IProgressMonitor.UNKNOWN);
+		try {
+			// The first line is the header.
+			iterator.header(reader.readLine());
+			while (true) {
+				if (monitor.isCanceled()) break;
+				String line = reader.readLine();
+				if (line == null) break;
+				UsageDataEvent event = createUsageDataEvent(line);
+				iterator.event(line, event);
+			}
+		} finally {
+			monitor.done();
 		}
 	}
 
