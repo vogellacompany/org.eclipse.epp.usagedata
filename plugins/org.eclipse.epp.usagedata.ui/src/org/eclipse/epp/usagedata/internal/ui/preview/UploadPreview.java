@@ -252,7 +252,6 @@ public class UploadPreview  {
 	 */
 	void resizeColumns() {
 		viewer.getTable().getDisplay().asyncExec(new Runnable() {
-			@Override
 			public void run() {
 				GC gc = new GC(viewer.getTable().getDisplay());
 				gc.setFont(viewer.getTable().getFont());
@@ -283,7 +282,6 @@ public class UploadPreview  {
 		private TableViewerColumn column;
 		private UsageDataColumnProvider usageDataColumnProvider;
 		private Comparator<UsageDataEvent> comparator = new Comparator<UsageDataEvent>() {	
-			@Override
 			public int compare(UsageDataEvent event1, UsageDataEvent event2) {
 				if (usageDataColumnProvider == null) return 0;
 				String text1 = usageDataColumnProvider.getText(event1);

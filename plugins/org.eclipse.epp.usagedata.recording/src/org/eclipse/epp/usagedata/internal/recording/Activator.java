@@ -104,11 +104,8 @@ public class Activator extends AbstractUIPlugin implements IStartup {
 		getLog().log(status);
 	}
 
-	// TODO Figure out why this is causing compiler problems.
-	//@Override
 	public void earlyStartup() {
-		// TODO Auto-generated method stub
-		
+		// Don't actually need to do anything, but still need the method.		
 	}
 
 	public UploadManager getUploadManager() {

@@ -203,9 +203,6 @@ public class UsageDataRecordingSettings {
 	 */
 	public File[] getUsageDataUploadFiles() {
 		return getWorkingDirectory().listFiles(new FilenameFilter() {
-			// TODO Sort out why the override is causing compiler errors on
-			// build.
-			// @Override
 			public boolean accept(File dir, String name) {
 				return name.startsWith(UPLOAD_FILE_PREFIX);
 			}

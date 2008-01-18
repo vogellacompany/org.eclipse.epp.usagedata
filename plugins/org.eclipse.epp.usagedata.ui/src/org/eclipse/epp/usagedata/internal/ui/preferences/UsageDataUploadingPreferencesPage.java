@@ -172,8 +172,6 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 		errorDecoration.hide();
 		
 		uploadUrlText.addModifyListener(new ModifyListener() {
-			// TODO Figure out why this is causing compiler problems.
-			//@Override
 			public void modifyText(ModifyEvent e) {
 				String contents = uploadUrlText.getText();
 				if (isValidUploadUrl(contents))
@@ -226,8 +224,6 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 		rangeErrorDecoration.hide();
 		
 		uploadPeriodText.addModifyListener(new ModifyListener() {
-			// TODO Figure out why this is causing compiler problems.
-			//@Override
 			public void modifyText(ModifyEvent e) {
 				String contents = uploadPeriodText.getText();
 				if (isValidUploadPeriod(contents))

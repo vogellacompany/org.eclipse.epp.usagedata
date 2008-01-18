@@ -78,8 +78,6 @@ public class UsageDataRecorder implements UsageDataEventListener {
 		events = null;
 	}
 	
-	// TODO Sort out why the override is causing compiler errors on build.
-	//@Override
 	public synchronized void accept(UsageDataEvent event) {
 		if (event == null) return;
 		if (!canAcceptEvents()) return;
