@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.epp.usagedata.feature"
-      label="Usage Data Feature"
+      label="Usage Data Feature (Incubation)"
       version="0.1.5.qualifier"
       provider-name="Eclipse.org">
 
