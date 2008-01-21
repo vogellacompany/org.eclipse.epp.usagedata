@@ -226,7 +226,6 @@ public class BasicUploader extends AbstractUploader {
 	void handleServerResponse(BufferedReader response) throws IOException {
 		while (true) {
 			String line = response.readLine();
-			System.out.println(line);
 			if (line == null) return;
 			int colon = line.indexOf(':'); // first occurrence
 			if (colon != -1) {
