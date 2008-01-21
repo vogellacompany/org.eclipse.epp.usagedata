@@ -246,21 +246,11 @@ litigation.
    </url>
 
    <requires>
-      <import plugin="org.eclipse.ui"/>
-      <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.ui.ide"/>
-      <import plugin="org.eclipse.jface.text"/>
-      <import plugin="org.eclipse.core.resources"/>
-      <import plugin="org.eclipse.ui.editors"/>
-      <import plugin="org.eclipse.ui.forms" version="3.3.100" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui" version="3.4.0" match="compatible"/>
+      <import plugin="org.eclipse.core.runtime" version="3.4.0" match="compatible"/>
+      <import plugin="org.eclipse.ui.forms" version="3.3.100" match="compatible"/>
+      <import plugin="org.apache.commons.logging"/>
    </requires>
-
-   <plugin
-         id="org.eclipse.epp.usagedata.recording"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
 
    <plugin
          id="org.apache.commons.httpclient"
@@ -277,7 +267,14 @@ litigation.
          unpack="false"/>
 
    <plugin
-         id="org.apache.commons.logging"
+         id="org.eclipse.epp.usagedata.gathering"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.epp.usagedata.recording"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -285,13 +282,6 @@ litigation.
 
    <plugin
          id="org.eclipse.epp.usagedata.ui"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.epp.usagedata.gathering"
          download-size="0"
          install-size="0"
          version="0.0.0"
