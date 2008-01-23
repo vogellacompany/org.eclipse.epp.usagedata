@@ -12,6 +12,7 @@ package org.eclipse.epp.usagedata.internal.ui.preview;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.ObjectInputStream.GetField;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -21,29 +22,42 @@ import java.util.List;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.epp.usagedata.internal.gathering.events.UsageDataEvent;
-import org.eclipse.epp.usagedata.internal.recording.Activator;
+import org.eclipse.epp.usagedata.internal.recording.filtering.FilterChangeListener;
+import org.eclipse.epp.usagedata.internal.recording.filtering.PreferencesBasedFilter;
 import org.eclipse.epp.usagedata.internal.recording.uploading.UploadParameters;
 import org.eclipse.epp.usagedata.internal.recording.uploading.UsageDataFileReader;
+import org.eclipse.epp.usagedata.internal.ui.Activator;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
-import org.eclipse.jface.viewers.OwnerDrawLabelProvider;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
-import org.eclipse.jface.viewers.deferred.DeferredContentProvider;
-import org.eclipse.jface.viewers.deferred.SetModel;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.ui.forms.widgets.FormText;
 
 public class UploadPreview  {
 
@@ -51,17 +65,11 @@ public class UploadPreview  {
 	
 	private TableViewer viewer;
 	private Job contentJob;
-	private SetModel events = new SetModel();
+	private List<UsageDataEventWrapper> events = new ArrayList<UsageDataEventWrapper>();
 	
 	private static final DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
 	
-	private static final Comparator<UsageDataEvent> sortByTimeStampComparator = new Comparator<UsageDataEvent>() {
-		public int compare(UsageDataEvent event1, UsageDataEvent event2) {
-			if (event1.when == event2.when) return 0;
-			return event1.when > event2.when ? 1 : -1;
-		}	
-	};
-	
+	private UsageDataTableViewerColumn includeColumn;
 	private UsageDataTableViewerColumn whatColumn;
 	private UsageDataTableViewerColumn kindColumn;
 	private UsageDataTableViewerColumn descriptionColumn;
@@ -71,23 +79,79 @@ public class UploadPreview  {
 	
 	private Color colorGray;
 	private Color colorBlack;
+	private Image xImage;
+
+	private Cursor busyCursor;
 
 	public UploadPreview(UploadParameters parameters) {
 		this.parameters = parameters;
 	}
 
-	public Control createControl(Composite parent) {
+	public Control createControl(final Composite parent) {
+		allocateResources(parent);
+		
+		createDescriptionText(parent);
+		createEventsTable(parent);
+		createButtons(parent);
+		
+		/*
+		 * Bit of a crazy idea. Add a paint listener that will
+		 * start the job of actually populating the page when
+		 * the composite is exposed. If the instance is created
+		 * in a wizard, it won't start populating until the user
+		 * actually switches to the page.
+		 */
+		final PaintListener paintListener = new PaintListener() {
+			boolean called = false;
+			public void paintControl(PaintEvent e) {
+				if (called) return;
+				called = true;
+				startContentJob();
+			}			
+		};
+		parent.addPaintListener(paintListener);
+		
+		return viewer.getTable();
+	}
+
+	/*
+	 * This method allocates the resources used by the receiver.
+	 * It installs a dispose listener on parent so that when
+	 * the parent is disposed, the allocated resources will be
+	 * deallocated.
+	 */
+	private void allocateResources(Composite parent) {
 		colorGray = parent.getDisplay().getSystemColor(SWT.COLOR_GRAY);
 		colorBlack = parent.getDisplay().getSystemColor(SWT.COLOR_BLACK);
+		busyCursor = parent.getDisplay().getSystemCursor(SWT.CURSOR_WAIT);
 		
-		viewer = new TableViewer(parent, SWT.VIRTUAL | SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+		xImage = Activator.getDefault().getImageDescriptor("/icons/x.png").createImage(parent.getDisplay());
+		
+		parent.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				xImage.dispose();
+			}			
+		});
+	}	
+
+	private void createDescriptionText(Composite parent) {
+		FormText text = new FormText(parent, SWT.NONE);
+		text.setImage("x", xImage);
+		text.setText("<form><p>The following events have been captured by the Usage Data Collector. Those events marked with an <img href=\"x\"/> will not be uploaded. You can control what is uploaded by adding filters.</p></form>", true, false);
+		GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, false);
+		layoutData.widthHint = 500;
+		text.setLayoutData(layoutData);
+	}
+
+	private void createEventsTable(Composite parent) {
+		viewer = new TableViewer(parent, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.getTable().setHeaderVisible(true);
 		viewer.getTable().setLinesVisible(false);
 		GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
+		layoutData.widthHint = 500;
 		viewer.getTable().setLayoutData(layoutData);
 		
-		OwnerDrawLabelProvider.setUpOwnerDraw(viewer);
-		
+		createIncludeColumn();
 		createWhatColumn();		
 		createKindColumn();		
 		createDescriptionColumn();
@@ -95,23 +159,64 @@ public class UploadPreview  {
 		createBundleVersionColumn();
 		createTimestampColumn();
 		
-		DeferredContentProvider provider = new DeferredContentProvider(sortByTimeStampComparator);
-		viewer.setContentProvider(provider);
+		timestampColumn.setSortColumn();
+		
+		//DeferredContentProvider provider = new DeferredContentProvider(sortByTimeStampComparator);
+		viewer.setContentProvider(new IStructuredContentProvider() {
+			public void dispose() {		
+			}
 
-		viewer.setInput(events);
+			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {				
+			}
+
+			public Object[] getElements(Object input) {
+				return (Object[])input;
+			}			
+		});
+
+		/*
+		 * Add a FilterChangeListener to the filter; if the filter changes, we need to
+		 * refresh the display. The dispose listener, added to the table will clean
+		 * up the FilterChangeListener when the table is disposed.
+		 */
+		final FilterChangeListener filterChangeListener = new FilterChangeListener() {
+			public void filterChanged() {
+				for (UsageDataEventWrapper event : events) {
+					event.resetCaches();
+				}
+				viewer.refresh();
+			}
+		};
+		parameters.getFilter().addFilterChangeListener(filterChangeListener);
 		
-		startContentJob();
+		viewer.getTable().addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				parameters.getFilter().removeFilterChangeListener(filterChangeListener);
+			}			
+		});
 		
-		return viewer.getTable();
+		// Initially, we have nothing.
+		viewer.setInput(new Object[] {});
 	}
-
+	
+	private void createIncludeColumn() {
+		includeColumn = new UsageDataTableViewerColumn(SWT.CENTER);
+		includeColumn.setLabelProvider(new UsageDataColumnProvider() {
+			@Override
+			public Image getImage(UsageDataEventWrapper event) {
+				if (!event.isIncludedByFilter()) return xImage;
+				return null;
+			}
+		});
+	}
+	
 	private void createWhatColumn() {
 		whatColumn = new UsageDataTableViewerColumn(SWT.LEFT);
 		whatColumn.setText("What");
 		whatColumn.setLabelProvider(new UsageDataColumnProvider() {
 			@Override
-			public String getText(UsageDataEvent event) {
-				return event.what;
+			public String getText(UsageDataEventWrapper event) {
+				return event.getWhat();
 			}
 		});
 	}
@@ -121,8 +226,8 @@ public class UploadPreview  {
 		kindColumn.setText("Kind");
 		kindColumn.setLabelProvider(new UsageDataColumnProvider() {
 			@Override
-			public String getText(UsageDataEvent event) {
-				return event.kind;
+			public String getText(UsageDataEventWrapper event) {
+				return event.getKind();
 			}
 		});
 	}
@@ -132,8 +237,8 @@ public class UploadPreview  {
 		descriptionColumn.setText("Description");
 		descriptionColumn.setLabelProvider(new UsageDataColumnProvider() {
 			@Override
-			public String getText(UsageDataEvent event) {
-				return event.description;
+			public String getText(UsageDataEventWrapper event) {
+				return event.getDescription();
 			}
 		});
 	}
@@ -143,8 +248,8 @@ public class UploadPreview  {
 		bundleIdColumn.setText("Bundle Id");
 		bundleIdColumn.setLabelProvider(new UsageDataColumnProvider() {
 			@Override
-			public String getText(UsageDataEvent event) {
-				return event.bundleId;
+			public String getText(UsageDataEventWrapper event) {
+				return event.getBundleId();
 			}			
 		});
 	}
@@ -154,8 +259,8 @@ public class UploadPreview  {
 		bundleVersionColumn.setText("Version");
 		bundleVersionColumn.setLabelProvider(new UsageDataColumnProvider() {
 			@Override
-			public String getText(UsageDataEvent event) {
-				return event.bundleVersion;
+			public String getText(UsageDataEventWrapper event) {
+				return event.getBundleVersion();
 			}
 		});
 	}
@@ -165,11 +270,48 @@ public class UploadPreview  {
 		timestampColumn.setText("When");
 		timestampColumn.setLabelProvider(new UsageDataColumnProvider() {
 			@Override
-			public String getText(UsageDataEvent event) {
-				return dateFormat.format(new Date(event.when));
+			public String getText(UsageDataEventWrapper event) {
+				return dateFormat.format(new Date(event.getWhen()));
 			}
 		});
-		timestampColumn.setSorter(sortByTimeStampComparator);
+		timestampColumn.setSorter(new Comparator<UsageDataEventWrapper>() {
+			public int compare(UsageDataEventWrapper event1, UsageDataEventWrapper event2) {
+				if (event1.getWhen() == event2.getWhen()) return 0;
+				return event1.getWhen() > event2.getWhen() ? 1 : -1;
+			}	
+		});
+	}
+
+	private void createButtons(Composite parent) {
+		Composite buttons = new Composite(parent, SWT.NONE);
+		GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, false);
+		buttons.setLayoutData(layoutData);
+		buttons.setLayout(new RowLayout());
+		createAddFilterButton(buttons);
+		createFiltersButton(buttons);
+	}
+	
+	private void createAddFilterButton(Composite parent) {
+		if (parameters.getFilter() instanceof PreferencesBasedFilter) {
+			Button addFilterButton = new Button(parent, SWT.PUSH);
+			addFilterButton.setText("Add filter...");
+			addFilterButton.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					new AddFilterDialog((PreferencesBasedFilter)parameters.getFilter()).prompt(viewer.getTable().getShell(), getFilterSuggestion());
+				}
+			});
+		}
+	}
+
+	String getFilterSuggestion() {
+		return "org.eclipse.*";
+	}
+
+	private void createFiltersButton(Composite parent) {
+		Button filtersButton = new Button(parent, SWT.PUSH);
+		filtersButton.setText("Filters");
+		filtersButton.setEnabled(false);		
 	}
 
 	/**
@@ -180,19 +322,35 @@ public class UploadPreview  {
 		contentJob = new Job("Generate Usage Data Upload Preview") {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				// TODO Consider actually using the monitor
-				File[] files = parameters.getFiles();
-				for (File file : files) {
-					if (isDisposed()) break; 
-					if (monitor.isCanceled()) return Status.CANCEL_STATUS;
-					processFile(file, monitor);
-				}
+				setTableCursor(busyCursor);
+				processFiles(monitor);
+				setTableCursor(null);
+				if (monitor.isCanceled()) return Status.CANCEL_STATUS;
 				return Status.OK_STATUS;
+			}
+
+			private void setTableCursor(final Cursor cursor) {
+				getDisplay().syncExec(new Runnable() {
+					public void run() {
+						viewer.getTable().setCursor(cursor);
+					}					
+				});
 			}			
 		};
 		contentJob.schedule();
 	}
 
+	private void processFiles(IProgressMonitor monitor) {
+		File[] files = parameters.getFiles();
+		monitor.beginTask("Process Files", files.length);	
+		for (File file : files) {
+			if (isDisposed()) break; 
+			if (monitor.isCanceled()) break;
+			processFile(file, monitor);
+		}
+		monitor.done();
+	}
+	
 	/**
 	 * This method extracts the events found in a {@link File}
 	 * and adds them to the list of events displayed by the
@@ -204,8 +362,9 @@ public class UploadPreview  {
 	 */
 	void processFile(File file, IProgressMonitor monitor) {
 		// TODO Add a progress bar to the page?
-		// TODO Actually use the monitor? May not be worth it.
-		final List<UsageDataEvent> events = new ArrayList<UsageDataEvent>();
+		SubProgressMonitor submonitor = new SubProgressMonitor(monitor, 1);
+		submonitor.beginTask(file.getName(), IProgressMonitor.UNKNOWN);
+		final List<UsageDataEventWrapper> events = new ArrayList<UsageDataEventWrapper>();
 		UsageDataFileReader reader = null;
 		try {
 			reader = new UsageDataFileReader(file);
@@ -215,8 +374,8 @@ public class UploadPreview  {
 				}
 				
 				public void event(String line, UsageDataEvent event) {
-					events.add(event);
-					if (events.size() > 50) {
+					events.add(new UsageDataEventWrapper(event));
+					if (events.size() > 25) {
 						addEvents(events);
 						events.clear();
 					}
@@ -231,6 +390,7 @@ public class UploadPreview  {
 			} catch (IOException e) {
 			}
 		}
+		submonitor.done();
 	}
 
 	boolean isDisposed() {
@@ -239,9 +399,20 @@ public class UploadPreview  {
 		return viewer.getTable().isDisposed();
 	}
 
-	void addEvents(List<UsageDataEvent> events) { 
-		this.events.addAll(events);
-		resizeColumns();
+	synchronized void addEvents(List<UsageDataEventWrapper> newEvents) { 
+		events.addAll(newEvents);
+		final Object[] array = (Object[]) events.toArray(new Object[events.size()]);
+		getDisplay().syncExec(new Runnable() {
+			public void run() {
+				//viewer.add(array);
+				viewer.setInput(array);
+				resizeColumns(array);
+			}
+		});
+	}
+
+	private Display getDisplay() {
+		return viewer.getTable().getDisplay();
 	}
 
 	/*
@@ -251,32 +422,77 @@ public class UploadPreview  {
 	 * them, we create one in this method and pass it into the helper method
 	 * {@link #resizeColumn(GC, UsageDataTableViewerColumn)} which does most of
 	 * the heavy lifting.
+	 * 
+	 * This method must be run in the UI Thread.
 	 */
-	void resizeColumns() {
+	void resizeColumns(final Object[] events) {
 		if (isDisposed()) return;
-		viewer.getTable().getDisplay().asyncExec(new Runnable() {
-			public void run() {
-				GC gc = new GC(viewer.getTable().getDisplay());
-				gc.setFont(viewer.getTable().getFont());
-				resizeColumn(gc, whatColumn);
-				resizeColumn(gc, kindColumn);
-				resizeColumn(gc, bundleIdColumn);
-				resizeColumn(gc, bundleVersionColumn);
-				resizeColumn(gc, descriptionColumn);
-				resizeColumn(gc, timestampColumn);
-				gc.dispose();
+	
+		GC gc = new GC(getDisplay());
+		gc.setFont(viewer.getTable().getFont());
+		resizeColumn(gc, includeColumn, events);
+		resizeColumn(gc, whatColumn, events);
+		resizeColumn(gc, kindColumn, events);
+		resizeColumn(gc, bundleIdColumn, events);
+		resizeColumn(gc, bundleVersionColumn, events);
+		resizeColumn(gc, descriptionColumn, events);
+		resizeColumn(gc, timestampColumn, events);
+		gc.dispose();
+	}
+
+	void resizeColumn(GC gc, UsageDataTableViewerColumn column, Object[] events) {
+		column.resize(gc, events);
+	}
+
+	class UsageDataEventWrapper {
+
+		private final UsageDataEvent event;
+		private Boolean isIncludedByFilter = null;
+
+		public UsageDataEventWrapper(UsageDataEvent event) {
+			this.event = event;
+		}
+
+		public String getKind() {
+			return event.kind;
+		}
+
+		public String getBundleId() {
+			return event.bundleId;
+		}
+
+		public String getBundleVersion() {
+			return event.bundleVersion;
+		}
+
+		public long getWhen() {
+			return event.when;
+		}
+
+		public String getDescription() {
+			return event.description;
+		}
+
+		public String getWhat() {
+			return event.what;
+		}
+
+		public synchronized boolean isIncludedByFilter() {
+			if (isIncludedByFilter == null) {
+				isIncludedByFilter = parameters.getFilter().includes(event);
 			}
-		});
-	}
+			return isIncludedByFilter;
+		}
 
-	void resizeColumn(GC gc, UsageDataTableViewerColumn column) {
-		column.resize(gc, events.getElements());
+		public synchronized void resetCaches() {
+			isIncludedByFilter = null;
+		}
 	}
-
+	
 	/**
 	 * The {@link UsageDataTableViewerColumn} provides a level of abstraction
 	 * for building table columns specifically for the table displaying
-	 * instances of {@link UsageDataEvent}. Instances automatically know how to
+	 * instances of {@link UsageDataEventWrapper}. Instances automatically know how to
 	 * sort themselves (ascending only) with help from the label provider. This
 	 * behaviour can be overridden by providing an alternative
 	 * {@link Comparator}.
@@ -284,8 +500,14 @@ public class UploadPreview  {
 	class UsageDataTableViewerColumn {
 		private TableViewerColumn column;
 		private UsageDataColumnProvider usageDataColumnProvider;
-		private Comparator<UsageDataEvent> comparator = new Comparator<UsageDataEvent>() {	
-			public int compare(UsageDataEvent event1, UsageDataEvent event2) {
+		/**
+		 * The default comparator knows how to compare objects based on the
+		 * string value returned for each instance by the
+		 * {@link UsageDataColumnProvider#getText(UsageDataEventWrapper)}
+		 * method.
+		 */
+		private Comparator<UsageDataEventWrapper> comparator = new Comparator<UsageDataEventWrapper>() {	
+			public int compare(UsageDataEventWrapper event1, UsageDataEventWrapper event2) {
 				if (usageDataColumnProvider == null) return 0;
 				String text1 = usageDataColumnProvider.getText(event1);
 				String text2 = usageDataColumnProvider.getText(event2);
@@ -297,6 +519,14 @@ public class UploadPreview  {
 				return text1.compareTo(text2);
 			}	
 		};
+		
+		private ViewerSorter sorter = new ViewerSorter() {
+			@Override
+			public int compare(Viewer viewer, Object object1, Object object2) {
+				return comparator.compare((UsageDataEventWrapper)object1, (UsageDataEventWrapper)object2);
+			}
+		};
+		
 		private SelectionListener selectionListener = new SelectionAdapter() {
 			/**
 			 * When the column is selected (clicked on by the
@@ -305,9 +535,7 @@ public class UploadPreview  {
 			 */
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				getTable().setSortColumn(getColumn());
-				getTable().setSortDirection(SWT.DOWN);
-				getContentProvider().setSortOrder(comparator);
+				setSortColumn();
 			}		
 		};
 	
@@ -316,14 +544,20 @@ public class UploadPreview  {
 			initialize();
 		}
 
+		public void setSortColumn() {
+			getTable().setSortColumn(getColumn());
+			getTable().setSortDirection(SWT.DOWN);
+			viewer.setSorter(sorter);
+		}
+
 		private void initialize() {
 			getColumn().addSelectionListener(selectionListener);
 			getColumn().setWidth(100);
 		}
-	
-		DeferredContentProvider getContentProvider() {
-			return (DeferredContentProvider)viewer.getContentProvider();
-		}
+//	
+//		DeferredContentProvider getContentProvider() {
+//			return (DeferredContentProvider)viewer.getContentProvider();
+//		}
 	
 		TableColumn getColumn() {
 			return column.getColumn();
@@ -333,7 +567,7 @@ public class UploadPreview  {
 			return viewer.getTable();
 		}
 	
-		public void setSorter(Comparator<UsageDataEvent> comparator) {
+		public void setSorter(Comparator<UsageDataEventWrapper> comparator) {
 			// TODO May need to handle the case when the active comparator is changed.
 			this.comparator = comparator;
 		}
@@ -368,17 +602,20 @@ public class UploadPreview  {
 		 * The returned value is the maximum width (in pixels) of the
 		 * text the receiver associates with each of the events. The
 		 * events are provided as Object[] because converting them to
-		 * UsageDataEvent[] would be an unnecessary expense.
+		 * {@link UsageDataEventWrapper}[] would be an unnecessary expense.
 		 * 
 		 * @param gc a {@link GC} loaded with the font used to display the events.
-		 * @param events an array of {@link UsageDataEvent} instances.
+		 * @param events an array of {@link UsageDataEventWrapper} instances.
 		 * @return the width of the widest event
 		 */
 		public int getMaximumWidth(GC gc, Object[] events) {
 			int width = 0;
 			for (Object event : events) {
 				Point extent = gc.textExtent(getText(event));
-				if (extent.x > width) width = extent.x;
+				int x = extent.x;
+				Image image = getImage(event);
+				if (image != null) x += image.getBounds().width;
+				if (x > width) width = x;
 			}
 			return width;
 		}
@@ -391,7 +628,7 @@ public class UploadPreview  {
 		 */
 		@Override
 		public Color getForeground(Object element) {
-			if (parameters.getFilter().includes((UsageDataEvent)element)) {
+			if (((UsageDataEventWrapper)element).isIncludedByFilter()) {
 				return colorBlack;
 			} else {
 				return colorGray;
@@ -400,9 +637,20 @@ public class UploadPreview  {
 		
 		@Override
 		public String getText(Object element) {
-			return getText((UsageDataEvent)element);
+			return getText((UsageDataEventWrapper)element);
 		}
 	
-		public abstract String getText(UsageDataEvent element);
+		@Override
+		public Image getImage(Object element) {
+			return getImage((UsageDataEventWrapper)element);
+		}
+		
+		public String getText(UsageDataEventWrapper element) {
+			return "";
+		}
+		
+		public Image getImage(UsageDataEventWrapper element) {
+			return null;
+		}
 	}
 }

@@ -16,4 +16,7 @@ public interface UsageDataEventFilter {
 
 	boolean includes(UsageDataEvent event);
 
+	void addFilterChangeListener(FilterChangeListener filterChangeListener);
+
+	void removeFilterChangeListener(FilterChangeListener filterChangeListener);
 }

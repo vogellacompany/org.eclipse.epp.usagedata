@@ -65,6 +65,7 @@ public class Activator extends AbstractUIPlugin implements IStartup {
 	public void stop(BundleContext context) throws Exception {
 		usageDataRecorder.stop();
 		getUsageDataService().removeUsageDataEventListener(usageDataRecorder);
+		settings.dispose();
 		
 		plugin = null;
 		super.stop(context);

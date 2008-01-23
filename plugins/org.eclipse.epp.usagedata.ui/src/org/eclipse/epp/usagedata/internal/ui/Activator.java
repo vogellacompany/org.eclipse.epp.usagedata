@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.epp.usagedata.internal.ui;
 
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -65,5 +66,22 @@ public class Activator extends AbstractUIPlugin {
 			getImageRegistry().put(path, descriptor);
 		}
 		return descriptor;
+	}
+	
+	public void log(int status, String message, Object ... arguments) {
+		log(status, (Exception)null, message, arguments);
+	}
+	
+	public void log(int status, Exception exception, String message, Object ... arguments) {
+		log(status, exception, String.format(message, arguments));
+	}
+	
+	public void log(int status, Exception e, String message) {
+		getLog().log(new Status(status, PLUGIN_ID, message, e));
+	}
+	
+
+	public void log(Status status) {
+		getLog().log(status);
 	}
 }

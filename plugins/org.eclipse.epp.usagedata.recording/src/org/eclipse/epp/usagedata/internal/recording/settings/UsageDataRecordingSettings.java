@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.epp.usagedata.internal.gathering.settings.UsageDataCaptureSettings;
 import org.eclipse.epp.usagedata.internal.recording.Activator;
-import org.eclipse.epp.usagedata.internal.recording.filtering.AcceptAllEventsFilter;
+import org.eclipse.epp.usagedata.internal.recording.filtering.PreferencesBasedFilter;
 import org.eclipse.epp.usagedata.internal.recording.filtering.UsageDataEventFilter;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.PlatformUI;
@@ -49,6 +49,8 @@ public class UsageDataRecordingSettings {
 	public static final String UPLOAD_URL_KEY = Activator.PLUGIN_ID + ".upload-url";
 	public static final String ASK_TO_UPLOAD_KEY = Activator.PLUGIN_ID + ".ask";
 	public static final String LOG_SERVER_ACTIVITY_KEY = Activator.PLUGIN_ID + ".log-server";
+	public static final String FILTER_ECLIPSE_BUNDLES_ONLY_KEY = Activator.PLUGIN_ID + ".filter-eclipse-only";
+	public static final String FILTER_PATTERNS_KEY = Activator.PLUGIN_ID + ".filter-patterns";
 
 	public static final int PERIOD_REASONABLE_MINIMUM = 60000; 
 	// TODO 15 * 60 * 1000; // 15 minutes
@@ -56,6 +58,8 @@ public class UsageDataRecordingSettings {
 	// TODO 5 * 24 * 60 * 60 * 1000; // five days
 	static final String UPLOAD_URL_DEFAULT = "http://cortez.eclipse.org/upload.php";
 	static final boolean ASK_TO_UPLOAD_DEFAULT = true;
+
+	private PreferencesBasedFilter filter = new PreferencesBasedFilter();
 
 	/**
 	 * First if the system property {@value #UPLOAD_PERIOD_KEY} has been set,
@@ -353,7 +357,8 @@ public class UsageDataRecordingSettings {
 	}
 
 	public UsageDataEventFilter getFilter() {
-		return new AcceptAllEventsFilter();
+		return filter;
+		
 	}
 
 	public boolean hasUserAcceptedTermsOfUse() {
@@ -378,6 +383,10 @@ public class UsageDataRecordingSettings {
 
 	public void setEnabled(boolean value) {
 		getCaptureSettings().setEnabled(value);
+	}
+
+	public void dispose() {
+		filter.dispose();
 	}
 
 }
