@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -30,6 +31,7 @@ import org.eclipse.epp.usagedata.internal.recording.uploading.UsageDataFileReade
 import org.eclipse.epp.usagedata.internal.ui.Activator;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
@@ -63,7 +65,7 @@ public class UploadPreview  {
 	
 	private TableViewer viewer;
 	private Job contentJob;
-	private List<UsageDataEventWrapper> events = new ArrayList<UsageDataEventWrapper>();
+	private List<UsageDataEventWrapper> events = Collections.synchronizedList(new ArrayList<UsageDataEventWrapper>());
 	
 	private static final DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
 	
@@ -160,7 +162,6 @@ public class UploadPreview  {
 		
 		timestampColumn.setSortColumn();
 		
-		//DeferredContentProvider provider = new DeferredContentProvider(sortByTimeStampComparator);
 		viewer.setContentProvider(new IStructuredContentProvider() {
 			public void dispose() {		
 			}
@@ -305,6 +306,13 @@ public class UploadPreview  {
 
 	// TODO Return a more interesting suggestion based on the selection.
 	String getFilterSuggestion() {
+		IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
+		if (selection != null) {
+			if (selection.size() == 1) {
+				return ((UsageDataEventWrapper)selection.getFirstElement()).getBundleId();
+			}
+		}
+		
 		return "org.eclipse.*";
 	}
 
@@ -330,8 +338,10 @@ public class UploadPreview  {
 			}
 
 			private void setTableCursor(final Cursor cursor) {
+				if (isDisposed()) return;
 				getDisplay().syncExec(new Runnable() {
 					public void run() {
+						if (isDisposed()) return;
 						viewer.getTable().setCursor(cursor);
 					}					
 				});
@@ -397,12 +407,20 @@ public class UploadPreview  {
 		return viewer.getTable().isDisposed();
 	}
 
-	synchronized void addEvents(List<UsageDataEventWrapper> newEvents) { 
+	/*
+	 * This method adds the list of events to the master list maintained
+	 * by the instance. It also updates the table.
+	 */
+	void addEvents(List<UsageDataEventWrapper> newEvents) { 
 		if (isDisposed()) return;
 		events.addAll(newEvents);
+		/*
+		 * Make a copy of the events that we know about so far to avoid
+		 */
 		final Object[] array = (Object[]) events.toArray(new Object[events.size()]);
-		getDisplay().syncExec(new Runnable() {
+		getDisplay().asyncExec(new Runnable() {
 			public void run() {
+				if (isDisposed()) return;
 				//viewer.add(array);
 				viewer.setInput(array);
 				resizeColumns(array);

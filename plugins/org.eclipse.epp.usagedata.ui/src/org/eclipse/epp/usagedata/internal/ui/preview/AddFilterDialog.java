@@ -13,7 +13,6 @@ package org.eclipse.epp.usagedata.internal.ui.preview;
 import org.eclipse.epp.usagedata.internal.recording.filtering.PreferencesBasedFilter;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 
 public class AddFilterDialog {
