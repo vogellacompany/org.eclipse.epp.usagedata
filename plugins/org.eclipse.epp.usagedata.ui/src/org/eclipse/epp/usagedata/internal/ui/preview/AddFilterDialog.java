@@ -27,7 +27,7 @@ public class AddFilterDialog {
 	public void prompt(Shell shell, String suggestion) {
 		InputDialog dialog = new InputDialog(shell, "New filter", "Provide a bundle name pattern. Bundles ids that match this pattern will not be uploaded.",suggestion, getValidator());
 		dialog.open();
-		if (dialog.getReturnCode() != SWT.OK) return;
+		if (dialog.getReturnCode() != InputDialog.OK) return;
 		
 		filter.addPattern(dialog.getValue().trim());
 	}
@@ -49,6 +49,6 @@ public class AddFilterDialog {
 	}
 
 	boolean isValidBundleIdPattern(String pattern) {
-		return pattern.matches("[[a-zA-Z0-9\\*]*?\\.]*?\\.[a-zA-Z0-9\\*]+");
+		return pattern.matches("[a-zA-Z0-9\\*]*?(\\.[a-zA-Z0-9\\*]+?)*?");
 	}
 }
