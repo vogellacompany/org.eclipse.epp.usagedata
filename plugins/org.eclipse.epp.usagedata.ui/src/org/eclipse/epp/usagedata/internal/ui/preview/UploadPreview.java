@@ -12,7 +12,6 @@ package org.eclipse.epp.usagedata.internal.ui.preview;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.ObjectInputStream.GetField;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -22,7 +21,6 @@ import java.util.List;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.epp.usagedata.internal.gathering.events.UsageDataEvent;
 import org.eclipse.epp.usagedata.internal.recording.filtering.FilterChangeListener;
@@ -103,6 +101,7 @@ public class UploadPreview  {
 		 */
 		final PaintListener paintListener = new PaintListener() {
 			boolean called = false;
+			// Don't need to synchronize since this will only ever be called in the UI thread.
 			public void paintControl(PaintEvent e) {
 				if (called) return;
 				called = true;
@@ -304,6 +303,7 @@ public class UploadPreview  {
 		}
 	}
 
+	// TODO Return a more interesting suggestion based on the selection.
 	String getFilterSuggestion() {
 		return "org.eclipse.*";
 	}
@@ -347,6 +347,7 @@ public class UploadPreview  {
 			if (isDisposed()) break; 
 			if (monitor.isCanceled()) break;
 			processFile(file, monitor);
+			monitor.worked(1);
 		}
 		monitor.done();
 	}
@@ -362,8 +363,6 @@ public class UploadPreview  {
 	 */
 	void processFile(File file, IProgressMonitor monitor) {
 		// TODO Add a progress bar to the page?
-		SubProgressMonitor submonitor = new SubProgressMonitor(monitor, 1);
-		submonitor.beginTask(file.getName(), IProgressMonitor.UNKNOWN);
 		final List<UsageDataEventWrapper> events = new ArrayList<UsageDataEventWrapper>();
 		UsageDataFileReader reader = null;
 		try {
@@ -390,7 +389,6 @@ public class UploadPreview  {
 			} catch (IOException e) {
 			}
 		}
-		submonitor.done();
 	}
 
 	boolean isDisposed() {
@@ -400,6 +398,7 @@ public class UploadPreview  {
 	}
 
 	synchronized void addEvents(List<UsageDataEventWrapper> newEvents) { 
+		if (isDisposed()) return;
 		events.addAll(newEvents);
 		final Object[] array = (Object[]) events.toArray(new Object[events.size()]);
 		getDisplay().syncExec(new Runnable() {
