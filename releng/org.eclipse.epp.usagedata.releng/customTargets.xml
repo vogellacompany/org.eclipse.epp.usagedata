@@ -138,6 +138,8 @@
 	<!-- Steps to do after the build is done. -->
 	<!-- ===================================================================== -->
 	<target name="postBuild">
+	    <ant antfile="${builder}/createUpdateSite.xml"
+	       target="createUpdateSite" />
 		<antcall target="gatherLogs" />
 	</target>
 

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project 
+  default="createUpdateSite"
+  name="Create Update Site">
+  
+  <target name="createUpdateSite">
+    <antcall target="createSiteXML" />
+    <antcall target="updateZIP" />
+  </target>
+
+  <target name="createSiteXML">
+    <echo message="Creating site.xml" />
+    <copy 
+      file="${builder}/templates/site.xml" 
+      tofile="${buildDirectory}/${buildLabel}/site.xml" />
+    <replace file="${buildDirectory}/${buildLabel}/site.xml" 
+      token="XXXXXXXXXXXXX"
+      value="${buildId}">
+    </replace>
+  </target>
+
+  <target name="updateZIP">
+    <echo message="Update ZIP file" />
+    <zip destfile="${buildDirectory}/${buildLabel}/org.eclipse.epp.usagedata.feature-${buildId}.zip"
+      update="true">
+      <zipfileset 
+        dir="${buildDirectory}/${buildLabel}" 
+      	includes="site.xml" 
+      	fullpath="eclipse/site.xml"/>
+  	</zip>
+  </target>
+  
+</project>
