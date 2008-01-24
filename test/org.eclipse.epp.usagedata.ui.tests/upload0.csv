@@ -1,0 +1,5 @@
+what,kind,bundleId,bundleVersion,description,time
+started,bundle,org.eclipse.osgi,3.4.0.v20071207,org.eclipse.osgi,1200928561690
+started,bundle,org.eclipse.equinox.common,3.4.0.v20071207,org.eclipse.equinox.common,1200928561691
+started,bundle,org.eclipse.update.configurator,3.2.200.v20071113,org.eclipse.update.configurator,1200928561691
+started,bundle,org.eclipse.core.runtime,3.4.0.v20071207,org.eclipse.core.runtime,1200928561692
