@@ -318,7 +318,7 @@ public class UploadPreview  {
 	
 	private void createEclipseOnlyButton(Composite buttons) {
 		eclipseOnlyButton = new Button(buttons, SWT.CHECK);
-		eclipseOnlyButton.setText("Only upload events from \"org.eclipse\" bundles.");
+		eclipseOnlyButton.setText("Only upload events from \"org.eclipse\" bundles");
 		eclipseOnlyButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {

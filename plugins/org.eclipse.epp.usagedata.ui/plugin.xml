@@ -20,6 +20,12 @@
             id="org.eclipse.epp.usagedata.internal.ui.preferences.UsageDataUploadingTermsOfUsePage"
             name="Terms of Use">
       </page>
+      <page
+            category="org.eclipse.epp.usagedata.internal.ui.preferences.UsageDataCapturePreferencesPage"
+            class="org.eclipse.epp.usagedata.internal.ui.preferences.UsageDataUploadingPreviewPage"
+            id="org.eclipse.epp.usagedata.internal.ui.preferences.UsageDataUploadingPreviewPage"
+            name="Preview">
+      </page>
    </extension>
    <extension
          point="org.eclipse.epp.usagedata.recording.uploader">
