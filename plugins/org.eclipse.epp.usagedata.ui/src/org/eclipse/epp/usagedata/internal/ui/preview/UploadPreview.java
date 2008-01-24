@@ -30,7 +30,6 @@ import org.eclipse.epp.usagedata.internal.recording.filtering.PreferencesBasedFi
 import org.eclipse.epp.usagedata.internal.recording.uploading.UploadParameters;
 import org.eclipse.epp.usagedata.internal.recording.uploading.UsageDataFileReader;
 import org.eclipse.epp.usagedata.internal.ui.Activator;
-import org.eclipse.equinox.internal.app.EclipseAppDescriptor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
