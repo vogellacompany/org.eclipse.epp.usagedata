@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 The Eclipse Foundation.
+ * Copyright (c) 2008 The Eclipse Foundation.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -114,6 +114,8 @@ public class PartUsageMonitor implements UsageMonitor {
 		
 	};
 
+	private ExtensionIdToBundleMapper perspectiveToBundleIdMapper;
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -123,6 +125,7 @@ public class PartUsageMonitor implements UsageMonitor {
 		this.usageDataService = usageDataService;
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		hookListeners(workbench);
+		perspectiveToBundleIdMapper = new ExtensionIdToBundleMapper("org.eclipse.ui.perspectives");
 	}
 
 	/*
@@ -133,6 +136,7 @@ public class PartUsageMonitor implements UsageMonitor {
 	public void stopMonitoring() {
 		final IWorkbench workbench = PlatformUI.getWorkbench();
 		unhookListeners(workbench);
+		perspectiveToBundleIdMapper.dispose();
 	}
 
 	/**
@@ -200,12 +204,12 @@ public class PartUsageMonitor implements UsageMonitor {
 	protected void recordEvent(String event, IWorkbenchWindow window) {
 		// TODO Hardcoding bundle id for now.
 		// TODO Does an IWorkbenchWindow have an id?
-		usageDataService.recordEvent(event, "workbench window", "", "org.eclipse.ui.workbench");
+		usageDataService.recordEvent(event, "workbench", "", "org.eclipse.ui.workbench");
 	}
 
 	protected void recordEvent(String event, IPerspectiveDescriptor perspective) {
-		// TODO Figure out the source bundle for the perspective.
-		usageDataService.recordEvent(event, "perspective", perspective.getId(), null);
+		String id = perspective.getId();
+		usageDataService.recordEvent(event, "perspective", id, perspectiveToBundleIdMapper.getBundleId(id));
 	}
 	
 	private void recordEvent(String event, IWorkbenchPart part) {
@@ -226,9 +230,9 @@ public class PartUsageMonitor implements UsageMonitor {
 	 */
 	private String getKind(IWorkbenchPartSite site) {
 		if (site instanceof IEditorSite)
-			return "org.eclipse.ui.editors";
+			return "editor";
 		else if (site instanceof IViewSite)
-			return "org.eclipse.ui.views";
-		return null;
+			return "view";
+		return "part";
 	}
 }
