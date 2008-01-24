@@ -296,7 +296,6 @@ public class UploadPreview  {
 		buttons.setLayout(new RowLayout());
 		createAddFilterButton(buttons);
 		createRemoveFilterButton(buttons);
-		createFiltersButton(buttons);
 
 		final FilterChangeListener filterChangeListener = new FilterChangeListener() {
 			public void filterChanged() {
@@ -374,12 +373,6 @@ public class UploadPreview  {
 		return FilterUtils.getFilterSuggestionBasedOnBundleIds(names);
 	}
 	
-	private void createFiltersButton(Composite parent) {
-		Button filtersButton = new Button(parent, SWT.PUSH);
-		filtersButton.setText("Filters");
-		filtersButton.setEnabled(false);		
-	}	
-
 	/**
 	 * This method starts the job that populates the list of
 	 * events.
