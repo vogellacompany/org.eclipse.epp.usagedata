@@ -30,6 +30,7 @@ import org.eclipse.epp.usagedata.internal.recording.filtering.PreferencesBasedFi
 import org.eclipse.epp.usagedata.internal.recording.uploading.UploadParameters;
 import org.eclipse.epp.usagedata.internal.recording.uploading.UsageDataFileReader;
 import org.eclipse.epp.usagedata.internal.ui.Activator;
+import org.eclipse.equinox.internal.app.EclipseAppDescriptor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -87,6 +88,10 @@ public class UploadPreview  {
 
 	Button removeFilterButton;
 
+	private Button eclipseOnlyButton;
+
+	private Button addFilterButton;
+
 	public UploadPreview(UploadParameters parameters) {
 		this.parameters = parameters;
 	}
@@ -99,6 +104,7 @@ public class UploadPreview  {
 		
 		createDescriptionText(composite);
 		createEventsTable(composite);
+		createEclipseOnlyButton(composite);
 		createButtons(composite);
 		
 		/*
@@ -311,18 +317,35 @@ public class UploadPreview  {
 		updateButtons();
 	}
 	
+	private void createEclipseOnlyButton(Composite buttons) {
+		eclipseOnlyButton = new Button(buttons, SWT.CHECK);
+		eclipseOnlyButton.setText("Only upload events from \"org.eclipse\" bundles.");
+		eclipseOnlyButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				((PreferencesBasedFilter)parameters.getFilter()).setEclipseOnly(eclipseOnlyButton.getSelection());
+			}
+		});
+	}
+
 	private void updateButtons() {
 		if (parameters.getFilter() instanceof PreferencesBasedFilter) {
 			PreferencesBasedFilter filter = (PreferencesBasedFilter)parameters.getFilter();
-			boolean hasAtLeastOnePattern = filter.getFilterPatterns().length > 0;
-			
-			removeFilterButton.setEnabled(hasAtLeastOnePattern);
+			if (filter.isEclipseOnly()) {
+				eclipseOnlyButton.setSelection(true);
+				addFilterButton.setEnabled(false);
+				removeFilterButton.setEnabled(false);
+			} else {
+				eclipseOnlyButton.setSelection(false);
+				addFilterButton.setEnabled(true);
+				removeFilterButton.setEnabled(filter.getFilterPatterns().length > 0);
+			}
 		}
 	}
 
 	private void createAddFilterButton(Composite parent) {
 		if (parameters.getFilter() instanceof PreferencesBasedFilter) {
-			Button addFilterButton = new Button(parent, SWT.PUSH);
+			addFilterButton = new Button(parent, SWT.PUSH);
 			addFilterButton.setText("Add filter...");
 			addFilterButton.addSelectionListener(new SelectionAdapter() {
 				@Override
@@ -353,7 +376,9 @@ public class UploadPreview  {
 			if (selection.size() == 1) {
 				return getFilterSuggestionBasedOnSingleSelection(selection);
 			} 
-			return getFilterSuggestionBasedOnMultipleSelection(selection);
+			if (selection.size() > 1) {
+				return getFilterSuggestionBasedOnMultipleSelection(selection);
+			}
 		}
 		
 		return FilterUtils.getDefaultFilterSuggestion();

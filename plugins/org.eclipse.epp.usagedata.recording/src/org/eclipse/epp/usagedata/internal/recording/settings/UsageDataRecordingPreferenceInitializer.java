@@ -21,6 +21,7 @@ public class UsageDataRecordingPreferenceInitializer extends AbstractPreferenceI
 		preferenceStore.setDefault(UsageDataRecordingSettings.UPLOAD_URL_KEY, UsageDataRecordingSettings.UPLOAD_URL_DEFAULT);
 		preferenceStore.setDefault(UsageDataRecordingSettings.UPLOAD_PERIOD_KEY, UsageDataRecordingSettings.UPLOAD_PERIOD_DEFAULT);
 		preferenceStore.setDefault(UsageDataRecordingSettings.ASK_TO_UPLOAD_KEY, UsageDataRecordingSettings.ASK_TO_UPLOAD_DEFAULT);
+		preferenceStore.setDefault(UsageDataRecordingSettings.FILTER_ECLIPSE_BUNDLES_ONLY_KEY, false);
 	}
 
 }

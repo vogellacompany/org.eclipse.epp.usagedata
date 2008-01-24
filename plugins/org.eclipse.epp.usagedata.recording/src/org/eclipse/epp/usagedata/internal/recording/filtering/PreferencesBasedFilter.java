@@ -130,5 +130,15 @@ public class PreferencesBasedFilter extends AbstractUsageDataEventFilter {
 		return false;
 	}
 
+	public void setEclipseOnly(boolean value) {
+		getPreferenceStore().setValue(UsageDataRecordingSettings.FILTER_ECLIPSE_BUNDLES_ONLY_KEY, value);
+		Activator.getDefault().savePluginPreferences();
+		fireFilterChangedEvent();
+	}
+
+	public boolean isEclipseOnly() {
+		return getPreferenceStore().getBoolean(UsageDataRecordingSettings.FILTER_ECLIPSE_BUNDLES_ONLY_KEY);
+	}
+
 
 }
