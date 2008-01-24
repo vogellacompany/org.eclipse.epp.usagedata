@@ -34,6 +34,10 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 public class PreferencesBasedFilter extends AbstractUsageDataEventFilter {
 
 	public PreferencesBasedFilter() {
+		hookListeners();
+	}
+
+	protected void hookListeners() {
 		propertyChangeListener = new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
 				if (isFilterProperty(event.getProperty())) {

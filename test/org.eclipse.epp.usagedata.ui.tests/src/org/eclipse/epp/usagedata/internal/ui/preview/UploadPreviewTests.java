@@ -10,7 +10,11 @@
  *******************************************************************************/
 package org.eclipse.epp.usagedata.internal.ui.preview;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,7 +25,6 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.adaptor.EclipseStarter;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.epp.usagedata.internal.recording.uploading.UploadParameters;
 import org.eclipse.epp.usagedata.internal.ui.Activator;
 import org.eclipse.epp.usagedata.internal.ui.preview.util.MockUploadSettings;
@@ -31,16 +34,51 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+/**
+ * The {@link UploadPreviewTests} class tests various aspects of the
+ * {@link UploadPreview} class. This test must be run as a &quot;JUnit Plug-in Test&quot;.
+ * 
+ * @author Wayne Beaton
+ */
+@SuppressWarnings("restriction")
 public class UploadPreviewTests {
 	UploadParameters parameters;
-	
+	UploadPreview preview;
+	private Display display;
+	private Shell shell;
+
 	@Before
-	public void setup() {
+	public void setup() throws Exception {
 		parameters = new UploadParameters();
 		parameters.setSettings(new MockUploadSettings());
+
+		parameters.setFiles(new File[] {findFile("upload0.csv")});
+		preview = new UploadPreview(parameters);
+		
+		while (!EclipseStarter.isRunning()) Thread.sleep(100);
+		display = PlatformUI.getWorkbench().getDisplay();
+		shell = new Shell(display);
+		shell.setLayout(new FillLayout());
+		preview.createControl(shell);
+		shell.open();
+	
+		preview.processFiles(new NullProgressMonitor());
+		preview.viewer.setInput((Object[]) preview.events.toArray(new Object[preview.events.size()]));
+	}
+	
+	@After
+	public void shutdown() {
+		shell.close();
+		shell.dispose();
+	}
+	
+	@Test
+	public void tableFullyPopulated() {
+		assertEquals(4, preview.events.size());
 	}
 	
 	@Test
@@ -55,11 +93,6 @@ public class UploadPreviewTests {
 	}
 	
 	void doTestUpdateButtons(Display display) {
-		Shell shell = new Shell(display);
-		UploadPreview preview = new UploadPreview(parameters);
-		preview.createControl(shell);
-		
-		shell.open();
 
 		assertFalse(preview.removeFilterButton.getEnabled());
 		
@@ -70,18 +103,6 @@ public class UploadPreviewTests {
 	
 	@Test
 	public void testRowChangesColorWhenFilterChanges() throws Exception {
-		parameters.setFiles(new File[] {findFile("upload0.csv")});
-		final UploadPreview preview = new UploadPreview(parameters);
-		
-		while (!EclipseStarter.isRunning()) Thread.sleep(100);
-		final Display display = PlatformUI.getWorkbench().getDisplay();
-		Shell shell = new Shell(display);
-		shell.setLayout(new FillLayout());
-		preview.createControl(shell);
-		shell.open();
-	
-		preview.processFiles(new NullProgressMonitor());
-		preview.viewer.setInput((Object[]) preview.events.toArray(new Object[preview.events.size()]));
 		
 		assertNull(preview.viewer.getTable().getItem(0).getImage(0));
 		assertEquals(display.getSystemColor(SWT.COLOR_BLACK), preview.viewer.getTable().getItem(0).getForeground(1));
@@ -90,6 +111,12 @@ public class UploadPreviewTests {
 
 		assertNotNull(preview.viewer.getTable().getItem(0).getImage(0));
 		assertEquals(display.getSystemColor(SWT.COLOR_GRAY), preview.viewer.getTable().getItem(0).getForeground(1));
+		
+		((MockUsageDataEventFilter)parameters.getFilter()).removeFilterPatterns(new String[] {"org.eclipse.osgi"});
+		
+		assertNull(preview.viewer.getTable().getItem(0).getImage(0));
+		assertEquals(display.getSystemColor(SWT.COLOR_BLACK), preview.viewer.getTable().getItem(0).getForeground(1));
+		
 	}
 
 	private File findFile(String string) throws URISyntaxException, IOException {

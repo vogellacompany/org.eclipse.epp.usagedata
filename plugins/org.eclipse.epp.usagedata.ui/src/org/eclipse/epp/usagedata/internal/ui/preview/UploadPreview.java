@@ -441,7 +441,7 @@ public class UploadPreview  {
 				}
 				
 				public void event(String line, UsageDataEvent event) {
-					events.add(new UsageDataEventWrapper(event));
+					events.add(new UsageDataEventWrapper(parameters, event));
 					if (events.size() > 25) {
 						addEvents(events);
 						events.clear();
@@ -519,50 +519,7 @@ public class UploadPreview  {
 		column.resize(gc, events);
 	}
 
-	class UsageDataEventWrapper {
-
-		private final UsageDataEvent event;
-		private Boolean isIncludedByFilter = null;
-
-		public UsageDataEventWrapper(UsageDataEvent event) {
-			this.event = event;
-		}
-
-		public String getKind() {
-			return event.kind;
-		}
-
-		public String getBundleId() {
-			return event.bundleId;
-		}
-
-		public String getBundleVersion() {
-			return event.bundleVersion;
-		}
-
-		public long getWhen() {
-			return event.when;
-		}
-
-		public String getDescription() {
-			return event.description;
-		}
-
-		public String getWhat() {
-			return event.what;
-		}
-
-		public synchronized boolean isIncludedByFilter() {
-			if (isIncludedByFilter == null) {
-				isIncludedByFilter = parameters.getFilter().includes(event);
-			}
-			return isIncludedByFilter;
-		}
-
-		public synchronized void resetCaches() {
-			isIncludedByFilter = null;
-		}
-	}
+	
 	
 	/**
 	 * The {@link UsageDataTableViewerColumn} provides a level of abstraction

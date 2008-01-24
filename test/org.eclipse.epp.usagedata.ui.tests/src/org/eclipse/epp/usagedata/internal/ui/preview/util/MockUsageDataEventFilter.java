@@ -28,8 +28,20 @@ public class MockUsageDataEventFilter extends PreferencesBasedFilter {
 	}
 
 	@Override
+	protected void hookListeners() {
+	}
+	
+	@Override
 	public void addPattern(String value) {
 		patterns.add(value);
+		fireFilterChangedEvent();
+	}
+	
+	@Override
+	public void removeFilterPatterns(Object[] toRemove) {
+		for (Object pattern : toRemove) {
+			patterns.remove(pattern);
+		}
 		fireFilterChangedEvent();
 	}
 	
