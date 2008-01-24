@@ -13,19 +13,14 @@ package org.eclipse.epp.usagedata.internal.recording.uploading;
 import java.io.File;
 
 import org.eclipse.epp.usagedata.internal.recording.filtering.UsageDataEventFilter;
-import org.eclipse.epp.usagedata.internal.recording.settings.UsageDataRecordingSettings;
+import org.eclipse.epp.usagedata.internal.recording.settings.UploadSettings;
 
 public class UploadParameters {
 
 	private File[] files;
-	private UsageDataRecordingSettings settings;
-	private UploadManager uploadManager;
-
-	public UploadParameters(UploadManager uploadManager) {
-		this.uploadManager = uploadManager;
-	}
-
-	public void setSettings(UsageDataRecordingSettings settings) {
+	private UploadSettings settings;
+	
+	public void setSettings(UploadSettings settings) {
 		this.settings = settings;
 	}
 
@@ -33,11 +28,7 @@ public class UploadParameters {
 		this.files = files;
 	}
 
-	public UploadManager getUploadManager() {
-		return uploadManager;
-	}
-
-	public UsageDataRecordingSettings getSettings() {
+	public UploadSettings getSettings() {
 		return settings;
 	}
 

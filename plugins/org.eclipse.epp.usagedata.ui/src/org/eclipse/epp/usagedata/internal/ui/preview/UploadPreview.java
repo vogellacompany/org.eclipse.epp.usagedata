@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.epp.usagedata.internal.gathering.events.UsageDataEvent;
 import org.eclipse.epp.usagedata.internal.recording.filtering.FilterChangeListener;
+import org.eclipse.epp.usagedata.internal.recording.filtering.FilterUtils;
 import org.eclipse.epp.usagedata.internal.recording.filtering.PreferencesBasedFilter;
 import org.eclipse.epp.usagedata.internal.recording.uploading.UploadParameters;
 import org.eclipse.epp.usagedata.internal.recording.uploading.UsageDataFileReader;
@@ -50,6 +51,7 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -63,9 +65,9 @@ public class UploadPreview  {
 
 	private final UploadParameters parameters;
 	
-	private TableViewer viewer;
-	private Job contentJob;
-	private List<UsageDataEventWrapper> events = Collections.synchronizedList(new ArrayList<UsageDataEventWrapper>());
+	TableViewer viewer;
+	Job contentJob;
+	List<UsageDataEventWrapper> events = Collections.synchronizedList(new ArrayList<UsageDataEventWrapper>());
 	
 	private static final DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
 	
@@ -83,6 +85,8 @@ public class UploadPreview  {
 
 	private Cursor busyCursor;
 
+	Button removeFilterButton;
+
 	public UploadPreview(UploadParameters parameters) {
 		this.parameters = parameters;
 	}
@@ -90,9 +94,12 @@ public class UploadPreview  {
 	public Control createControl(final Composite parent) {
 		allocateResources(parent);
 		
-		createDescriptionText(parent);
-		createEventsTable(parent);
-		createButtons(parent);
+		Composite composite = new Composite(parent, SWT.NONE);
+		composite.setLayout(new GridLayout());
+		
+		createDescriptionText(composite);
+		createEventsTable(composite);
+		createButtons(composite);
 		
 		/*
 		 * Bit of a crazy idea. Add a paint listener that will
@@ -110,9 +117,9 @@ public class UploadPreview  {
 				startContentJob();
 			}			
 		};
-		parent.addPaintListener(paintListener);
+		composite.addPaintListener(paintListener);
 		
-		return viewer.getTable();
+		return composite;
 	}
 
 	/*
@@ -288,9 +295,32 @@ public class UploadPreview  {
 		buttons.setLayoutData(layoutData);
 		buttons.setLayout(new RowLayout());
 		createAddFilterButton(buttons);
+		createRemoveFilterButton(buttons);
 		createFiltersButton(buttons);
+
+		final FilterChangeListener filterChangeListener = new FilterChangeListener() {
+			public void filterChanged() {
+				updateButtons();
+			}			
+		};
+		parameters.getFilter().addFilterChangeListener(filterChangeListener);
+		parent.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				parameters.getFilter().removeFilterChangeListener(filterChangeListener);
+			}			
+		});
+		updateButtons();
 	}
 	
+	private void updateButtons() {
+		if (parameters.getFilter() instanceof PreferencesBasedFilter) {
+			PreferencesBasedFilter filter = (PreferencesBasedFilter)parameters.getFilter();
+			boolean hasAtLeastOnePattern = filter.getFilterPatterns().length > 0;
+			
+			removeFilterButton.setEnabled(hasAtLeastOnePattern);
+		}
+	}
+
 	private void createAddFilterButton(Composite parent) {
 		if (parameters.getFilter() instanceof PreferencesBasedFilter) {
 			Button addFilterButton = new Button(parent, SWT.PUSH);
@@ -304,29 +334,57 @@ public class UploadPreview  {
 		}
 	}
 
+	private void createRemoveFilterButton(Composite parent) {
+		if (parameters.getFilter() instanceof PreferencesBasedFilter) {
+			removeFilterButton = new Button(parent, SWT.PUSH);
+			removeFilterButton.setText("Remove filter...");
+			removeFilterButton.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					new RemoveFilterDialog((PreferencesBasedFilter)parameters.getFilter()).prompt(viewer.getTable().getShell());
+				}
+			});
+		}
+	}
+	
 	// TODO Return a more interesting suggestion based on the selection.
 	String getFilterSuggestion() {
 		IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
 		if (selection != null) {
 			if (selection.size() == 1) {
-				return ((UsageDataEventWrapper)selection.getFirstElement()).getBundleId();
-			}
+				return getFilterSuggestionBasedOnSingleSelection(selection);
+			} 
+			return getFilterSuggestionBasedOnMultipleSelection(selection);
 		}
 		
-		return "org.eclipse.*";
+		return FilterUtils.getDefaultFilterSuggestion();
 	}
 
+	String getFilterSuggestionBasedOnSingleSelection(
+			IStructuredSelection selection) {
+		return ((UsageDataEventWrapper)selection.getFirstElement()).getBundleId();
+	}
+
+	String getFilterSuggestionBasedOnMultipleSelection(IStructuredSelection selection) {
+		String[] names = new String[selection.size()];
+		int index = 0;
+		for (Object event : selection.toArray()) {
+			names[index++] = ((UsageDataEventWrapper)event).getBundleId();
+		}
+		return FilterUtils.getFilterSuggestionBasedOnBundleIds(names);
+	}
+	
 	private void createFiltersButton(Composite parent) {
 		Button filtersButton = new Button(parent, SWT.PUSH);
 		filtersButton.setText("Filters");
 		filtersButton.setEnabled(false);		
-	}
+	}	
 
 	/**
 	 * This method starts the job that populates the list of
 	 * events.
 	 */
-	private void startContentJob() {
+	void startContentJob() {
 		contentJob = new Job("Generate Usage Data Upload Preview") {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
@@ -350,7 +408,7 @@ public class UploadPreview  {
 		contentJob.schedule();
 	}
 
-	private void processFiles(IProgressMonitor monitor) {
+	void processFiles(IProgressMonitor monitor) {
 		File[] files = parameters.getFiles();
 		monitor.beginTask("Process Files", files.length);	
 		for (File file : files) {

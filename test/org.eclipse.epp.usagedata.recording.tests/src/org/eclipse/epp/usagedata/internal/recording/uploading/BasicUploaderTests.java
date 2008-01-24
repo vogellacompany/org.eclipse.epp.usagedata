@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2008 The Eclipse Foundation.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *    The Eclipse Foundation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.epp.usagedata.internal.recording.uploading;
 
 import static org.junit.Assert.assertEquals;
@@ -10,7 +20,8 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 
 import org.eclipse.epp.usagedata.internal.recording.Activator;
-import org.eclipse.epp.usagedata.internal.recording.settings.UsageDataRecordingSettings;
+import org.eclipse.epp.usagedata.internal.recording.settings.UploadSettings;
+import org.eclipse.epp.usagedata.internal.recording.uploading.util.MockUploadSettings;
 import org.eclipse.epp.usagedata.internal.recording.uploading.util.UploadGoodServlet;
 import org.eclipse.epp.usagedata.internal.recording.uploading.util.UploaderTestUtils;
 import org.eclipse.epp.usagedata.internal.recording.uploading.util.UsageDataRecordingSettingsMock;
@@ -60,7 +71,7 @@ public class BasicUploaderTests {
 		
 		File file = UploaderTestUtils.createBogusUploadDataFile(settings, 90);
 		
-		UploadParameters uploadParameters = new UploadParameters(null);
+		UploadParameters uploadParameters = new UploadParameters();
 		uploadParameters.setSettings(settings);
 		uploadParameters.setFiles(new File[] {file});
 		
@@ -77,7 +88,7 @@ public class BasicUploaderTests {
 		
 		File file = UploaderTestUtils.createBogusUploadDataFile(settings, 1);
 
-		UploadParameters uploadParameters = new UploadParameters(null);
+		UploadParameters uploadParameters = new UploadParameters();
 		uploadParameters.setSettings(settings);
 		uploadParameters.setFiles(new File[] {file});
 		
@@ -98,7 +109,7 @@ public class BasicUploaderTests {
 		
 		File file = UploaderTestUtils.createBogusUploadDataFile(settings, 1);
 
-		UploadParameters uploadParameters = new UploadParameters(null);
+		UploadParameters uploadParameters = new UploadParameters();
 		uploadParameters.setSettings(settings);
 		uploadParameters.setFiles(new File[] {file});
 		
@@ -110,7 +121,7 @@ public class BasicUploaderTests {
 		
 	@Test
 	public void testTermsOfUseNotAccepted() {
-		UsageDataRecordingSettings settings = new UsageDataRecordingSettings() {
+		UploadSettings settings = new MockUploadSettings() {
 			@Override
 			public boolean isEnabled() {
 				return true;
@@ -121,7 +132,7 @@ public class BasicUploaderTests {
 				return false;
 			}
 		};
-		UploadParameters uploadParameters = new UploadParameters(null);
+		UploadParameters uploadParameters = new UploadParameters();
 		uploadParameters.setSettings(settings);
 		
 		assertFalse(new BasicUploader(uploadParameters).hasUserAuthorizedUpload());
@@ -129,7 +140,7 @@ public class BasicUploaderTests {
 
 	@Test
 	public void testNotEnabled() {
-		UsageDataRecordingSettings settings = new UsageDataRecordingSettings() {
+		UploadSettings settings = new MockUploadSettings() {
 			@Override
 			public boolean isEnabled() {
 				return false;
@@ -140,7 +151,7 @@ public class BasicUploaderTests {
 				return true;
 			}
 		};
-		UploadParameters uploadParameters = new UploadParameters(null);
+		UploadParameters uploadParameters = new UploadParameters();
 		uploadParameters.setSettings(settings);
 		
 		assertFalse(new BasicUploader(uploadParameters).hasUserAuthorizedUpload());

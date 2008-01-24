@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.epp.usagedata.internal.recording.filtering;
 
-import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.epp.usagedata.internal.gathering.events.UsageDataEvent;
 import org.eclipse.epp.usagedata.internal.recording.Activator;
 import org.eclipse.epp.usagedata.internal.recording.settings.UsageDataRecordingSettings;
@@ -18,11 +17,22 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
-public class PreferencesBasedFilter implements UsageDataEventFilter {
+/**
+ * The {@link PreferencesBasedFilter} is a {@link UsageDataEventFilter} with
+ * direct links to preferences for the org.eclipse.epp.usagedata.recording
+ * bundle. When created, instances hook a listener into the preference store
+ * for the bundle so as to be notified by changes in preferences and update
+ * accordingly. Instances must be released using the {@link #dispose()} method
+ * to clean up the listener.
+ * <p>
+ * A single instance of this class is maintained by the activator for the
+ * bundle via the settings object. The activator manages the lifecycle.
+ * 
+ * @see UsageDataRecordingSettings
+ * @author Wayne Beaton
+ */
+public class PreferencesBasedFilter extends AbstractUsageDataEventFilter {
 
-	private ListenerList changeListeners = new ListenerList();
-	private IPropertyChangeListener propertyChangeListener;
-	
 	public PreferencesBasedFilter() {
 		propertyChangeListener = new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
@@ -34,16 +44,17 @@ public class PreferencesBasedFilter implements UsageDataEventFilter {
 		getPreferenceStore().addPropertyChangeListener(propertyChangeListener);
 	}
 
+	/**
+	 * This method cleans up hooks made by the instance.
+	 */
 	public void dispose() {
 		getPreferenceStore().removePropertyChangeListener(propertyChangeListener);
 	}
 
-	void fireFilterChangedEvent() {
-		for (Object listener : changeListeners.getListeners()) {
-			((FilterChangeListener)listener).filterChanged();
-		}
-	}
-
+	/**
+	 * This method is used to test whether or the parameter represents
+	 * a property that the receiver is interested in.
+	 */
 	boolean isFilterProperty(String property) {
 		if (UsageDataRecordingSettings.FILTER_ECLIPSE_BUNDLES_ONLY_KEY.equals(property)) return true;
 		if (UsageDataRecordingSettings.FILTER_PATTERNS_KEY.equals(property)) return true;
@@ -60,8 +71,9 @@ public class PreferencesBasedFilter implements UsageDataEventFilter {
 		return true;
 	}
 
-	private String[] getFilterPatterns() {
+	public String[] getFilterPatterns() {
 		String patternString = getPreferenceStore().getString(UsageDataRecordingSettings.FILTER_PATTERNS_KEY);
+		if ("".equals(patternString)) return new String[0];
 		return patternString.split("\n");
 	}
 
@@ -71,10 +83,6 @@ public class PreferencesBasedFilter implements UsageDataEventFilter {
 
 	private IPreferenceStore getPreferenceStore() {
 		return Activator.getDefault().getPreferenceStore();
-	}
-
-	public void addFilterChangeListener(FilterChangeListener filterChangeListener) {
-		changeListeners.add(filterChangeListener);
 	}
 
 	public void addPattern(String value) {
@@ -88,29 +96,32 @@ public class PreferencesBasedFilter implements UsageDataEventFilter {
 		Activator.getDefault().savePluginPreferences();
 	}
 	
-	boolean matches(String pattern, String bundleId) {
-		return bundleId.matches(asRegex(pattern));
-	}
-
-	// TODO If we keep this, it needs to be more robust.
-	String asRegex(String filter) {
-		StringBuilder builder = new StringBuilder();
-		for(int index=0;index<filter.length();index++) {
-			char next = filter.charAt(index);
-			if (next == '*') builder.append(".*");
-			else if (next == '.') builder.append("\\.");
-			else builder.append(next);
-		}
-		return builder.toString();
-	}
-
-	public void removeFilterChangeListener(FilterChangeListener filterChangeListener) {
-		changeListeners.remove(filterChangeListener);
-	}
-
 	public boolean includesPattern(String pattern) {
 		for (String filter : getFilterPatterns()) {
 			if (pattern.equals(filter)) return true;
+		}
+		return false;
+	}
+
+	public void removeFilterPatterns(Object[] toRemove) {
+		String patternString = getPreferenceStore().getString(UsageDataRecordingSettings.FILTER_PATTERNS_KEY);
+		String[] patterns = patternString.split("\n");
+		StringBuilder builder = new StringBuilder();
+		String separator = "";
+		for (String pattern : patterns) {
+			if (!shouldRemovePattern(pattern, toRemove)) {
+				builder.append(separator);
+				builder.append(pattern);
+				separator = "\n";
+			}
+		}
+		getPreferenceStore().setValue(UsageDataRecordingSettings.FILTER_PATTERNS_KEY, builder.toString());
+		Activator.getDefault().savePluginPreferences();
+	}
+
+	private boolean shouldRemovePattern(String pattern, Object[] toRemove) {
+		for (Object object : toRemove) {
+			if (object.equals(pattern)) return true;			
 		}
 		return false;
 	}

@@ -39,7 +39,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.epp.usagedata.internal.gathering.events.UsageDataEvent;
 import org.eclipse.epp.usagedata.internal.recording.Activator;
-import org.eclipse.epp.usagedata.internal.recording.settings.UsageDataRecordingSettings;
+import org.eclipse.epp.usagedata.internal.recording.settings.UploadSettings;
 
 /**
  * Instances of the {@link BasicUploader} class are responsible for
@@ -258,7 +258,7 @@ public class BasicUploader extends AbstractUploader {
 		if (!getSettings().hasUserAcceptedTermsOfUse()) return false;
 		return true;
 	}
-	private UsageDataRecordingSettings getSettings() {
+	private UploadSettings getSettings() {
 		return getUploadParameters().getSettings();
 	}
 

@@ -38,7 +38,7 @@ import org.eclipse.ui.PlatformUI;
  * @author Wayne Beaton
  *
  */
-public class UsageDataRecordingSettings {
+public class UsageDataRecordingSettings implements UploadSettings {
 
 	private static final String DEFAULT_ID = "unknown";
 
@@ -187,13 +187,8 @@ public class UsageDataRecordingSettings {
 				+ Activator.PLUGIN_ID + ".workspaceId");
 	}
 
-	/**
-	 * This method answers whether or not we want to ask the server to 
-	 * provide a log of activity. This method only answers <code>true</code>
-	 * if the "{@value #LOG_SERVER_ACTIVITY_KEY}" system property is set
-	 * to "true". This is mostly useful for debugging.
-	 * 
-	 * @return
+	/* (non-Javadoc)
+	 * @see org.eclipse.epp.usagedata.internal.recording.settings.UploadSettings#isLoggingServerActivity()
 	 */
 	public boolean isLoggingServerActivity() {
 		return "true".equals(System.getProperty(LOG_SERVER_ACTIVITY_KEY));
@@ -222,10 +217,8 @@ public class UsageDataRecordingSettings {
 		getPreferencesStore().setValue(LAST_UPLOAD_KEY, System.currentTimeMillis());
 	}
 
-	/**
-	 * This method returns the target URL for uploads.
-	 * 
-	 * @return the target URL for uploads.
+	/* (non-Javadoc)
+	 * @see org.eclipse.epp.usagedata.internal.recording.settings.UploadSettings#getUploadUrl()
 	 */
 	public String getUploadUrl() {
 		return getPropertyOrPreferenceString(UPLOAD_URL_KEY, UPLOAD_URL_DEFAULT);
@@ -356,11 +349,17 @@ public class UsageDataRecordingSettings {
 		return path.toString() + "?user=" + getUserId() + "&workspace=" + getWorkspaceId();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.epp.usagedata.internal.recording.settings.UploadSettings#getFilter()
+	 */
 	public UsageDataEventFilter getFilter() {
 		return filter;
 		
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.epp.usagedata.internal.recording.settings.UploadSettings#hasUserAcceptedTermsOfUse()
+	 */
 	public boolean hasUserAcceptedTermsOfUse() {
 		return getCaptureSettings().hasUserAcceptedTermsOfUse();
 	}
@@ -373,6 +372,9 @@ public class UsageDataRecordingSettings {
 		return org.eclipse.epp.usagedata.internal.gathering.Activator.getDefault().getSettings();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.epp.usagedata.internal.recording.settings.UploadSettings#isEnabled()
+	 */
 	public boolean isEnabled() {
 		return getCaptureSettings().isEnabled();
 	}

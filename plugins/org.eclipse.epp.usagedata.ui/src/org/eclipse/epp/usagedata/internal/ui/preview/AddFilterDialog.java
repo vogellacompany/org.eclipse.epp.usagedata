@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.epp.usagedata.internal.ui.preview;
 
+import org.eclipse.epp.usagedata.internal.recording.filtering.FilterUtils;
 import org.eclipse.epp.usagedata.internal.recording.filtering.PreferencesBasedFilter;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
@@ -35,9 +36,10 @@ public class AddFilterDialog {
 		return new IInputValidator() {
 			public String isValid(String pattern) {
 				if (pattern == null) return null;
-				if (pattern.trim().length() == 0) return null;
+				pattern = pattern.trim();
+				if (pattern.length() == 0) return null;
 				if (alreadyHasPattern(pattern)) return "You are already filtering this pattern.";
-				if (!isValidBundleIdPattern(pattern)) return "The pattern is not valid.";
+				if (!FilterUtils.isValidBundleIdPattern(pattern)) return "The pattern is not valid.";
 				return null;
 			}
 		};
@@ -47,7 +49,4 @@ public class AddFilterDialog {
 		return filter.includesPattern(pattern);
 	}
 
-	boolean isValidBundleIdPattern(String pattern) {
-		return pattern.matches("[a-zA-Z0-9\\*]*?(\\.[a-zA-Z0-9\\*]+?)*?");
-	}
 }

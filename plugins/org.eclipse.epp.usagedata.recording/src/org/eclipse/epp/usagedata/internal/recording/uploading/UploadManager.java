@@ -71,7 +71,7 @@ public class UploadManager {
 		
 		getSettings().setLastUploadTime();
 		
-		UploadParameters uploadParameters = new UploadParameters(this);
+		UploadParameters uploadParameters = new UploadParameters();
 		uploadParameters.setSettings(getSettings());
 		uploadParameters.setFiles(usageDataUploadFiles);
 		//request.setFilter(getSettings().getFilter());
