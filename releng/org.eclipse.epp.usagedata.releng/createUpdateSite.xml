@@ -15,7 +15,7 @@
       tofile="${buildDirectory}/${buildLabel}/site.xml" />
     <replace file="${buildDirectory}/${buildLabel}/site.xml" 
       token="XXXXXXXXXXXXX"
-      value="${buildId}">
+      value="${buildLabel}">
     </replace>
   </target>
 
