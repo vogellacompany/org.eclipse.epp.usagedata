@@ -19,6 +19,22 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IRegistryEventListener;
 import org.eclipse.core.runtime.Platform;
 
+/**
+ * Instances of this class perform a mapping between
+ * extensions and the id (symbolic name) of the bundle that defines it.
+ * The constructor takes the name of an extension point. From that,
+ * it builds a mapping of all extensions to that extension point. It
+ * is assumed that all extensions have an &quot;id&quot; attribute
+ * that is used for the mapping.
+ * <p>
+ * The instance will rebuild its cache when the extension registry
+ * detects a change to the extension point (i.e. when bundles are
+ * added or removed).
+ * </p>
+ * 
+ * @author Wayne Beaton
+ *
+ */
 public class ExtensionIdToBundleMapper {
 	private Map<String, String> map;
 	private final String extensionPointId;
@@ -51,13 +67,14 @@ public class ExtensionIdToBundleMapper {
 	
 	public void dispose() {
 		Platform.getExtensionRegistry().removeListener(listener);
+		clearCache();
 	}		
 	
 	/**
-	 * This method fetches the bundle that defines
-	 * the extension, extensionId. Since extensions are defined in the plugin.xml, the bundle
-	 * that defines it must be a singleton which means that there will only be one version
-	 * of the bundle loaded. Happy day.
+	 * This method fetches the bundle that defines the extension, extensionId.
+	 * Since extensions are defined in the plugin.xml, the bundle that defines
+	 * it must be a singleton which means that there will only be one version of
+	 * the bundle loaded. Happy day.
 	 * 
 	 * @param extensionId
 	 * @return
