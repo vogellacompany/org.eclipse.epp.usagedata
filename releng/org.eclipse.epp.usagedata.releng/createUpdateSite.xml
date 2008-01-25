@@ -6,6 +6,7 @@
   <target name="createUpdateSite">
     <antcall target="createSiteXML" />
     <antcall target="updateZIP" />
+    <antcall target="cleanup" />
   </target>
 
   <target name="createSiteXML">
@@ -28,6 +29,11 @@
       	includes="site.xml" 
       	fullpath="eclipse/site.xml"/>
   	</zip>
+  </target>
+  
+  <target name="cleanup">
+    <echo message="Remove site.xml file" />
+    <delete file="${buildDirectory}/${buildLabel}/site.xml" />
   </target>
   
 </project>
