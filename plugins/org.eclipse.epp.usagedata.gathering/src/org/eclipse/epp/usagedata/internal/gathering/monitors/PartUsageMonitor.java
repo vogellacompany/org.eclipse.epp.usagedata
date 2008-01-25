@@ -194,6 +194,7 @@ public class PartUsageMonitor implements UsageMonitor {
 	}
 	
 	private void hookListeners(IWorkbenchPage page) {
+		recordEvent("initial", page.getPerspective());
 		page.addPartListener(partListener);
 	}
 
