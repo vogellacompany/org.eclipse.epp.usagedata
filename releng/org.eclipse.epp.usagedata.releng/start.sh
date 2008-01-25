@@ -15,4 +15,5 @@ ${JAVA} -jar ${BUILD_ROOT}/eclipse/plugins/org.eclipse.equinox.launcher_1.0.100.
         -Dbuilder=${BUILD_ROOT}/org.eclipse.epp/releng/org.eclipse.epp.usagedata.releng/ \
         -DbuildDirectory=${BUILD_ROOT}/workspace/ \
         -Dbase=${BUILD_ROOT} \
-        -DbuildId=${TIMESTAMP}
+        -DbuildId=${TIMESTAMP} \
+        -Dtimestamp=${TIMESTAMP}
