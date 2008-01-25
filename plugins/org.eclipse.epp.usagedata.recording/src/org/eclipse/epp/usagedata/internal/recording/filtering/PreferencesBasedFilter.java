@@ -85,7 +85,7 @@ public class PreferencesBasedFilter extends AbstractUsageDataEventFilter {
 		return getPreferenceStore().getBoolean(UsageDataRecordingSettings.FILTER_ECLIPSE_BUNDLES_ONLY_KEY);
 	}
 
-	private IPreferenceStore getPreferenceStore() {
+	IPreferenceStore getPreferenceStore() {
 		return Activator.getDefault().getPreferenceStore();
 	}
 

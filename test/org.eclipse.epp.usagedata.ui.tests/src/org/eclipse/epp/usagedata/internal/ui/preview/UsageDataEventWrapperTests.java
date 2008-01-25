@@ -10,15 +10,22 @@
  *******************************************************************************/
 package org.eclipse.epp.usagedata.internal.ui.preview;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import org.eclipse.epp.usagedata.internal.gathering.events.UsageDataEvent;
+import org.eclipse.epp.usagedata.internal.recording.filtering.MockUsageDataEventFilter;
 import org.eclipse.epp.usagedata.internal.recording.uploading.UploadParameters;
 import org.eclipse.epp.usagedata.internal.ui.preview.util.MockUploadSettings;
-import org.eclipse.epp.usagedata.internal.ui.preview.util.MockUsageDataEventFilter;
 import org.junit.Before;
 import org.junit.Test;
 
+/**
+ * These tests can be run outside of the workbench.
+ * 
+ * @author Wayne Beaton
+ */
 public class UsageDataEventWrapperTests {
 
 	private UploadParameters parameters;

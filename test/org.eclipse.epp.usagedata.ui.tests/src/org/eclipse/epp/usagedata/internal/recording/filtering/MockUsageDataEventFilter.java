@@ -8,17 +8,27 @@
  * Contributors:
  *    The Eclipse Foundation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.epp.usagedata.internal.ui.preview.util;
+package org.eclipse.epp.usagedata.internal.recording.filtering;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.epp.usagedata.internal.gathering.events.UsageDataEvent;
-import org.eclipse.epp.usagedata.internal.recording.filtering.PreferencesBasedFilter;
+import org.eclipse.jface.preference.IPreferenceStore;
 
+/**
+ * This class implements a &quot;mock&quot; implementation of
+ * {@link UsageDataEventFilter} to be used for testing. The
+ * implementation extends {@link PreferencesBasedFilter}, overriding
+ * the methods that read to and write from the preferences and replacing
+ * them with in-memory variants.
+ * 
+ * @author Wayne Beaton
+ */
 public class MockUsageDataEventFilter extends PreferencesBasedFilter {
 
 	private List<String> patterns = new ArrayList<String>();
+	private boolean isEclipseOnly = false;
 
 	public boolean includes(UsageDataEvent event) {
 		for (String pattern : patterns) {
@@ -34,6 +44,17 @@ public class MockUsageDataEventFilter extends PreferencesBasedFilter {
 	@Override
 	public void addPattern(String value) {
 		patterns.add(value);
+		fireFilterChangedEvent();
+	}
+	
+	@Override
+	public boolean isEclipseOnly() {
+		return isEclipseOnly;
+	}
+	
+	@Override
+	public void setEclipseOnly(boolean value) {
+		isEclipseOnly = value;
 		fireFilterChangedEvent();
 	}
 	
@@ -54,7 +75,11 @@ public class MockUsageDataEventFilter extends PreferencesBasedFilter {
 	public void dispose() {
 		// TODO Auto-generated method stub
 		super.dispose();
+	}	
+	
+	@Override
+	IPreferenceStore getPreferenceStore() {
+		// Override to make sure that nothing bad happens by mistake...
+		return null;
 	}
-	
-	
 }
