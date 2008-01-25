@@ -391,4 +391,8 @@ public class UsageDataRecordingSettings implements UploadSettings {
 		filter.dispose();
 	}
 
+	public String getUserAgent() {
+		return "Eclipse UDC/" + Activator.getDefault().getBundle().getHeaders().get("Bundle-Version");
+	}
+
 }

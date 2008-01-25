@@ -75,6 +75,8 @@ public class BasicUploader extends AbstractUploader {
 	 * between the user's workstation and the server.
 	 */
 	private static final String HTTP_TIME = "TIME";
+
+	private static final String USER_AGENT = "User-Agent";
 	
 	private boolean uploadInProgress = false;
 
@@ -177,6 +179,7 @@ public class BasicUploader extends AbstractUploader {
 		post.setRequestHeader(HTTP_USERID, getSettings().getUserId());
 		post.setRequestHeader(HTTP_WORKSPACEID, getSettings().getWorkspaceId());
 		post.setRequestHeader(HTTP_TIME, String.valueOf(System.currentTimeMillis()));
+		post.setRequestHeader(USER_AGENT, getSettings().getUserAgent());
 		// TODO Set the user agent header
 		boolean loggingServerActivity = getSettings().isLoggingServerActivity();
 		if (loggingServerActivity) {

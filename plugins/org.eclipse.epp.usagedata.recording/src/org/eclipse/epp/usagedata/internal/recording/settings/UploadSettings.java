@@ -31,4 +31,6 @@ public interface UploadSettings {
 
 	public abstract String getWorkspaceId();
 
+	public abstract String getUserAgent();
+
 }
