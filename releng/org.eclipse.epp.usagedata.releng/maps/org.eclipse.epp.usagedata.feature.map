@@ -1,5 +1,4 @@
 # map file that uses HEAD to build the EPP Usage Data Collector
-# testing is not yet included!
 
 # feature
 feature@org.eclipse.epp.usagedata.feature=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.epp/features/org.eclipse.epp.usagedata.feature
