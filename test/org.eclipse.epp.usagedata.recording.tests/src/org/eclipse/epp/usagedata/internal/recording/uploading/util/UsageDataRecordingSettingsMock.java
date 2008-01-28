@@ -10,34 +10,27 @@
  *******************************************************************************/
 package org.eclipse.epp.usagedata.internal.recording.uploading.util;
 
-import java.io.File;
+import org.eclipse.epp.usagedata.internal.gathering.events.UsageDataEvent;
+import org.eclipse.epp.usagedata.internal.recording.filtering.AbstractUsageDataEventFilter;
+import org.eclipse.epp.usagedata.internal.recording.filtering.UsageDataEventFilter;
+import org.eclipse.epp.usagedata.internal.recording.settings.UploadSettings;
 
-import org.eclipse.epp.usagedata.internal.recording.settings.UsageDataRecordingSettings;
-
-public class UsageDataRecordingSettingsMock extends	UsageDataRecordingSettings {
-	private final File file;
+public class UsageDataRecordingSettingsMock implements UploadSettings {
 	private String uploadUrl;
+	private UsageDataEventFilter filter = new AbstractUsageDataEventFilter() {
+		public boolean includes(UsageDataEvent event) {
+			return true;
+		}		
+	};
 
-	UsageDataRecordingSettingsMock(File file) {
-		this.file = file;
-	}
-
-	@Override
-	public File getEventFile() {
-		return file;
-	}
-
-	@Override
 	public String getUserId() {
 		return "bogus";
 	}
 
-	@Override
 	public String getWorkspaceId() {
 		return "bogus";
 	}
 
-	@Override
 	public boolean isLoggingServerActivity() {
 		return false;
 	}
@@ -46,18 +39,23 @@ public class UsageDataRecordingSettingsMock extends	UsageDataRecordingSettings {
 		this.uploadUrl = uploadUrl;		
 	}
 	
-	@Override
 	public String getUploadUrl() {
 		return uploadUrl;
 	}
 	
-	@Override
 	public boolean hasUserAcceptedTermsOfUse() {
 		return true;
 	}
 	
-	@Override
 	public boolean isEnabled() {
 		return true;
+	}
+
+	public UsageDataEventFilter getFilter() {
+		return filter;
+	}
+
+	public String getUserAgent() {
+		return "MockUpload/1.0";
 	}
 }

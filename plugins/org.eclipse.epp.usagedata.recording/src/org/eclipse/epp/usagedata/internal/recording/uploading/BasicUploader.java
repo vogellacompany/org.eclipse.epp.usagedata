@@ -180,7 +180,7 @@ public class BasicUploader extends AbstractUploader {
 		post.setRequestHeader(HTTP_WORKSPACEID, getSettings().getWorkspaceId());
 		post.setRequestHeader(HTTP_TIME, String.valueOf(System.currentTimeMillis()));
 		post.setRequestHeader(USER_AGENT, getSettings().getUserAgent());
-		// TODO Set the user agent header
+
 		boolean loggingServerActivity = getSettings().isLoggingServerActivity();
 		if (loggingServerActivity) {
 			post.setRequestHeader("LOGGING", "true");

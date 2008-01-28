@@ -10,44 +10,49 @@
  *******************************************************************************/
 package org.eclipse.epp.usagedata.internal.recording.uploading.util;
 
+import org.eclipse.epp.usagedata.internal.recording.filtering.NullFilter;
 import org.eclipse.epp.usagedata.internal.recording.filtering.UsageDataEventFilter;
 import org.eclipse.epp.usagedata.internal.recording.settings.UploadSettings;
 
 public class MockUploadSettings implements UploadSettings {
 
+	private String uploadUrl;
+	private UsageDataEventFilter filter = new NullFilter();
+
 	public UsageDataEventFilter getFilter() {
-		// TODO Auto-generated method stub
-		return null;
+		return filter;
 	}
 
+	public void setUploadUrl(String uploadUrl) {
+		this.uploadUrl = uploadUrl;		
+	}
+	
 	public String getUploadUrl() {
-		// TODO Auto-generated method stub
-		return null;
+		return uploadUrl;
 	}
 
 	public String getUserId() {
-		// TODO Auto-generated method stub
-		return null;
+		return "bogusUserId";
 	}
 
 	public String getWorkspaceId() {
-		// TODO Auto-generated method stub
-		return null;
+		return "bogusWorkspaceId";
 	}
 
 	public boolean hasUserAcceptedTermsOfUse() {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	public boolean isEnabled() {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	public boolean isLoggingServerActivity() {
-		// TODO Auto-generated method stub
 		return false;
+	}
+
+	public String getUserAgent() {
+		return "Mock Upload/1.0";
 	}
 
 }

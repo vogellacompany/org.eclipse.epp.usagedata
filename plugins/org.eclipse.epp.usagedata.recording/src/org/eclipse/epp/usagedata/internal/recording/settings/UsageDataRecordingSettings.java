@@ -19,9 +19,7 @@ import java.io.Reader;
 import java.io.Writer;
 import java.util.UUID;
 
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.epp.usagedata.internal.gathering.settings.UsageDataCaptureSettings;
 import org.eclipse.epp.usagedata.internal.recording.Activator;
 import org.eclipse.epp.usagedata.internal.recording.filtering.PreferencesBasedFilter;
@@ -46,7 +44,6 @@ public class UsageDataRecordingSettings implements UploadSettings {
 
 	public static final String UPLOAD_PERIOD_KEY = Activator.PLUGIN_ID + ".period";
 	public static final String LAST_UPLOAD_KEY = Activator.PLUGIN_ID + ".last-upload";
-	public static final String UPLOAD_URL_KEY = Activator.PLUGIN_ID + ".upload-url";
 	public static final String ASK_TO_UPLOAD_KEY = Activator.PLUGIN_ID + ".ask";
 	public static final String LOG_SERVER_ACTIVITY_KEY = Activator.PLUGIN_ID + ".log-server";
 	public static final String FILTER_ECLIPSE_BUNDLES_ONLY_KEY = Activator.PLUGIN_ID + ".filter-eclipse-only";
@@ -187,8 +184,16 @@ public class UsageDataRecordingSettings implements UploadSettings {
 				+ Activator.PLUGIN_ID + ".workspaceId");
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.epp.usagedata.internal.recording.settings.UploadSettings#isLoggingServerActivity()
+
+	/**
+	 * This method answers whether or not we want to ask the server to 
+	 * provide a log of activity. This method only answers <code>true</code>
+	 * if the "{@value #LOG_SERVER_ACTIVITY_KEY}" system property is set
+	 * to "true". This is mostly useful for debugging.
+	 * 
+	 * @return true if we're logging, false otherwise.
+	 * 
+	 * @see UploadSettings#isLoggingServerActivity()
 	 */
 	public boolean isLoggingServerActivity() {
 		return "true".equals(System.getProperty(LOG_SERVER_ACTIVITY_KEY));
@@ -215,13 +220,6 @@ public class UsageDataRecordingSettings implements UploadSettings {
 	 */
 	public void setLastUploadTime() {
 		getPreferencesStore().setValue(LAST_UPLOAD_KEY, System.currentTimeMillis());
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.epp.usagedata.internal.recording.settings.UploadSettings#getUploadUrl()
-	 */
-	public String getUploadUrl() {
-		return getPropertyOrPreferenceString(UPLOAD_URL_KEY, UPLOAD_URL_DEFAULT);
 	}
 	
 	/**
@@ -323,16 +321,6 @@ public class UsageDataRecordingSettings implements UploadSettings {
 		}
 	}
 
-	private String getPropertyOrPreferenceString(String key, String defaultValue) {
-		if (System.getProperties().containsKey(key)) {
-			return System.getProperty(key);
-		} else if (getPreferencesStore().contains(key)) {
-			return getPreferencesStore().getString(key);
-		} else {
-			return defaultValue;
-		}
-	}
-
 	public boolean shouldAskBeforeUploading() {
 		if (System.getProperties().containsKey(ASK_TO_UPLOAD_KEY)) {
 			return "true".equals(System.getProperty(ASK_TO_UPLOAD_KEY));
@@ -343,18 +331,11 @@ public class UsageDataRecordingSettings implements UploadSettings {
 		}
 	}
 
-	public String getMyUsageDataUrl() {
-		// TODO This is a bit of a hack. 
-		IPath path = new Path(getUploadUrl()).removeLastSegments(1).append("myusage.php");
-		return path.toString() + "?user=" + getUserId() + "&workspace=" + getWorkspaceId();
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.epp.usagedata.internal.recording.settings.UploadSettings#getFilter()
 	 */
 	public UsageDataEventFilter getFilter() {
 		return filter;
-		
 	}
 
 	/* (non-Javadoc)
@@ -393,6 +374,10 @@ public class UsageDataRecordingSettings implements UploadSettings {
 
 	public String getUserAgent() {
 		return "Eclipse UDC/" + Activator.getDefault().getBundle().getHeaders().get("Bundle-Version");
+	}
+
+	public String getUploadUrl() {
+		return UPLOAD_URL_DEFAULT;
 	}
 
 }

@@ -24,7 +24,6 @@ import org.eclipse.epp.usagedata.internal.recording.settings.UploadSettings;
 import org.eclipse.epp.usagedata.internal.recording.uploading.util.MockUploadSettings;
 import org.eclipse.epp.usagedata.internal.recording.uploading.util.UploadGoodServlet;
 import org.eclipse.epp.usagedata.internal.recording.uploading.util.UploaderTestUtils;
-import org.eclipse.epp.usagedata.internal.recording.uploading.util.UsageDataRecordingSettingsMock;
 import org.eclipse.equinox.http.jetty.JettyConfigurator;
 import org.eclipse.equinox.http.jetty.JettyConstants;
 import org.junit.AfterClass;
@@ -66,10 +65,10 @@ public class BasicUploaderTests {
 	
 	@Test
 	public void testBigUpload() throws Exception {
-		UsageDataRecordingSettingsMock settings = UploaderTestUtils.getSettings();
+		MockUploadSettings settings = new MockUploadSettings();
 		settings.setUploadUrl("http://localhost:" + port + GOOD_SERVLET_NAME);
 		
-		File file = UploaderTestUtils.createBogusUploadDataFile(settings, 90);
+		File file = UploaderTestUtils.createBogusUploadDataFile(90);
 		
 		UploadParameters uploadParameters = new UploadParameters();
 		uploadParameters.setSettings(settings);
@@ -83,10 +82,10 @@ public class BasicUploaderTests {
 	
 	@Test
 	public void testInvalidUrl() throws Exception {
-		UsageDataRecordingSettingsMock settings = UploaderTestUtils.getSettings();
+		MockUploadSettings settings = new MockUploadSettings();
 		settings.setUploadUrl("httpx://localhost:" + port + GOOD_SERVLET_NAME);
 		
-		File file = UploaderTestUtils.createBogusUploadDataFile(settings, 1);
+		File file = UploaderTestUtils.createBogusUploadDataFile(1);
 
 		UploadParameters uploadParameters = new UploadParameters();
 		uploadParameters.setSettings(settings);
@@ -104,10 +103,10 @@ public class BasicUploaderTests {
 
 	@Test
 	public void testUnknownHost() throws Exception {
-		UsageDataRecordingSettingsMock settings = UploaderTestUtils.getSettings();
+		MockUploadSettings settings = new MockUploadSettings();
 		settings.setUploadUrl("http://localhost:" + port + "/Non-existent-path");
 		
-		File file = UploaderTestUtils.createBogusUploadDataFile(settings, 1);
+		File file = UploaderTestUtils.createBogusUploadDataFile(1);
 
 		UploadParameters uploadParameters = new UploadParameters();
 		uploadParameters.setSettings(settings);

@@ -51,4 +51,8 @@ public class MockUploadSettings implements UploadSettings {
 		return false;
 	}
 
+	public String getUserAgent() {
+		return "Mock Upload/1.0";
+	}
+
 }

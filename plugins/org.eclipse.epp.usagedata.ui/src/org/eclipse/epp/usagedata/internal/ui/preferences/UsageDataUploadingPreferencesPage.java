@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.epp.usagedata.internal.ui.preferences;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.text.MessageFormat;
 import java.util.Date;
 
@@ -51,7 +49,6 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 	private static final long MINIMUM_PERIOD_IN_DAYS = UsageDataRecordingSettings.PERIOD_REASONABLE_MINIMUM / MILLISECONDS_IN_ONE_DAY;
 	private static final long MAXIMUM_PERIOD_IN_DAYS = 90;
 	
-	private Text uploadUrlText;
 	private Text uploadPeriodText;
 	private Label label;
 	private Text lastUploadText;
@@ -93,7 +90,6 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 
 	private void initialize() {
 		askBeforeUploadingCheckbox.setSelection(getRecordingPreferences().getBoolean(UsageDataRecordingSettings.ASK_TO_UPLOAD_KEY));		
-		uploadUrlText.setText(getRecordingPreferences().getString(UsageDataRecordingSettings.UPLOAD_URL_KEY));
 		uploadPeriodText.setText(String.valueOf(getRecordingPreferences().getLong(UsageDataRecordingSettings.UPLOAD_PERIOD_KEY) / MILLISECONDS_IN_ONE_DAY));
 		
 		lastUploadText.setText(getLastUploadDateAsString());
@@ -104,7 +100,6 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 	@Override
 	public boolean performOk() {		
 		getRecordingPreferences().setValue(UsageDataRecordingSettings.ASK_TO_UPLOAD_KEY, askBeforeUploadingCheckbox.getSelection());		
-		getRecordingPreferences().setValue(UsageDataRecordingSettings.UPLOAD_URL_KEY, uploadUrlText.getText());
 		getRecordingPreferences().setValue(UsageDataRecordingSettings.UPLOAD_PERIOD_KEY, Long.valueOf(uploadPeriodText.getText()) * MILLISECONDS_IN_ONE_DAY);
 		
 		return super.performOk();
@@ -112,7 +107,6 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 	
 	@Override
 	public boolean isValid() {
-		if (!isValidUploadUrl(uploadUrlText.getText())) return false;
 		if (!isValidUploadPeriod(uploadPeriodText.getText())) return false;
 		return true;
 	}
@@ -120,7 +114,6 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 	@Override
 	protected void performDefaults() {
 		askBeforeUploadingCheckbox.setSelection(getRecordingPreferences().getDefaultBoolean(UsageDataRecordingSettings.ASK_TO_UPLOAD_KEY));
-		uploadUrlText.setText(getRecordingPreferences().getDefaultString(UsageDataRecordingSettings.UPLOAD_URL_KEY));
 		uploadPeriodText.setText(String.valueOf(getRecordingPreferences().getDefaultLong(UsageDataRecordingSettings.UPLOAD_PERIOD_KEY) / MILLISECONDS_IN_ONE_DAY));
 
 		lastUploadText.setText(getLastUploadDateAsString());
@@ -149,56 +142,9 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 		// Create the layout that will be used by all the fields.
 		GridData fieldLayoutData = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		fieldLayoutData.horizontalIndent = FieldDecorationRegistry.getDefault().getMaximumDecorationWidth();
-		
-		createUploadUrlField(group);		
+			
 		createUploadPeriodField(group);
 		createLastUploadField(group);
-	}
-
-	private void createUploadUrlField(Group composite) {
-		Label label = new Label(composite, SWT.NONE);
-		label.setText("Upload URL:");
-		
-		uploadUrlText = new Text(composite, SWT.SINGLE | SWT.BORDER);
-		
-		GridData gridData = new GridData(SWT.FILL, SWT.CENTER, true, false);
-		gridData.horizontalIndent = FieldDecorationRegistry.getDefault().getMaximumDecorationWidth();
-		gridData.horizontalSpan = 2;
-		uploadUrlText.setLayoutData(gridData);
-		
-		final ControlDecoration errorDecoration = new ControlDecoration(uploadUrlText, SWT.LEFT | SWT.TOP);
-		errorDecoration.setImage(getErrorImage());
-		errorDecoration.setDescriptionText("Enter a valid URL.");
-		errorDecoration.hide();
-		
-		uploadUrlText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				String contents = uploadUrlText.getText();
-				if (isValidUploadUrl(contents))
-					errorDecoration.hide();
-				else
-					errorDecoration.show();
-				updateApplyButton();
-				getContainer().updateButtons();
-			}
-		});
-		
-		if (System.getProperty(UsageDataRecordingSettings.UPLOAD_URL_KEY) != null) {
-			addOverrideWarning(uploadUrlText);						
-		}
-	}
-
-	private boolean isValidUploadUrl(String text) {
-		try {
-			URL url = new URL(text);
-//			if (!("http".equals(url.getProtocol())))
-//				return false;
-			if (url.getHost().length() == 0)
-				return false;
-		} catch (MalformedURLException e1) {
-			return false;
-		}
-		return true;
 	}
 		
 	private void createUploadPeriodField(Group composite) {
@@ -256,7 +202,6 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 	private Image getErrorImage() {
 		return FieldDecorationRegistry.getDefault().getFieldDecoration(FieldDecorationRegistry.DEC_ERROR).getImage();
 	}
-
 
 	private void createLastUploadField(Group composite) {
 		label = new Label(composite, SWT.NONE);
