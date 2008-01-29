@@ -57,7 +57,7 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 
 
 	public UsageDataUploadingPreferencesPage() {
-		setDescription("Usage data collection");
+		setDescription("Information gathered by the Usage Data Collector is periodically uploaded to servers hosted by The Eclipse Foundation. ");
 		setPreferenceStore(Activator.getDefault().getPreferenceStore());
 	}
 

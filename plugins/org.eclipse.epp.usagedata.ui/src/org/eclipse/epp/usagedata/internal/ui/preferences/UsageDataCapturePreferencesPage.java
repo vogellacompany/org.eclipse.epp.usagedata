@@ -30,7 +30,7 @@ public class UsageDataCapturePreferencesPage extends PreferencePage
 	private Button captureEnabledCheckbox;
 
 	public UsageDataCapturePreferencesPage() {
-		setDescription("Usage data collection");
+		setDescription("The Usage Data Collector collects information about how individuals are using the Eclipse platform. The intent is to use this data to help committers and organizations better understand how developers are using Eclipse.");
 		setPreferenceStore(Activator.getDefault().getPreferenceStore());
 	}
 	

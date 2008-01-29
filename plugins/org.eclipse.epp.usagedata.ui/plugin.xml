@@ -6,7 +6,7 @@
       <page
             class="org.eclipse.epp.usagedata.internal.ui.preferences.UsageDataCapturePreferencesPage"
             id="org.eclipse.epp.usagedata.internal.ui.preferences.UsageDataCapturePreferencesPage"
-            name="Usage Data Collection">
+            name="Usage Data Collector">
       </page>
       <page
             category="org.eclipse.epp.usagedata.internal.ui.preferences.UsageDataCapturePreferencesPage"
