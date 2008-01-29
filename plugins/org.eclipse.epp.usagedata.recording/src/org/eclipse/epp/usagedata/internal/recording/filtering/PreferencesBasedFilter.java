@@ -133,7 +133,8 @@ public class PreferencesBasedFilter extends AbstractUsageDataEventFilter {
 	public void setEclipseOnly(boolean value) {
 		getPreferenceStore().setValue(UsageDataRecordingSettings.FILTER_ECLIPSE_BUNDLES_ONLY_KEY, value);
 		Activator.getDefault().savePluginPreferences();
-		fireFilterChangedEvent();
+		// Don't need to do this, happens indirectly when value is set above.
+		// fireFilterChangedEvent();
 	}
 
 	public boolean isEclipseOnly() {
