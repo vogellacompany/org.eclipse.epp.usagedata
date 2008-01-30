@@ -157,7 +157,7 @@ public class UploadPreview  {
 	}
 
 	private void createEventsTable(Composite parent) {
-		viewer = new TableViewer(parent, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+		viewer = new TableViewer(parent, SWT.FULL_SELECTION | SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.getTable().setHeaderVisible(true);
 		viewer.getTable().setLinesVisible(false);
 		GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
