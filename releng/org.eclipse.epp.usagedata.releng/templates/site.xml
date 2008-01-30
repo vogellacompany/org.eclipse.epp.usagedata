@@ -2,9 +2,9 @@
 <site
       mirrorsURL="http://www.eclipse.org/downloads/download.php?file=/technology/epp/updates/0.5milestones/site.xml&amp;format=xml">
    <feature 
-      url="features/org.eclipse.epp.usagedata.feature_0.5.1.XXXXXXXXXXXXX.jar" 
+      url="features/org.eclipse.epp.usagedata.feature_0.5.2.XXXXXXXXXXXXX.jar" 
       id="org.eclipse.epp.usagedata.feature" 
-      version="0.5.1.XXXXXXXXXXXXX">
+      version="0.5.2.XXXXXXXXXXXXX">
       <category name="UsageData"/>
    </feature>
    <category-def name="UsageData" label="Usage Data"/>
