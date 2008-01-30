@@ -15,8 +15,8 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 
 public abstract class AbstractUsageDataEventFilter implements UsageDataEventFilter {
 
-	private ListenerList changeListeners = new ListenerList();
-	protected IPropertyChangeListener propertyChangeListener;
+	ListenerList changeListeners = new ListenerList();
+	IPropertyChangeListener propertyChangeListener;
 
 
 	public void addFilterChangeListener(FilterChangeListener filterChangeListener) {

@@ -8,11 +8,10 @@
  * Contributors:
  *    The Eclipse Foundation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.epp.usagedata.internal.gathering;
+package org.eclipse.epp.usagedata.internal.recording;
 
-import org.eclipse.epp.usagedata.internal.gathering.services.UsageDataServiceLifecycleTests;
-import org.eclipse.epp.usagedata.internal.gathering.services.UsageDataServiceTests;
-import org.eclipse.epp.usagedata.internal.gathering.settings.UsageDataCaptureSettingsTests;
+import org.eclipse.epp.usagedata.internal.ui.preview.UploadPreviewTests;
+import org.eclipse.epp.usagedata.internal.ui.preview.UsageDataEventWrapperTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -23,9 +22,9 @@ import org.junit.runners.Suite;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-	UsageDataServiceLifecycleTests.class,
-	UsageDataServiceTests.class,
-	UsageDataCaptureSettingsTests.class
+	UploadPreviewTests.class,
+	UsageDataEventWrapperTests.class,
+	
 })
 public class UsageDataGatheringTests {
 
