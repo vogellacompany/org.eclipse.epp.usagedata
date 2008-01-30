@@ -11,13 +11,13 @@
 package org.eclipse.epp.usagedata.internal.recording.settings;
 
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
-import org.eclipse.epp.usagedata.internal.recording.Activator;
+import org.eclipse.epp.usagedata.internal.recording.UsageDataRecordingActivator;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 public class UsageDataRecordingPreferenceInitializer extends AbstractPreferenceInitializer {
 	@Override
 	public void initializeDefaultPreferences() {
-		IPreferenceStore preferenceStore = Activator.getDefault().getPreferenceStore();
+		IPreferenceStore preferenceStore = UsageDataRecordingActivator.getDefault().getPreferenceStore();
 		preferenceStore.setDefault(UsageDataRecordingSettings.UPLOAD_PERIOD_KEY, UsageDataRecordingSettings.UPLOAD_PERIOD_DEFAULT);
 		preferenceStore.setDefault(UsageDataRecordingSettings.ASK_TO_UPLOAD_KEY, UsageDataRecordingSettings.ASK_TO_UPLOAD_DEFAULT);
 		preferenceStore.setDefault(UsageDataRecordingSettings.FILTER_ECLIPSE_BUNDLES_ONLY_KEY, false);

@@ -19,7 +19,7 @@ import java.io.File;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
-import org.eclipse.epp.usagedata.internal.recording.Activator;
+import org.eclipse.epp.usagedata.internal.recording.UsageDataRecordingActivator;
 import org.eclipse.epp.usagedata.internal.recording.settings.UploadSettings;
 import org.eclipse.epp.usagedata.internal.recording.uploading.util.MockUploadSettings;
 import org.eclipse.epp.usagedata.internal.recording.uploading.util.UploadGoodServlet;
@@ -47,11 +47,11 @@ public class BasicUploaderTests {
 		settings.put("http.port", 0);
 		JettyConfigurator.startServer(SERVER_NAME, settings);
 		
-		ServiceReference[] reference = Activator.getDefault().getBundle().getBundleContext().getServiceReferences("org.osgi.service.http.HttpService", "(other.info=usagedata.upload.tests)"); 
+		ServiceReference[] reference = UsageDataRecordingActivator.getDefault().getBundle().getBundleContext().getServiceReferences("org.osgi.service.http.HttpService", "(other.info=usagedata.upload.tests)"); 
 		Object assignedPort = reference[0].getProperty("http.port"); 
 		port = Integer.parseInt((String)assignedPort);
 		
-		tracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(), reference[0], null);
+		tracker = new ServiceTracker(UsageDataRecordingActivator.getDefault().getBundle().getBundleContext(), reference[0], null);
 		tracker.open();
 		HttpService server = (HttpService)tracker.getService();
 		server.registerServlet(GOOD_SERVLET_NAME, new UploadGoodServlet(), null, null);		

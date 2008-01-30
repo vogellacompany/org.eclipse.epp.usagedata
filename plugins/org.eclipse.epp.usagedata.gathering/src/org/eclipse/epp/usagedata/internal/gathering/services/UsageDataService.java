@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.adaptor.EclipseStarter;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.epp.usagedata.internal.gathering.Activator;
+import org.eclipse.epp.usagedata.internal.gathering.UsageDataCaptureActivator;
 import org.eclipse.epp.usagedata.internal.gathering.events.UsageDataEvent;
 import org.eclipse.epp.usagedata.internal.gathering.events.UsageDataEventListener;
 import org.eclipse.epp.usagedata.internal.gathering.monitors.UsageMonitor;
@@ -53,7 +53,7 @@ import org.eclipse.epp.usagedata.internal.gathering.monitors.UsageMonitor;
  */
 @SuppressWarnings("restriction")
 public class UsageDataService {
-	private static final String MONITORS_EXTENSION_POINT = Activator.PLUGIN_ID + ".monitors";
+	private static final String MONITORS_EXTENSION_POINT = UsageDataCaptureActivator.PLUGIN_ID + ".monitors";
 
 	private boolean monitoring = false;
 
@@ -305,7 +305,7 @@ public class UsageDataService {
 			listener.accept(event);
 		} catch (Throwable e) {
 			// TODO Add some logic to remove repeat offenders.
-			Activator.getDefault().logException("The listener (" + listener.getClass() + ") threw an exception", e);
+			UsageDataCaptureActivator.getDefault().logException("The listener (" + listener.getClass() + ") threw an exception", e);
 		}
 	}
 	

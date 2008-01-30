@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.eclipse.epp.usagedata.internal.ui.preferences;
 
-import org.eclipse.epp.usagedata.internal.gathering.Activator;
+import org.eclipse.epp.usagedata.internal.gathering.UsageDataCaptureActivator;
 import org.eclipse.epp.usagedata.internal.gathering.settings.UsageDataCaptureSettings;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -29,15 +31,30 @@ public class UsageDataCapturePreferencesPage extends PreferencePage
 	
 	private Button captureEnabledCheckbox;
 
+	IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener() {
+		public void propertyChange(PropertyChangeEvent event) {
+			if (UsageDataCaptureSettings.CAPTURE_ENABLED_KEY.equals(event.getProperty())) {
+				captureEnabledCheckbox.setSelection((Boolean)event.getNewValue());
+			}
+		}			
+	};
+	
 	public UsageDataCapturePreferencesPage() {
 		setDescription("The Usage Data Collector collects information about how individuals are using the Eclipse platform. The intent is to use this data to help committers and organizations better understand how developers are using Eclipse.");
-		setPreferenceStore(Activator.getDefault().getPreferenceStore());
+		setPreferenceStore(UsageDataCaptureActivator.getDefault().getPreferenceStore());
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
 	public void init(IWorkbench workbench) {
+		getPreferenceStore().addPropertyChangeListener(propertyChangeListener);
+	}
+	
+	@Override
+	public void dispose() {
+		getPreferenceStore().removePropertyChangeListener(propertyChangeListener);
+		super.dispose();
 	}
 
 	@Override
@@ -87,6 +104,6 @@ public class UsageDataCapturePreferencesPage extends PreferencePage
 
 
 	private IPreferenceStore getCapturePreferences() {
-		return org.eclipse.epp.usagedata.internal.gathering.Activator.getDefault().getPreferenceStore();
+		return org.eclipse.epp.usagedata.internal.gathering.UsageDataCaptureActivator.getDefault().getPreferenceStore();
 	}
 }

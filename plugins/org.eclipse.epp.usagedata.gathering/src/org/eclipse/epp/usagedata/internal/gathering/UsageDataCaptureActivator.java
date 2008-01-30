@@ -25,13 +25,13 @@ import org.osgi.util.tracker.ServiceTracker;
 /**
  * The activator class controls the plug-in life cycle
  */
-public class Activator extends AbstractUIPlugin implements IStartup {
+public class UsageDataCaptureActivator extends AbstractUIPlugin implements IStartup {
 
 	// The plug-in ID
 	public static final String PLUGIN_ID = "org.eclipse.epp.usagedata.gathering";
 
 	// The shared instance
-	private static Activator plugin;
+	private static UsageDataCaptureActivator plugin;
 
 	private ServiceRegistration registration;
 
@@ -112,7 +112,7 @@ public class Activator extends AbstractUIPlugin implements IStartup {
 	 *
 	 * @return the shared instance
 	 */
-	public static Activator getDefault() {
+	public static UsageDataCaptureActivator getDefault() {
 		return plugin;
 	}
 

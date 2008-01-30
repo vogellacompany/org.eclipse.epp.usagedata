@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.epp.usagedata.internal.ui.preferences;
 
-import org.eclipse.epp.usagedata.internal.recording.Activator;
+import org.eclipse.epp.usagedata.internal.recording.UsageDataRecordingActivator;
 import org.eclipse.epp.usagedata.internal.recording.settings.UsageDataRecordingSettings;
 import org.eclipse.epp.usagedata.internal.recording.uploading.UploadParameters;
 import org.eclipse.epp.usagedata.internal.ui.preview.UploadPreview;
@@ -48,6 +48,6 @@ public class UsageDataUploadingPreviewPage extends PreferencePage
 	}
 
 	protected UsageDataRecordingSettings getSettings() {
-		return Activator.getDefault().getSettings();
+		return UsageDataRecordingActivator.getDefault().getSettings();
 	}
 }

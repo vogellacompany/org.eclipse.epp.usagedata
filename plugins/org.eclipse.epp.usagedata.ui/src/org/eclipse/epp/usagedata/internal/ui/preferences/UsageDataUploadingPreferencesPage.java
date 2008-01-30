@@ -13,13 +13,17 @@ package org.eclipse.epp.usagedata.internal.ui.preferences;
 import java.text.MessageFormat;
 import java.util.Date;
 
-import org.eclipse.epp.usagedata.internal.recording.Activator;
+import org.eclipse.epp.usagedata.internal.gathering.UsageDataCaptureActivator;
+import org.eclipse.epp.usagedata.internal.gathering.settings.UsageDataCaptureSettings;
+import org.eclipse.epp.usagedata.internal.recording.UsageDataRecordingActivator;
 import org.eclipse.epp.usagedata.internal.recording.settings.UsageDataRecordingSettings;
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -55,10 +59,39 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 
 	private Button askBeforeUploadingCheckbox;
 
+	private Button uploadNowButton;
+	
+	IPropertyChangeListener capturePropertyChangeListener = new IPropertyChangeListener() {
+		public void propertyChange(PropertyChangeEvent event) {
+			if (UsageDataCaptureSettings.CAPTURE_ENABLED_KEY.equals(event.getProperty())) {
+				updateButtons();
+				return;
+			}
+		}		
+	};
+
+	IPropertyChangeListener recordingPropertyChangeListener = new IPropertyChangeListener() {
+		public void propertyChange(PropertyChangeEvent event) {			
+			if (UsageDataRecordingSettings.ASK_TO_UPLOAD_KEY.equals(event.getProperty())) {
+				updateAskToUploadCheckbox();
+				return;
+			}
+
+			if (UsageDataRecordingSettings.UPLOAD_PERIOD_KEY.equals(event.getProperty())) {
+				updateUploadPeriodText();
+				return;
+			}
+			
+			if (UsageDataRecordingSettings.LAST_UPLOAD_KEY.equals(event.getProperty())) {
+				updateLastUploadText();
+				return;
+			}
+		}		
+	};
 
 	public UsageDataUploadingPreferencesPage() {
 		setDescription("Information gathered by the Usage Data Collector is periodically uploaded to servers hosted by The Eclipse Foundation. ");
-		setPreferenceStore(Activator.getDefault().getPreferenceStore());
+		setPreferenceStore(UsageDataRecordingActivator.getDefault().getPreferenceStore());
 	}
 
 	
@@ -66,6 +99,15 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
 	public void init(IWorkbench workbench) {
+		getCapturePreferenceStore().addPropertyChangeListener(capturePropertyChangeListener);
+		getPreferenceStore().addPropertyChangeListener(recordingPropertyChangeListener);
+	}
+	
+	@Override
+	public void dispose() {
+		getCapturePreferenceStore().removePropertyChangeListener(capturePropertyChangeListener);
+		getPreferenceStore().removePropertyChangeListener(recordingPropertyChangeListener);
+		super.dispose();
 	}
 
 	@Override
@@ -89,12 +131,35 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 
 
 	private void initialize() {
-		askBeforeUploadingCheckbox.setSelection(getRecordingPreferences().getBoolean(UsageDataRecordingSettings.ASK_TO_UPLOAD_KEY));		
-		uploadPeriodText.setText(String.valueOf(getRecordingPreferences().getLong(UsageDataRecordingSettings.UPLOAD_PERIOD_KEY) / MILLISECONDS_IN_ONE_DAY));
-		
+		updateAskToUploadCheckbox();		
+		updateUploadPeriodText();		
+		updateLastUploadText();
+		updateButtons();
+	}
+
+
+	private void updateLastUploadText() {
 		lastUploadText.setText(getLastUploadDateAsString());
 	}
+
+
+	private void updateUploadPeriodText() {
+		uploadPeriodText.setText(String.valueOf(getRecordingPreferences().getLong(UsageDataRecordingSettings.UPLOAD_PERIOD_KEY) / MILLISECONDS_IN_ONE_DAY));
+	}
+
+
+	private void updateAskToUploadCheckbox() {
+		askBeforeUploadingCheckbox.setSelection(getRecordingPreferences().getBoolean(UsageDataRecordingSettings.ASK_TO_UPLOAD_KEY));
+	}
 	
+	private void updateButtons() {
+		uploadNowButton.setEnabled(getCapturePreferenceStore().getBoolean(UsageDataCaptureSettings.CAPTURE_ENABLED_KEY));
+	}
+
+
+	private IPreferenceStore getCapturePreferenceStore() {
+		return UsageDataCaptureActivator.getDefault().getPreferenceStore();
+	}
 
 
 	@Override
@@ -116,7 +181,7 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 		askBeforeUploadingCheckbox.setSelection(getRecordingPreferences().getDefaultBoolean(UsageDataRecordingSettings.ASK_TO_UPLOAD_KEY));
 		uploadPeriodText.setText(String.valueOf(getRecordingPreferences().getDefaultLong(UsageDataRecordingSettings.UPLOAD_PERIOD_KEY) / MILLISECONDS_IN_ONE_DAY));
 
-		lastUploadText.setText(getLastUploadDateAsString());
+		updateLastUploadText();
 
 		super.performDefaults();
 	}
@@ -230,17 +295,17 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 
 
 	protected UsageDataRecordingSettings getSettings() {
-		return Activator.getDefault().getSettings();
+		return UsageDataRecordingActivator.getDefault().getSettings();
 	}
 
 
 	private void createUploadNowButton(Composite composite) {
-		Button uploadNow = new Button(composite, SWT.PUSH);
-		uploadNow.setText("Upload Now");
-		uploadNow.addSelectionListener(new SelectionAdapter() {
+		uploadNowButton = new Button(composite, SWT.PUSH);
+		uploadNowButton.setText("Upload Now");
+		uploadNowButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				Activator.getDefault().getUploadManager().startUpload();
+				UsageDataRecordingActivator.getDefault().getUploadManager().startUpload();
 			}
 		});
 	}
@@ -260,10 +325,10 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 
 
 	private IPreferenceStore getRecordingPreferences() {
-		return Activator.getDefault().getPreferenceStore();
+		return UsageDataRecordingActivator.getDefault().getPreferenceStore();
 	}
 
 	private UsageDataRecordingSettings getRecordingSettings() {
-		return Activator.getDefault().getSettings();
+		return UsageDataRecordingActivator.getDefault().getSettings();
 	}
 }

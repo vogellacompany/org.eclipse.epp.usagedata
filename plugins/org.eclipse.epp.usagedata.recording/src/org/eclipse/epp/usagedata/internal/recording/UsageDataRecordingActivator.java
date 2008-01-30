@@ -22,13 +22,13 @@ import org.osgi.util.tracker.ServiceTracker;
 /**
  * The activator class controls the plug-in life cycle
  */
-public class Activator extends AbstractUIPlugin implements IStartup {
+public class UsageDataRecordingActivator extends AbstractUIPlugin implements IStartup {
 
 	// The plug-in ID
 	public static final String PLUGIN_ID = "org.eclipse.epp.usagedata.recording";
 
 	// The shared instance
-	private static Activator plugin;
+	private static UsageDataRecordingActivator plugin;
 
 	private UploadManager uploadManager;
 
@@ -80,7 +80,7 @@ public class Activator extends AbstractUIPlugin implements IStartup {
 	 *
 	 * @return the shared instance
 	 */
-	public static Activator getDefault() {
+	public static UsageDataRecordingActivator getDefault() {
 		return plugin;
 	}
 

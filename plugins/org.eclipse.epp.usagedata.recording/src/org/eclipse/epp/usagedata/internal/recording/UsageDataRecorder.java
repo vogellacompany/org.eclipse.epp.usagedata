@@ -100,8 +100,8 @@ public class UsageDataRecorder implements UsageDataEventListener {
 	}
 
 	protected UsageDataRecordingSettings getSettings() {
-		if (Activator.getDefault() == null) return null; 
-		return Activator.getDefault().getSettings();
+		if (UsageDataRecordingActivator.getDefault() == null) return null; 
+		return UsageDataRecordingActivator.getDefault().getSettings();
 	}
 
 	/**
@@ -128,8 +128,8 @@ public class UsageDataRecorder implements UsageDataEventListener {
 	}
 
 	private UploadManager getUploadManager() {
-		if (Activator.getDefault() == null) return null;
-		return Activator.getDefault().getUploadManager();
+		if (UsageDataRecordingActivator.getDefault() == null) return null;
+		return UsageDataRecordingActivator.getDefault().getUploadManager();
 	}
 
 	private boolean canAcceptEvents() {
@@ -157,10 +157,10 @@ public class UsageDataRecorder implements UsageDataEventListener {
 
 	private void handleException(IOException e, String message) {
 		if (exceptionCount++ > EXCEPTION_THRESHOLD) {
-			Activator.getDefault().log(IStatus.INFO, e, "The UsageDataRecorder has been stopped because it has caused too many exceptions");
+			UsageDataRecordingActivator.getDefault().log(IStatus.INFO, e, "The UsageDataRecorder has been stopped because it has caused too many exceptions");
 			stop();
 		}
-		Activator.getDefault().log(IStatus.ERROR, e, message);
+		UsageDataRecordingActivator.getDefault().log(IStatus.ERROR, e, message);
 	}
 	
 

@@ -11,7 +11,7 @@
 package org.eclipse.epp.usagedata.internal.recording.filtering;
 
 import org.eclipse.epp.usagedata.internal.gathering.events.UsageDataEvent;
-import org.eclipse.epp.usagedata.internal.recording.Activator;
+import org.eclipse.epp.usagedata.internal.recording.UsageDataRecordingActivator;
 import org.eclipse.epp.usagedata.internal.recording.settings.UsageDataRecordingSettings;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -86,7 +86,7 @@ public class PreferencesBasedFilter extends AbstractUsageDataEventFilter {
 	}
 
 	IPreferenceStore getPreferenceStore() {
-		return Activator.getDefault().getPreferenceStore();
+		return UsageDataRecordingActivator.getDefault().getPreferenceStore();
 	}
 
 	public void addPattern(String value) {
@@ -97,7 +97,7 @@ public class PreferencesBasedFilter extends AbstractUsageDataEventFilter {
 			patternString += "\n" + value;
 		}
 		getPreferenceStore().setValue(UsageDataRecordingSettings.FILTER_PATTERNS_KEY, patternString);
-		Activator.getDefault().savePluginPreferences();
+		UsageDataRecordingActivator.getDefault().savePluginPreferences();
 	}
 	
 	public boolean includesPattern(String pattern) {
@@ -120,7 +120,7 @@ public class PreferencesBasedFilter extends AbstractUsageDataEventFilter {
 			}
 		}
 		getPreferenceStore().setValue(UsageDataRecordingSettings.FILTER_PATTERNS_KEY, builder.toString());
-		Activator.getDefault().savePluginPreferences();
+		UsageDataRecordingActivator.getDefault().savePluginPreferences();
 	}
 
 	private boolean shouldRemovePattern(String pattern, Object[] toRemove) {
@@ -132,7 +132,7 @@ public class PreferencesBasedFilter extends AbstractUsageDataEventFilter {
 
 	public void setEclipseOnly(boolean value) {
 		getPreferenceStore().setValue(UsageDataRecordingSettings.FILTER_ECLIPSE_BUNDLES_ONLY_KEY, value);
-		Activator.getDefault().savePluginPreferences();
+		UsageDataRecordingActivator.getDefault().savePluginPreferences();
 		// Don't need to do this, happens indirectly when value is set above.
 		// fireFilterChangedEvent();
 	}

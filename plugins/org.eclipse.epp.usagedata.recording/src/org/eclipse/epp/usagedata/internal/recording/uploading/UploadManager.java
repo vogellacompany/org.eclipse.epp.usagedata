@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.epp.usagedata.internal.recording.Activator;
+import org.eclipse.epp.usagedata.internal.recording.UsageDataRecordingActivator;
 import org.eclipse.epp.usagedata.internal.recording.settings.UsageDataRecordingSettings;
 import org.eclipse.ui.PlatformUI;
 
@@ -27,6 +27,7 @@ public class UploadManager {
 	public static final int UPLOAD_IN_PROGRESS = 2;
 	public static final int WORKBENCH_IS_CLOSING = 3;
 	public static final int NO_UPLOADER = 4;
+	public static final int UPLOAD_DISABLED = 5;
 	
 	private Object lock = new Object();
 	private Uploader uploader;
@@ -56,6 +57,7 @@ public class UploadManager {
 	 * @return a status code.
 	 */
 	public int startUpload() {
+		if (!getSettings().isEnabled()) return UPLOAD_DISABLED;
 		if (PlatformUI.getWorkbench().isClosing()) return WORKBENCH_IS_CLOSING;
 		
 		File[] usageDataUploadFiles;
@@ -99,7 +101,7 @@ public class UploadManager {
 	}
 	
 	private UsageDataRecordingSettings getSettings() {
-		return Activator.getDefault().getSettings();
+		return UsageDataRecordingActivator.getDefault().getSettings();
 	}
 	
 	/**
@@ -125,7 +127,7 @@ public class UploadManager {
 	 */
 	private Uploader getUploader() {
 		IConfigurationElement[] elements = Platform.getExtensionRegistry()
-				.getConfigurationElementsFor(Activator.PLUGIN_ID + ".uploader");
+				.getConfigurationElementsFor(UsageDataRecordingActivator.PLUGIN_ID + ".uploader");
 		for (IConfigurationElement element : elements) {
 			if ("uploader".equals(element.getName())) {
 				try {
@@ -134,7 +136,7 @@ public class UploadManager {
 						return (Uploader) uploader;
 					}
 				} catch (CoreException e) {
-					Activator.getDefault().getLog().log(e.getStatus());
+					UsageDataRecordingActivator.getDefault().getLog().log(e.getStatus());
 				}
 			}
 		}

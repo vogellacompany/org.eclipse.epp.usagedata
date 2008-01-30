@@ -12,7 +12,7 @@ package org.eclipse.epp.usagedata.internal.ui.uploaders;
 
 import java.io.File;
 
-import org.eclipse.epp.usagedata.internal.recording.Activator;
+import org.eclipse.epp.usagedata.internal.recording.UsageDataRecordingActivator;
 import org.eclipse.epp.usagedata.internal.recording.filtering.UsageDataEventFilter;
 import org.eclipse.epp.usagedata.internal.recording.settings.UsageDataRecordingSettings;
 import org.eclipse.epp.usagedata.internal.recording.uploading.AbstractUploader;
@@ -84,7 +84,7 @@ public class AskUserUploader extends AbstractUploader {
 	}
 
 	private UsageDataRecordingSettings getSettings() {
-		return Activator.getDefault().getSettings();
+		return UsageDataRecordingActivator.getDefault().getSettings();
 	}
 
 	public synchronized boolean isUploadInProgress() {

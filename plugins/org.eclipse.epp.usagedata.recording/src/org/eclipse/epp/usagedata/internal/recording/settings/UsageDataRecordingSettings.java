@@ -21,7 +21,7 @@ import java.util.UUID;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.epp.usagedata.internal.gathering.settings.UsageDataCaptureSettings;
-import org.eclipse.epp.usagedata.internal.recording.Activator;
+import org.eclipse.epp.usagedata.internal.recording.UsageDataRecordingActivator;
 import org.eclipse.epp.usagedata.internal.recording.filtering.PreferencesBasedFilter;
 import org.eclipse.epp.usagedata.internal.recording.filtering.UsageDataEventFilter;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -42,12 +42,12 @@ public class UsageDataRecordingSettings implements UploadSettings {
 
 	private static final String UPLOAD_FILE_PREFIX = "upload";
 
-	public static final String UPLOAD_PERIOD_KEY = Activator.PLUGIN_ID + ".period";
-	public static final String LAST_UPLOAD_KEY = Activator.PLUGIN_ID + ".last-upload";
-	public static final String ASK_TO_UPLOAD_KEY = Activator.PLUGIN_ID + ".ask";
-	public static final String LOG_SERVER_ACTIVITY_KEY = Activator.PLUGIN_ID + ".log-server";
-	public static final String FILTER_ECLIPSE_BUNDLES_ONLY_KEY = Activator.PLUGIN_ID + ".filter-eclipse-only";
-	public static final String FILTER_PATTERNS_KEY = Activator.PLUGIN_ID + ".filter-patterns";
+	public static final String UPLOAD_PERIOD_KEY = UsageDataRecordingActivator.PLUGIN_ID + ".period";
+	public static final String LAST_UPLOAD_KEY = UsageDataRecordingActivator.PLUGIN_ID + ".last-upload";
+	public static final String ASK_TO_UPLOAD_KEY = UsageDataRecordingActivator.PLUGIN_ID + ".ask";
+	public static final String LOG_SERVER_ACTIVITY_KEY = UsageDataRecordingActivator.PLUGIN_ID + ".log-server";
+	public static final String FILTER_ECLIPSE_BUNDLES_ONLY_KEY = UsageDataRecordingActivator.PLUGIN_ID + ".filter-eclipse-only";
+	public static final String FILTER_PATTERNS_KEY = UsageDataRecordingActivator.PLUGIN_ID + ".filter-patterns";
 
 	public static final int PERIOD_REASONABLE_MINIMUM = 60000; 
 	// TODO 15 * 60 * 1000; // 15 minutes
@@ -77,7 +77,7 @@ public class UsageDataRecordingSettings implements UploadSettings {
 			} catch (NumberFormatException e) {
 				// If we can't get it from this source, we'll pick it up some
 				// other way. Long the problem and move on.
-				Activator.getDefault().log(IStatus.WARNING,
+				UsageDataRecordingActivator.getDefault().log(IStatus.WARNING,
 						e, "The UsageDataUploader cannot parse the %1$s system property (\"%2$s\"", UPLOAD_PERIOD_KEY, value);
 			}
 		} else if (getPreferencesStore().contains(UPLOAD_PERIOD_KEY)) {
@@ -106,7 +106,7 @@ public class UsageDataRecordingSettings implements UploadSettings {
 		}
 		long period = System.currentTimeMillis();
 		getPreferencesStore().setValue(LAST_UPLOAD_KEY, period);
-		Activator.getDefault().savePluginPreferences();
+		UsageDataRecordingActivator.getDefault().savePluginPreferences();
 
 		return period;
 	}
@@ -167,7 +167,7 @@ public class UsageDataRecordingSettings implements UploadSettings {
 	 * @return an identifier for the workstation.
 	 */
 	public String getUserId() {
-		return getExistingOrGenerateId(new File(System.getProperty("user.home")), "." + Activator.PLUGIN_ID
+		return getExistingOrGenerateId(new File(System.getProperty("user.home")), "." + UsageDataRecordingActivator.PLUGIN_ID
 				+ ".userId");
 	}
 
@@ -181,7 +181,7 @@ public class UsageDataRecordingSettings implements UploadSettings {
 	 */
 	public String getWorkspaceId() {
 		return getExistingOrGenerateId(getWorkingDirectory(), "."
-				+ Activator.PLUGIN_ID + ".workspaceId");
+				+ UsageDataRecordingActivator.PLUGIN_ID + ".workspaceId");
 	}
 
 
@@ -276,15 +276,15 @@ public class UsageDataRecordingSettings implements UploadSettings {
 	}
 
 	private void handleCannotReadFileException(File file, IOException e) {
-		Activator.getDefault().log(IStatus.WARNING,	e, "Cannot read the existing id from %1$s; using the default.", file.toString());
+		UsageDataRecordingActivator.getDefault().log(IStatus.WARNING,	e, "Cannot read the existing id from %1$s; using the default.", file.toString());
 	}
 
 	private IPreferenceStore getPreferencesStore() {
-		return Activator.getDefault().getPreferenceStore();
+		return UsageDataRecordingActivator.getDefault().getPreferenceStore();
 	}
 	
 	private File getWorkingDirectory() {
-		return Activator.getDefault().getStateLocation().toFile();
+		return UsageDataRecordingActivator.getDefault().getStateLocation().toFile();
 	}
 	
 	/**
@@ -350,7 +350,7 @@ public class UsageDataRecordingSettings implements UploadSettings {
 	}
 	
 	private UsageDataCaptureSettings getCaptureSettings() {
-		return org.eclipse.epp.usagedata.internal.gathering.Activator.getDefault().getSettings();
+		return org.eclipse.epp.usagedata.internal.gathering.UsageDataCaptureActivator.getDefault().getSettings();
 	}
 
 	/* (non-Javadoc)
@@ -373,7 +373,7 @@ public class UsageDataRecordingSettings implements UploadSettings {
 	}
 
 	public String getUserAgent() {
-		return "Eclipse UDC/" + Activator.getDefault().getBundle().getHeaders().get("Bundle-Version");
+		return "Eclipse UDC/" + UsageDataRecordingActivator.getDefault().getBundle().getHeaders().get("Bundle-Version");
 	}
 
 	public String getUploadUrl() {

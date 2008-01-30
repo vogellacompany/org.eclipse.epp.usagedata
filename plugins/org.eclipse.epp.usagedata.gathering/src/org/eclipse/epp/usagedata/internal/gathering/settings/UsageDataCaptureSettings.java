@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eclipse.epp.usagedata.internal.gathering.settings;
 
-import org.eclipse.epp.usagedata.internal.gathering.Activator;
+import org.eclipse.epp.usagedata.internal.gathering.UsageDataCaptureActivator;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 public class UsageDataCaptureSettings {
 
-	public static final String CAPTURE_ENABLED_KEY = Activator.PLUGIN_ID + ".enabled";
-	public static final String USER_ACCEPTED_TERMS_OF_USE_KEY = Activator.PLUGIN_ID + ".terms_accepted";
+	public static final String CAPTURE_ENABLED_KEY = UsageDataCaptureActivator.PLUGIN_ID + ".enabled";
+	public static final String USER_ACCEPTED_TERMS_OF_USE_KEY = UsageDataCaptureActivator.PLUGIN_ID + ".terms_accepted";
 
 	public boolean isEnabled() {
 		if (System.getProperties().containsKey(CAPTURE_ENABLED_KEY)) {
@@ -42,7 +42,7 @@ public class UsageDataCaptureSettings {
 	}
 	
 	private IPreferenceStore getPreferencesStore() {
-		return Activator.getDefault().getPreferenceStore();
+		return UsageDataCaptureActivator.getDefault().getPreferenceStore();
 	}
 
 	public boolean hasUserAcceptedTermsOfUse() {
