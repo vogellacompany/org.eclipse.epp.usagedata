@@ -49,7 +49,13 @@ public class SelectActionWizardPage extends WizardPage {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout());
 		
-		createFormText(composite, "<form><p>The Eclipse Usage Data Collector (UDC) has been collecting data on how you have been using the workbench. It would now like to upload the data to a server at the Eclipse Foundation.</p></form>");
+		FormText greeting = createFormText(composite, "<form><p>The Eclipse Usage Data Collector (UDC) has been collecting data on how you have been using the workbench. It would now like to upload the data to a server at the Eclipse Foundation.</p><p>You can preview the data before it is uploaded on the <a href=\"preview\">Preview page</a>.</p></form>");
+		greeting.addHyperlinkListener(new HyperlinkAdapter() {
+			@Override
+			public void linkActivated(HyperlinkEvent event) {
+				((AskUserUploaderWizard)getWizard()).showPreviewPage();
+			}
+		});
 		createSpacer(composite);		
 						
 		createUploadNowRadio(composite);		
@@ -63,7 +69,7 @@ public class SelectActionWizardPage extends WizardPage {
 		
 		createNeverUploadRadio(composite);
 		createSpacer(composite);
-		
+
 		FormText text = createFormText(composite, getTermsText());
 		text.addHyperlinkListener(new HyperlinkAdapter() {
 			@Override
@@ -71,7 +77,7 @@ public class SelectActionWizardPage extends WizardPage {
 				((AskUserUploaderWizard)getWizard()).showTermsPage();
 			}
 		});
-	
+		
 		setControl(composite);
 	}
 

@@ -19,21 +19,23 @@ import org.eclipse.ui.IWorkbench;
 public class AskUserUploaderWizard extends Wizard implements INewWizard {
 	private final AskUserUploader uploader;
 	private TermsOfUseWizardPage termsPage;
+	private UploadPreviewPage previewPage;
 
 	public AskUserUploaderWizard(AskUserUploader uploader) {
 		super();
 		this.uploader = uploader;
 		setNeedsProgressMonitor(false);
 		setHelpAvailable(false);
-		
 	}
 	
 	public void addPages() {
 		addPage(new SelectActionWizardPage(uploader));
+		
 		termsPage = new TermsOfUseWizardPage(uploader);
 		addPage(termsPage);
-		addPage(new UploadPreviewPage(uploader));
-		//addPage(new FilterPage(uploader));
+		
+		previewPage = new UploadPreviewPage(uploader);
+		addPage(previewPage);
 	}
 	
 	@Override
@@ -58,5 +60,9 @@ public class AskUserUploaderWizard extends Wizard implements INewWizard {
 
 	public void showTermsPage() {
 		getContainer().showPage(termsPage);
+	}
+
+	public void showPreviewPage() {
+		getContainer().showPage(previewPage);
 	}
 }
