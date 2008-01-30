@@ -189,8 +189,7 @@ public class BasicUploader extends AbstractUploader {
 		
 		// Configure the HttpClient to timeout after one minute.
 		HttpClientParams httpParameters = new HttpClientParams();
-		// TODO Make the socket timeout a preference.
-		httpParameters.setSoTimeout(60000); // "So" means "socket"; who knew?
+		httpParameters.setSoTimeout(getSocketTimeout()); // "So" means "socket"; who knew?
 		
 		int result = new HttpClient(httpParameters).executeMethod(post);
 		
@@ -207,6 +206,18 @@ public class BasicUploader extends AbstractUploader {
 		}
 		
 		return new UploadResult(result);
+	}
+
+	/**
+	 * This method returns a &quot;reasonable&quot; value for 
+	 * socket timeout based on the number of files we're trying
+	 * to upload. Assumes that &quot;about a minute&squot; per
+	 * file should be plenty of time.
+	 * 
+	 * @return int value specifying a reasonable timeout.
+	 */
+	int getSocketTimeout() {
+		return getUploadParameters().getFiles().length * 60000;
 	}
 
 	void handleServerResponse(PostMethod post) {
