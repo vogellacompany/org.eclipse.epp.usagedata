@@ -14,9 +14,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IRegistryEventListener;
+import org.eclipse.core.runtime.IExtensionDelta;
+import org.eclipse.core.runtime.IRegistryChangeEvent;
+import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.core.runtime.Platform;
 
 /**
@@ -38,7 +38,21 @@ import org.eclipse.core.runtime.Platform;
 public class ExtensionIdToBundleMapper {
 	private Map<String, String> map;
 	private final String extensionPointId;
-	private IRegistryEventListener listener;
+	private IRegistryChangeListener listener = new IRegistryChangeListener() {
+		public void registryChanged(IRegistryChangeEvent event) {
+			if (extensionsAdded(event)) {
+				clearCache();
+			}
+		}
+
+		private boolean extensionsAdded(IRegistryChangeEvent event) {
+			for (IExtensionDelta delta : event.getExtensionDeltas()) {
+				if (delta.getExtensionPoint().getUniqueIdentifier().equals(extensionPointId))
+					return true;
+			}
+			return false;
+		}
+	};
 
 	public ExtensionIdToBundleMapper(String extensionPointId) {
 		this.extensionPointId = extensionPointId;
@@ -46,27 +60,11 @@ public class ExtensionIdToBundleMapper {
 	}
 	
 	void hookListeners() {
-		listener = new IRegistryEventListener() {
-
-			public void added(IExtension[] extensions) {
-				clearCache();
-			}
-
-			public void added(IExtensionPoint[] extensionPoints) {
-			}
-
-			public void removed(IExtension[] extensions) {
-				clearCache();				
-			}
-
-			public void removed(IExtensionPoint[] extensionPoints) {
-			}
-		};
-		Platform.getExtensionRegistry().addListener(listener, extensionPointId);
+		Platform.getExtensionRegistry().addRegistryChangeListener(listener);
 	}
 	
 	public void dispose() {
-		Platform.getExtensionRegistry().removeListener(listener);
+		Platform.getExtensionRegistry().removeRegistryChangeListener(listener);
 		clearCache();
 	}		
 	
