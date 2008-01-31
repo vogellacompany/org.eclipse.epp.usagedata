@@ -36,4 +36,17 @@
     <delete file="${buildDirectory}/${buildLabel}/site.xml" />
   </target>
   
+  <target name="populateUpdateSite">
+    <echo message="Upload new content to EPP testing update site" />
+    <unzip 
+      src="${buildDirectory}/${buildLabel}/org.eclipse.epp.usagedata.feature-${buildId}.zip"
+      dest="/home/data/httpd/download.eclipse.org/technology/epp/updates/testing/"
+      overwrite="true">
+      <mapper 
+        type="regexp" 
+        from="^eclipse/(.*)" 
+        to="\1"/>
+    </unzip>
+  </target>
+  
 </project>
