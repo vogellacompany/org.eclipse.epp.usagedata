@@ -6,7 +6,6 @@
   <target name="createUpdateSite">
     <antcall target="createSiteXML" />
     <antcall target="updateZIP" />
-    <antcall target="populateUpdateSite"/>
     <antcall target="cleanup" />
   </target>
 
