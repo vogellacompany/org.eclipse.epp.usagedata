@@ -140,8 +140,6 @@
 	<target name="postBuild">
 	    <ant antfile="${builder}/createUpdateSite.xml"
 	       target="createUpdateSite" />
-	    <ant antfile="${builder}/createUpdateSite.xml"
-	       target="populateUpdateSite" />
 		<antcall target="gatherLogs" />
 	</target>
 

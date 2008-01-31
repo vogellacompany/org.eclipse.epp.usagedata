@@ -6,6 +6,7 @@
   <target name="createUpdateSite">
     <antcall target="createSiteXML" />
     <antcall target="updateZIP" />
+    <antcall target="populateUpdateSite"/>
     <antcall target="cleanup" />
   </target>
 
@@ -31,11 +32,6 @@
   	</zip>
   </target>
   
-  <target name="cleanup">
-    <echo message="Remove site.xml file" />
-    <delete file="${buildDirectory}/${buildLabel}/site.xml" />
-  </target>
-  
   <target name="populateUpdateSite">
     <echo message="Upload new content to EPP testing update site" />
     <unzip 
@@ -47,6 +43,11 @@
         from="^eclipse/(.*)" 
         to="\1"/>
     </unzip>
+  </target>
+  
+  <target name="cleanup">
+    <echo message="Remove site.xml file" />
+    <delete file="${buildDirectory}/${buildLabel}/site.xml" />
   </target>
   
 </project>
