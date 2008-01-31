@@ -153,8 +153,6 @@
 	<!-- Steps to do to publish the build results -->
 	<!-- ===================================================================== -->
 	<target name="publish">
-	    <ant antfile="${builder}/createUpdateSite.xml"
-	       target="populateUpdateSite" />
 	</target>
 
 	<!-- ===================================================================== -->
