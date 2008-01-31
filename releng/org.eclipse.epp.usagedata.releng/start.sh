@@ -2,6 +2,7 @@
 
 JAVA=/opt/ibm/java2-ppc-50/bin/java
 BUILD_ROOT=/shared/technology/epp/udc_build
+UPDATE_SITE=/home/data/httpd/download.eclipse.org/technology/epp/updates/testing/
 
 BUILD_DATE=`date +%Y%m%d`
 BUILD_TIME=`date +%H%M`
@@ -19,4 +20,5 @@ ${JAVA} -jar ${BUILD_ROOT}/eclipse/plugins/org.eclipse.equinox.launcher_1.0.100.
         -DbuildDirectory=${BUILD_ROOT}/workspace/ \
         -Dbase=${BUILD_ROOT} \
         -DbuildId=${TIMESTAMP} \
-        -Dtimestamp=${TIMESTAMP}
+        -Dtimestamp=${TIMESTAMP} \
+        -DupdateSite=${UPDATE_SITE}

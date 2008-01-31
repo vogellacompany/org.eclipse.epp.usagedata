@@ -33,10 +33,10 @@
   </target>
   
   <target name="populateUpdateSite">
-    <echo message="Upload new content to EPP testing update site" />
+    <echo message="Upload new content to update site: ${updateSite}" />
     <unzip 
       src="${buildDirectory}/${buildLabel}/org.eclipse.epp.usagedata.feature-${buildId}.zip"
-      dest="/home/data/httpd/download.eclipse.org/technology/epp/updates/testing/"
+      dest="${updateSite}"
       overwrite="true">
       <mapper 
         type="regexp" 
