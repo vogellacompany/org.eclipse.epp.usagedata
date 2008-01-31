@@ -9,6 +9,9 @@ TIMESTAMP=${BUILD_DATE}${BUILD_TIME}
 
 rm -r ${BUILD_ROOT}/workspace
 
+cd ${BUILD_ROOT}
+cvs -d :pserver:anonymous@dev.eclipse.org:/cvsroot/technology co org.eclipse.epp/releng/org.eclipse.epp.usagedata.releng/
+
 ${JAVA} -jar ${BUILD_ROOT}/eclipse/plugins/org.eclipse.equinox.launcher_1.0.100.v20071211.jar \
         -application org.eclipse.ant.core.antRunner \
         -buildfile ${BUILD_ROOT}/eclipse/plugins/org.eclipse.pde.build_3.4.0.v20071212/scripts/build.xml \
