@@ -221,6 +221,9 @@ public class BasicUploader extends AbstractUploader {
 	}
 
 	void handleServerResponse(PostMethod post) {
+		// No point in doing any work if nobody's listening.
+		if (responseListeners.isEmpty()) return;
+		
 		InputStream response = null;
 		try {
 			response = post.getResponseBodyAsStream();
