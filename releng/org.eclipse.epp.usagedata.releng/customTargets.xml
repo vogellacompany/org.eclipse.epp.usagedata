@@ -140,6 +140,8 @@
 	<target name="postBuild">
 	    <ant antfile="${builder}/createUpdateSite.xml"
 	       target="createUpdateSite" />
+	    <ant antfile="${builder}/createUpdateSite.xml"
+	       target="populateUpdateSite" />
 		<antcall target="gatherLogs" />
 	</target>
 
@@ -153,9 +155,6 @@
 	<!-- Steps to do to publish the build results -->
 	<!-- ===================================================================== -->
 	<target name="publish">
-	    <ant antfile="${builder}/createUpdateSite.xml"
-	       target="populateUpdateSite" />
-		<antcall target="gatherLogs" />
 	</target>
 
 	<!-- ===================================================================== -->
