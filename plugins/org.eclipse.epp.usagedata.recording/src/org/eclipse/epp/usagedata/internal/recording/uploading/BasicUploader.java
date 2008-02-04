@@ -167,7 +167,7 @@ public class BasicUploader extends AbstractUploader {
 	 * @throws Exception 
 	 */
 	UploadResult doUpload(IProgressMonitor monitor) throws Exception {
-		monitor.beginTask("Upload", getUploadParameters().getFiles().length + 2);
+		monitor.beginTask("Upload", getUploadParameters().getFiles().length + 3);
 		/*
 		 * The files that we have been provided with were determined while the recorder
 		 * was suspended. We should be safe to work with these files without worrying
@@ -202,9 +202,12 @@ public class BasicUploader extends AbstractUploader {
 		httpParameters.setSoTimeout(getSocketTimeout()); // "So" means "socket"; who knew?
 		
 		monitor.worked(1);
-		int result = new HttpClient(httpParameters).executeMethod(post);
 		
+		int result = new HttpClient(httpParameters).executeMethod(post);
+				
 		handleServerResponse(post);
+		
+		monitor.worked(1);
 		
 		post.releaseConnection();
 		
@@ -217,6 +220,7 @@ public class BasicUploader extends AbstractUploader {
 		}
 		
 		monitor.worked(1);
+		
 		monitor.done();
 		
 		return new UploadResult(result);
@@ -225,7 +229,7 @@ public class BasicUploader extends AbstractUploader {
 	/**
 	 * This method returns a &quot;reasonable&quot; value for 
 	 * socket timeout based on the number of files we're trying
-	 * to upload. Assumes that &quot;about a minute&squot; per
+	 * to upload. Assumes that &quot;about a minute&quot; per
 	 * file should be plenty of time.
 	 * 
 	 * @return int value specifying a reasonable timeout.
@@ -342,6 +346,19 @@ public class BasicUploader extends AbstractUploader {
 			} finally {
 				input.close();
 			}
+		}
+		
+		/**
+		 * Return the length (size in bytes) of the data we're sending.
+		 * Since we're going to be (potentially) applying filters to the
+		 * data, we don't really know the size so return -1. We could
+		 * compute the size, but that would require either passing twice
+		 * over the file, or keeping the content in memory; both options
+		 * have limited appeal.
+		 */
+		@Override
+		public long length() throws IOException {
+			return -1;
 		}
 	}
 
