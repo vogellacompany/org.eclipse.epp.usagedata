@@ -29,7 +29,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 public class UsageDataCapturePreferencesPage extends PreferencePage
 	implements IWorkbenchPreferencePage {
 	
-	private Button captureEnabledCheckbox;
+	Button captureEnabledCheckbox;
 
 	IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener() {
 		public void propertyChange(PropertyChangeEvent event) {

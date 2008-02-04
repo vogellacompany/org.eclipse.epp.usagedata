@@ -27,6 +27,6 @@ import org.junit.runners.Suite;
 	UsageDataServiceTests.class,
 	UsageDataCaptureSettingsTests.class
 })
-public class UsageDataGatheringTests {
+public class AllTests {
 
 }

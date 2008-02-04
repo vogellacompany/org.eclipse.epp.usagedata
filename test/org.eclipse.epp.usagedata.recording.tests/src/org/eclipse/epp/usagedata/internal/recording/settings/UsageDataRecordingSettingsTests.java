@@ -72,7 +72,7 @@ public class UsageDataRecordingSettingsTests {
 		long lastUploadTime = getRecordingSettings().getLastUploadTime();
 		long time = System.currentTimeMillis();
 		
-		assertTrue(time - lastUploadTime < 10);
+		assertTrue(time - lastUploadTime < 50);
 	}
 	
 	@Test
