@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.multipart.FilePart;
 import org.apache.commons.httpclient.methods.multipart.MultipartRequestEntity;
@@ -113,6 +112,15 @@ public class BasicUploader extends AbstractUploader {
 		job.schedule();
 	}
 	
+	/**
+	 * Do the upload. This is basically a wrapper method that invokes the real
+	 * behaviour and then deals with the fallout.
+	 * 
+	 * @param monitor
+	 *            an instance of something that implements
+	 *            {@link IProgressMonitor}. Must not be <code>null</code>.
+	 * @return
+	 */
 	UploadResult upload(IProgressMonitor monitor) {
 		UploadResult result = null;
 		
@@ -146,18 +154,20 @@ public class BasicUploader extends AbstractUploader {
 	}
 
 	/**
+	 * This method does the heavy lifting when it comes to downloads.
+	 * 
 	 * I can envision a time when we may want to upload something other than files.
 	 * We may, for example, want to upload an in-memory representation of the files.
 	 * For now, in the spirit of having something that works is better than
 	 * overengineering something you may not need, we're just dealing with files.
 	 * 
-	 * TODO All of this can be moved to an UploadJob class.
-	 * @param files
 	 * @param monitor
-	 * @throws IOException 
-	 * @throws HttpException 
+	 *            an instance of something that implements
+	 *            {@link IProgressMonitor}. Must not be <code>null</code>.
+	 * @throws Exception 
 	 */
 	UploadResult doUpload(IProgressMonitor monitor) throws Exception {
+		monitor.beginTask("Upload", getUploadParameters().getFiles().length + 2);
 		/*
 		 * The files that we have been provided with were determined while the recorder
 		 * was suspended. We should be safe to work with these files without worrying
@@ -185,12 +195,13 @@ public class BasicUploader extends AbstractUploader {
 		if (loggingServerActivity) {
 			post.setRequestHeader("LOGGING", "true");
 		}
-		post.setRequestEntity(new MultipartRequestEntity(getFileParts(), post.getParams()));
+		post.setRequestEntity(new MultipartRequestEntity(getFileParts(monitor), post.getParams()));
 		
 		// Configure the HttpClient to timeout after one minute.
 		HttpClientParams httpParameters = new HttpClientParams();
 		httpParameters.setSoTimeout(getSocketTimeout()); // "So" means "socket"; who knew?
 		
+		monitor.worked(1);
 		int result = new HttpClient(httpParameters).executeMethod(post);
 		
 		handleServerResponse(post);
@@ -204,6 +215,9 @@ public class BasicUploader extends AbstractUploader {
 				if (file.exists()) file.delete();
 			}
 		}
+		
+		monitor.worked(1);
+		monitor.done();
 		
 		return new UploadResult(result);
 	}
@@ -279,12 +293,12 @@ public class BasicUploader extends AbstractUploader {
 		return getUploadParameters().getSettings();
 	}
 
-	Part[] getFileParts() {
+	Part[] getFileParts(IProgressMonitor monitor) {
 		List<Part> fileParts = new ArrayList<Part>();
 		for (File file : getUploadParameters().getFiles()) {
 			try {
 				// TODO Hook in a custom FilePart that filters contents.
-				fileParts.add(new FilteredFilePart("uploads[]", file));
+				fileParts.add(new FilteredFilePart(monitor, "uploads[]", file));
 			} catch (FileNotFoundException e) {
 				// If an exception occurs while creating the FilePart, 
 				// ignore the error and move on. If this has happened,
@@ -295,8 +309,11 @@ public class BasicUploader extends AbstractUploader {
 	}
 	
 	class FilteredFilePart extends FilePart {
-		public FilteredFilePart(String name, File file)	throws FileNotFoundException {
+		private final IProgressMonitor monitor;
+
+		public FilteredFilePart(IProgressMonitor monitor, String name, File file)	throws FileNotFoundException {
 			super(name, file);
+			this.monitor = monitor;
 		}
 		
 		@Override
@@ -318,6 +335,7 @@ public class BasicUploader extends AbstractUploader {
 					}					
 				});
 				writer.flush();
+				monitor.worked(1);
 			} catch (Exception e) {
 				if (e instanceof IOException) throw (IOException)e;
 				UsageDataRecordingActivator.getDefault().log(IStatus.WARNING, e, e.getMessage());

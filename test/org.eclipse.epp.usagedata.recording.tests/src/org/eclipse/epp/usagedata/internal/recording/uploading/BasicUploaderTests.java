@@ -19,6 +19,7 @@ import java.io.File;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.epp.usagedata.internal.recording.UsageDataRecordingActivator;
 import org.eclipse.epp.usagedata.internal.recording.settings.UploadSettings;
 import org.eclipse.epp.usagedata.internal.recording.uploading.util.MockUploadSettings;
@@ -74,7 +75,7 @@ public class BasicUploaderTests {
 		uploadParameters.setSettings(settings);
 		uploadParameters.setFiles(new File[] {file});
 		
-		UploadResult result = new BasicUploader(uploadParameters).doUpload(null);
+		UploadResult result = new BasicUploader(uploadParameters).doUpload(new NullProgressMonitor());
 
 		assertEquals(200, result.getReturnCode());
 		assertFalse(file.exists());
@@ -92,7 +93,7 @@ public class BasicUploaderTests {
 		uploadParameters.setFiles(new File[] {file});
 		
 		try {
-			new BasicUploader(uploadParameters).doUpload(null);
+			new BasicUploader(uploadParameters).doUpload(new NullProgressMonitor());
 			
 			fail("IllegalStateException expected.");
 		} catch (IllegalStateException e) {
@@ -112,7 +113,7 @@ public class BasicUploaderTests {
 		uploadParameters.setSettings(settings);
 		uploadParameters.setFiles(new File[] {file});
 		
-		UploadResult result = new BasicUploader(uploadParameters).doUpload(null);
+		UploadResult result = new BasicUploader(uploadParameters).doUpload(new NullProgressMonitor());
 		
 		assertEquals(404, result.getReturnCode());
 		assertTrue(file.exists());
