@@ -8,22 +8,17 @@
  * Contributors:
  *    The Eclipse Foundation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.epp.usagedata.internal.ui;
+package org.eclipse.epp.usagedata.tests;
 
-import org.eclipse.epp.usagedata.internal.recording.UsageDataGatheringTests;
-import org.eclipse.epp.usagedata.internal.ui.preferences.UsageDataCapturePreferencesPageTests;
-import org.eclipse.epp.usagedata.internal.ui.preview.UploadPreviewTests;
-import org.eclipse.epp.usagedata.internal.ui.preview.UsageDataEventWrapperTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses( { 
-	UsageDataEventWrapperTests.class,
-	UploadPreviewTests.class,
-	UsageDataGatheringTests.class,
-	UsageDataCapturePreferencesPageTests.class
+	org.eclipse.epp.usagedata.internal.gathering.AllTests.class,
+	org.eclipse.epp.usagedata.internal.recording.AllTests.class,
+	org.eclipse.epp.usagedata.internal.ui.AllTests.class
 })
 public class AllTests {
 
