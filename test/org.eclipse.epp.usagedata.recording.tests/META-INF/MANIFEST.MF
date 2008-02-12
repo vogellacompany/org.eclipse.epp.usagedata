@@ -1,11 +1,12 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Usage Data Recording Tests Fragment
+Bundle-Name: Usage Data Recording Tests Fragment (Incubation)
 Bundle-SymbolicName: org.eclipse.epp.usagedata.recording.tests;singleton:=true
 Bundle-Version: 0.5.2.qualifier
-Fragment-Host: org.eclipse.epp.usagedata.recording;bundle-version="0.5.2"
+Fragment-Host: org.eclipse.epp.usagedata.recording;bundle-version="[0.5.2,1.0.0)"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Require-Bundle: org.junit4,
+Require-Bundle: org.junit4;bundle-version="[4.3.1,4.4.0)",
  javax.servlet,
  org.eclipse.equinox.http.jetty,
  org.eclipse.osgi.services
+Bundle-Vendor: Eclipse.org

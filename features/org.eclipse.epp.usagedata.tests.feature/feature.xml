@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.epp.usagedata.tests.feature"
-      label="Usagedata Unit Tests"
+      label="Usagedata Unit Tests (Incubation)"
       version="0.5.2.qualifier"
       provider-name="Eclipse.org">
 
@@ -18,12 +18,13 @@
    </license>
 
    <requires>
-      <import plugin="org.junit4" version="4.3.1" match="greaterOrEqual"/>
+      <import plugin="org.junit4" version="4.3.1" match="equivalent"/>
       <import plugin="javax.servlet"/>
       <import plugin="org.eclipse.equinox.http.jetty"/>
       <import plugin="org.eclipse.osgi.services"/>
-      <import plugin="org.eclipse.epp.usagedata.recording" version="0.5.2" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.epp.usagedata.ui" version="0.5.2" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.epp.usagedata.recording" version="0.5.2" match="compatible"/>
+      <import plugin="org.eclipse.epp.usagedata.ui" version="0.5.2" match="compatible"/>
+      <import plugin="org.eclipse.epp.usagedata.gathering" version="0.5.2" match="compatible"/>
    </requires>
 
    <plugin
@@ -40,6 +41,21 @@
          install-size="0"
          version="0.0.0"
          fragment="true"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.epp.usagedata.gathering.tests"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         fragment="true"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.epp.usagedata.tests"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
          unpack="false"/>
 
 </feature>
