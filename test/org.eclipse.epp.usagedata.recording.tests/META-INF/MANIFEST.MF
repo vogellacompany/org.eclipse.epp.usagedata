@@ -10,3 +10,8 @@ Require-Bundle: org.junit4;bundle-version="[4.3.1,4.4.0)",
  org.eclipse.equinox.http.jetty,
  org.eclipse.osgi.services
 Bundle-Vendor: Eclipse.org
+Export-Package: org.eclipse.epp.usagedata.internal.recording,
+ org.eclipse.epp.usagedata.internal.recording.filtering,
+ org.eclipse.epp.usagedata.internal.recording.settings,
+ org.eclipse.epp.usagedata.internal.recording.uploading,
+ org.eclipse.epp.usagedata.internal.recording.uploading.util

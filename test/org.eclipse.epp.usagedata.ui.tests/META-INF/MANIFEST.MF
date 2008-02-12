@@ -6,3 +6,9 @@ Bundle-Version: 0.5.2.qualifier
 Fragment-Host: org.eclipse.epp.usagedata.ui;bundle-version="[0.5.2,1.0.0)"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Require-Bundle: org.junit4;bundle-version="[4.3.1,4.4.0)"
+Export-Package: org.eclipse.epp.usagedata.internal.recording,
+ org.eclipse.epp.usagedata.internal.recording.filtering,
+ org.eclipse.epp.usagedata.internal.ui,
+ org.eclipse.epp.usagedata.internal.ui.preferences,
+ org.eclipse.epp.usagedata.internal.ui.preview,
+ org.eclipse.epp.usagedata.internal.ui.preview.util
