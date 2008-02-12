@@ -14,3 +14,4 @@ Export-Package: org.eclipse.epp.usagedata.internal.recording;x-friends:="org.ecl
  org.eclipse.epp.usagedata.internal.recording.filtering;x-friends:="org.eclipse.epp.usagedata.ui",
  org.eclipse.epp.usagedata.internal.recording.settings;x-friends:="org.eclipse.epp.usagedata.ui",
  org.eclipse.epp.usagedata.internal.recording.uploading;x-friends:="org.eclipse.epp.usagedata.ui"
+Bundle-Vendor: Eclipse.org

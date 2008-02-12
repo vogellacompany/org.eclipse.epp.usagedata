@@ -2,8 +2,8 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Usage Data Recording Tests Fragment
 Bundle-SymbolicName: org.eclipse.epp.usagedata.recording.tests;singleton:=true
-Bundle-Version: 0.5.1
-Fragment-Host: org.eclipse.epp.usagedata.recording;bundle-version="0.5.1"
+Bundle-Version: 0.5.2.qualifier
+Fragment-Host: org.eclipse.epp.usagedata.recording;bundle-version="0.5.2"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Require-Bundle: org.junit4,
  javax.servlet,

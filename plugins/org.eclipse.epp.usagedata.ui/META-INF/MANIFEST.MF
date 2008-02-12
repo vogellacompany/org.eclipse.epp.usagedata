@@ -16,3 +16,4 @@ Export-Package: org.eclipse.epp.usagedata.internal.ui;x-internal:=true,
  org.eclipse.epp.usagedata.internal.ui.preview;x-internal:=true,
  org.eclipse.epp.usagedata.internal.ui.uploaders;x-internal:=true,
  org.eclipse.epp.usagedata.internal.ui.wizards;x-internal:=true
+Bundle-Vendor: Eclipse.org

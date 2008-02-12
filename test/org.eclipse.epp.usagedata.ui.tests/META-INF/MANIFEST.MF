@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Testing Fragment
 Bundle-SymbolicName: org.eclipse.epp.usagedata.ui.tests
-Bundle-Version: 0.5.1
-Fragment-Host: org.eclipse.epp.usagedata.ui;bundle-version="0.5.1"
+Bundle-Version: 0.5.2.qualifier
+Fragment-Host: org.eclipse.epp.usagedata.ui;bundle-version="0.5.2"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Require-Bundle: org.junit4;bundle-version="4.3.1"
