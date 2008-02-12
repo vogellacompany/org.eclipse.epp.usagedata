@@ -246,7 +246,6 @@ litigation.
    </url>
 
    <requires>
-      <import plugin="org.apache.commons.logging" version="1.0.4" match="compatible"/>
       <import plugin="org.eclipse.core.runtime" version="3.3.0" match="compatible"/>
       <import plugin="org.eclipse.ui" version="3.3.0" match="compatible"/>
       <import plugin="org.eclipse.ui.forms" version="3.3.0" match="compatible"/>
@@ -282,6 +281,13 @@ litigation.
 
    <plugin
          id="org.apache.commons.codec"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.apache.commons.logging"
          download-size="0"
          install-size="0"
          version="0.0.0"
