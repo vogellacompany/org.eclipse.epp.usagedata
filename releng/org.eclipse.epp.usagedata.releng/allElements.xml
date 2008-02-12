@@ -13,9 +13,19 @@
 	<!-- ${pluginPath} locations.												-->
  	<!-- ===================================================================== 	-->
  	<target name="allElementsDelegator">
+ 		<!-- 
  		<ant antfile="${genericTargets}" target="${target}">
 	 		<property name="type" value="${topLevelElementType}" />
 	 		<property name="id" value="${topLevelElementId}" />
+ 		</ant>
+ 		-->
+ 		<ant antfile="${genericTargets}" target="${target}">
+	 		<property name="type" value="feature" />
+	 		<property name="id" value="org.eclipse.epp.usagedata.feature" />
+ 		</ant>
+ 		<ant antfile="${genericTargets}" target="${target}">
+	 		<property name="type" value="feature" />
+	 		<property name="id" value="org.eclipse.epp.usagedata.tests.feature" />
  		</ant>
  	</target>
  
