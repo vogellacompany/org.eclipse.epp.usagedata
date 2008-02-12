@@ -4,6 +4,7 @@
 feature@org.eclipse.epp.usagedata.tests.feature=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.epp/features/org.eclipse.epp.usagedata.tests.feature
 
 # plugins
+fragment@org.eclipse.epp.usagedata.ui.tests=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.epp/test/org.eclipse.epp.usagedata.ui.tests
+fragment@org.eclipse.epp.usagedata.recording.tests=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.epp/test/org.eclipse.epp.usagedata.recording.tests
+fragment@org.eclipse.epp.usagedata.gathering.tests=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.epp/test/org.eclipse.epp.usagedata.gathering.tests
 plugin@org.eclipse.epp.usagedata.tests=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.epp/test/org.eclipse.epp.usagedata.tests
-plugin@org.eclipse.epp.usagedata.recording.tests=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.epp/test/org.eclipse.epp.usagedata.recording.tests
-plugin@org.eclipse.epp.usagedata.ui.tests=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.epp/test/org.eclipse.epp.usagedata.ui.tests
