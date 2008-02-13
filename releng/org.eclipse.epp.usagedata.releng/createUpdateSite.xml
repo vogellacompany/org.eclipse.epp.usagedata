@@ -2,10 +2,15 @@
 <project 
   default="createUpdateSite"
   name="Create Update Site">
-  
+
+  <property name="archiveName" value="org.eclipse.epp.usagedata.feature-${buildId}.zip"/>
+  <property name="archiveDir" value="${buildDirectory}/${buildLabel}"/>
+  <property name="tempDir" value="${buildDirectory}/temp"/>
+
   <target name="createUpdateSite">
     <antcall target="createSiteXML" />
     <antcall target="updateZIP" />
+    <antcall target="pack200" />
     <antcall target="populateUpdateSite"/>
     <antcall target="cleanup" />
   </target>
@@ -23,19 +28,38 @@
 
   <target name="updateZIP">
     <echo message="Update ZIP file" />
-    <zip destfile="${buildDirectory}/${buildLabel}/org.eclipse.epp.usagedata.feature-${buildId}.zip"
+    <zip destfile="${archiveDir}/${archiveName}"
       update="true">
       <zipfileset 
         dir="${buildDirectory}/${buildLabel}" 
       	includes="site.xml" 
       	fullpath="eclipse/site.xml"/>
-  	</zip>
+    </zip>
   </target>
-  
+
+  <target name="pack200" if="udc.pack200">
+    <echo message="Running pack200" />
+    <property name="pack200tempDir" value="${tempDir}/pack"/>
+    <mkdir dir="${pack200tempDir}" />
+    
+    <!-- TODO is there a possibility to get rid of this annoying version number in the jar reference -->
+    <java 
+      jar="${eclipse.home}/plugins/org.eclipse.equinox.launcher_1.0.100.v20071211.jar" 
+      fork="true" 
+      failonerror="true" 
+      dir="${tempDir}"
+      output="${tempDir}/jarprocessor.out"
+      error="${tempDir}/jarprocessor.err">
+      <arg line="-consolelog -application org.eclipse.update.core.siteOptimizer" />
+      <arg line="-jarProcessor -verbose -outputDir ${pack200tempDir} -processAll -repack -pack ${tempDir}/${archiveName}"/>      
+    </java>
+    <move file="${pack200tempDir}/${archiveName}" todir="${archiveDir}" overwrite="true" />
+  </target>
+
   <target name="populateUpdateSite">
     <echo message="Upload new content to update site: ${updateSite}" />
     <unzip 
-      src="${buildDirectory}/${buildLabel}/org.eclipse.epp.usagedata.feature-${buildId}.zip"
+      src="${archiveDir}/${archiveName}"
       dest="${updateSite}"
       overwrite="true">
       <mapper 
@@ -44,10 +68,10 @@
         to="\1"/>
     </unzip>
   </target>
-  
+
   <target name="cleanup">
     <echo message="Remove site.xml file" />
     <delete file="${buildDirectory}/${buildLabel}/site.xml" />
   </target>
-  
+
 </project>
