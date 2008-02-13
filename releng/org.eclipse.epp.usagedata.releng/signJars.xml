@@ -14,7 +14,7 @@
     <mkdir dir="${udc.signOutputDir}"/>
     <chmod dir="${udc.signOutputDir}" perm="ugo+rw" />
     
-    <copyfile dest="${udc.archiveDir}/${udc.archiveName}" src="${udc.inputFile}" forceoverwrite="true" />
+    <copy file="${udc.archiveDir}/${udc.archiveName}" todir="${udc.signInputDir}" overwrite="true" /> 
     <!-- TODO add pack.properties to zip file -->
     
     <echo message="Start the external sign script" />
