@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project 
+  default="signJars"
+  name="Sign all jar files with Eclipse Foundation key">
+
+  <property name="udc.archiveName" value="org.eclipse.epp.usagedata.feature-${buildId}.zip" />
+  <property name="udc.archiveDir" value="${buildDirectory}/${buildLabel}" />
+  <property name="udc.signInputDir" value="/home/data/httpd/download-staging.priv/technology/epp" />
+  <property name="udc.inputFile" value="${udc.signInputDir}/${udc.archiveName}" />
+  <property name="udc.signOutputDir" value="${udc.signInputDir}/output" />
+  <property name="udc.outputFile" value="${udc.signOutputDir}/${udc.archiveName}"/>
+    
+  <target name="signJars" if="udc.signJars">
+    <mkdir dir="${udc.signOutputDir}"/>
+    <chmod dir="${udc.signOutputDir}" perm="ugo+rw" />
+    
+    <copyfile dest="${udc.archiveDir}/${udc.archiveName}" src="${udc.inputFile}" forceoverwrite="true" />
+    <!-- TODO add pack.properties to zip file -->
+    
+    <echo message="Start the external sign script" />
+    <exec executable="/usr/bin/sign" dir="${udc.signInputDir}" output="sign.out" error="sign.err" append="true" >
+      <arg value="${udc.inputFile}" />
+      <arg value="mail" /> 
+      <arg value="${udc.signOutputDir}" />
+    </exec>
+  </target>
+
+</project>

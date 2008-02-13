@@ -132,14 +132,16 @@
 	<!-- Steps to do after  running package. -->
 	<!-- ===================================================================== -->
 	<target name="postPackage">
+    <ant antfile="${builder}/signJars.xml"
+         target="signJars" />
 	</target>
 
 	<!-- ===================================================================== -->
 	<!-- Steps to do after the build is done. -->
 	<!-- ===================================================================== -->
 	<target name="postBuild">
-	    <ant antfile="${builder}/createUpdateSite.xml"
-	       target="createUpdateSite" />
+    <ant antfile="${builder}/createUpdateSite.xml"
+         target="createUpdateSite" />
 		<antcall target="gatherLogs" />
 	</target>
 
