@@ -58,6 +58,7 @@
   </target>
 
   <target name="createDigest" if="udc.createDigest">
+    <!-- not yet working -->
     <echo message="Creating digest" />
     <property name="digestTempDir" value="${tempDir}/digest"/>
     <mkdir dir="${digestTempDir}" />

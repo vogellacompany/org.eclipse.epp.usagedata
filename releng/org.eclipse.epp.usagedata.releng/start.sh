@@ -23,5 +23,4 @@ ${JAVA} -jar ${BUILD_ROOT}/eclipse/plugins/org.eclipse.equinox.launcher_1.0.100.
         -Dtimestamp=${TIMESTAMP} \
         -DupdateSite=${UPDATE_SITE} \
         -DbuildType=N \
-        -Dudc.pack200=true \
-        -Dudc.createDigest=true
+        -Dudc.pack200=true
