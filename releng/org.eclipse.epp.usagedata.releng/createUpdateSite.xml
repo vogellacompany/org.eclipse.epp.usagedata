@@ -49,8 +49,8 @@
       failonerror="true" 
       dir="${tempDir}"
       append="true"
-      output="${tempDir}/jarprocessor.out"
-      error="${tempDir}/jarprocessor.err">
+      output="${tempDir}/pack200.out"
+      error="${tempDir}/pack200.err">
       <arg line="-consolelog -application org.eclipse.update.core.siteOptimizer" />
       <arg line="-jarProcessor -verbose -outputDir ${pack200tempDir} -processAll -repack -pack ${archiveDir}/${archiveName}"/>      
     </java>
@@ -70,15 +70,15 @@
       failonerror="true" 
       dir="${tempDir}"
       append="true"
-      output="${tempDir}/jarprocessor.out"
-      error="${tempDir}/jarprocessor.err">
+      output="${tempDir}/digest.out"
+      error="${tempDir}/digest.err">
       <arg line="-consolelog -application org.eclipse.update.core.siteOptimizer" />
       <arg line="-digestBuilder -digestOutputDir=${digestTempDir}/eclipse -siteXML=${digestTempDir}/eclipse/site.xml"/>      
     </java>
     <zip destfile="${archiveDir}/${archiveName}"
       update="true">
       <zipfileset 
-        dir="${digestTempDir" 
+        dir="${digestTempDir}" 
         includes="digest.zip" 
         fullpath="eclipse/digest.zip"/>
     </zip>
