@@ -19,8 +19,8 @@
     <echo message="Creating site.xml" />
     <copy 
       file="${builder}/templates/site.xml" 
-      tofile="${buildDirectory}/${buildLabel}/site.xml" />
-    <replace file="${buildDirectory}/${buildLabel}/site.xml" 
+      tofile="${tempDir}/site.xml" />
+    <replace file="${tempDir}/site.xml" 
       token="XXXXXXXXXXXXX"
       value="${buildLabel}">
     </replace>
@@ -31,7 +31,7 @@
     <zip destfile="${archiveDir}/${archiveName}"
       update="true">
       <zipfileset 
-        dir="${buildDirectory}/${buildLabel}" 
+        dir="${tempDir}" 
       	includes="site.xml" 
       	fullpath="eclipse/site.xml"/>
     </zip>
@@ -41,7 +41,6 @@
     <echo message="Running pack200" />
     <property name="pack200tempDir" value="${tempDir}/pack"/>
     <mkdir dir="${pack200tempDir}" />
-    
     <!-- TODO is there a possibility to get rid of this annoying version number in the jar reference -->
     <java 
       jar="${eclipse.home}/plugins/org.eclipse.equinox.launcher_1.0.100.v20071211.jar" 
@@ -51,7 +50,7 @@
       output="${tempDir}/jarprocessor.out"
       error="${tempDir}/jarprocessor.err">
       <arg line="-consolelog -application org.eclipse.update.core.siteOptimizer" />
-      <arg line="-jarProcessor -verbose -outputDir ${pack200tempDir} -processAll -repack -pack ${tempDir}/${archiveName}"/>      
+      <arg line="-jarProcessor -verbose -outputDir ${pack200tempDir} -processAll -repack -pack ${archiveDir}/${archiveName}"/>      
     </java>
     <move file="${pack200tempDir}/${archiveName}" todir="${archiveDir}" overwrite="true" />
   </target>
@@ -71,7 +70,7 @@
 
   <target name="cleanup">
     <echo message="Remove site.xml file" />
-    <delete file="${buildDirectory}/${buildLabel}/site.xml" />
+    <delete file="${tempDir}/site.xml" />
   </target>
 
 </project>
