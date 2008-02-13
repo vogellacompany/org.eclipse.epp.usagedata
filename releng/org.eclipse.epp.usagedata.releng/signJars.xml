@@ -23,6 +23,17 @@
       <arg value="mail" /> 
       <arg value="${udc.signOutputDir}" />
     </exec>
+    
+    <echo message="Waiting for file ${udc.outputFile}" />
+    <waitfor maxwait="15" maxwaitunit="minute" 
+             checkevery="5" checkeveryunit="second">
+      <available file="${udc.outputFile}" />
+    </waitfor>
+    
+    <sleep seconds="10" />
+    <echo message="Copying signed zip file to old location" />
+    <copy file="${udc.outputFile}" todir="${udc.archiveDir}" overwrite="true" />
+    
   </target>
 
 </project>
