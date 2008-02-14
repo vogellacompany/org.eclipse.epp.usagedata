@@ -11,7 +11,6 @@
     <antcall target="createSiteXML" />
     <antcall target="updateZIP" />
     <antcall target="pack200" />
-    <antcall target="createDigest" />
     <antcall target="populateUpdateSite"/>
     <antcall target="cleanup" />
   </target>
@@ -57,35 +56,6 @@
     <move file="${pack200tempDir}/${archiveName}" todir="${archiveDir}" overwrite="true" />
   </target>
 
-  <target name="createDigest" if="udc.createDigest">
-    <!-- not yet working -->
-    <echo message="Creating digest" />
-    <property name="digestTempDir" value="${tempDir}/digest"/>
-    <mkdir dir="${digestTempDir}" />
-    <unzip 
-      src="${archiveDir}/${archiveName}"
-      dest="${digestTempDir}" />
-    <java 
-      jar="${eclipse.home}/plugins/org.eclipse.equinox.launcher_1.0.100.v20071211.jar" 
-      fork="true" 
-      failonerror="true" 
-      dir="${tempDir}"
-      append="true"
-      output="${tempDir}/digest.out"
-      error="${tempDir}/digest.err">
-      <arg line="-consolelog -application org.eclipse.update.core.siteOptimizer" />
-      <arg line="-digestBuilder -digestOutputDir=${digestTempDir}/eclipse -siteXML=${digestTempDir}/eclipse/site.xml"/>      
-    </java>
-    <zip destfile="${archiveDir}/${archiveName}"
-      update="true">
-      <zipfileset 
-        dir="${digestTempDir}" 
-        includes="digest.zip" 
-        fullpath="eclipse/digest.zip"/>
-    </zip>
-  </target>
-
-  
   <target name="populateUpdateSite">
     <echo message="Upload new content to update site: ${updateSite}" />
     <unzip 
