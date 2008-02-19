@@ -422,6 +422,7 @@ public class UploadPreview  {
 				});
 			}			
 		};
+		contentJob.setPriority(Job.LONG);
 		contentJob.schedule();
 	}
 
