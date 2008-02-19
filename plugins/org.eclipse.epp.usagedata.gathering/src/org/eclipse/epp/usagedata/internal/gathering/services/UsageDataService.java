@@ -149,18 +149,22 @@ public class UsageDataService {
 		if (eventConsumerJob != null) return;
 		
 		eventConsumerJob = new Job("Usage Data Event consumer") {
-			private boolean cancelled = false;
+			boolean cancelled = false;
 
 			public IStatus run(IProgressMonitor monitor) {
 				waitForWorkbenchToFinishStarting();
-				while (!cancelled) {
+				while (!isCancelled()) {
 					UsageDataEvent event = getQueuedEvent();
 					dispatchEvent(event);
 				}
 				return Status.OK_STATUS;
 			}
 		
-			protected void canceling() {
+			synchronized boolean isCancelled() {
+				return cancelled;
+			}
+			
+			protected synchronized void canceling() {
 				cancelled = true;
 			}			
 		};
