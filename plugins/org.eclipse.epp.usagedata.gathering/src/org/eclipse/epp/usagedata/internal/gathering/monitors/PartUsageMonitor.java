@@ -194,7 +194,10 @@ public class PartUsageMonitor implements UsageMonitor {
 	}
 	
 	private void hookListeners(IWorkbenchPage page) {
-		recordEvent("activated", page.getPerspective());
+		IPerspectiveDescriptor perspective = page.getPerspective();
+		if (perspective != null) {
+			recordEvent("activated", perspective);
+		}
 		page.addPartListener(partListener);
 	}
 
