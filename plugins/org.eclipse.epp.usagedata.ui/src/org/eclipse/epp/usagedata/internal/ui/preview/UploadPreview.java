@@ -181,8 +181,12 @@ public class UploadPreview  {
 			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {				
 			}
 
+			@SuppressWarnings("unchecked")
 			public Object[] getElements(Object input) {
-				return (Object[])input;
+				if (input instanceof List) {
+					return (Object[]) ((List<UsageDataEventWrapper>)input).toArray(new Object[((List<UsageDataEventWrapper>)input).size()]);
+				}
+				return new Object[0];
 			}			
 		});
 
@@ -208,7 +212,7 @@ public class UploadPreview  {
 		});
 		
 		// Initially, we have nothing.
-		viewer.setInput(new Object[] {});
+		viewer.setInput(events);
 	}
 	
 	private void createIncludeColumn() {
@@ -401,7 +405,8 @@ public class UploadPreview  {
 	 * This method starts the job that populates the list of
 	 * events.
 	 */
-	void startContentJob() {
+	synchronized void startContentJob() {
+		if (contentJob != null) return;
 		contentJob = new Job("Generate Usage Data Upload Preview") {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
@@ -490,15 +495,12 @@ public class UploadPreview  {
 	void addEvents(List<UsageDataEventWrapper> newEvents) { 
 		if (isDisposed()) return;
 		events.addAll(newEvents);
-		/*
-		 * Make a copy of the events that we know about so far to avoid
-		 */
-		final Object[] array = (Object[]) events.toArray(new Object[events.size()]);
-		getDisplay().asyncExec(new Runnable() {
+		
+		final Object[] array = (Object[]) newEvents.toArray(new Object[newEvents.size()]);
+		getDisplay().syncExec(new Runnable() {
 			public void run() {
 				if (isDisposed()) return;
-				//viewer.add(array);
-				viewer.setInput(array);
+				viewer.add(array);
 				resizeColumns(array);
 			}
 		});
@@ -602,7 +604,7 @@ public class UploadPreview  {
 
 		private void initialize() {
 			getColumn().addSelectionListener(selectionListener);
-			getColumn().setWidth(100);
+			getColumn().setWidth(25);
 		}
 //	
 //		DeferredContentProvider getContentProvider() {
@@ -624,6 +626,7 @@ public class UploadPreview  {
 	
 		public void resize(GC gc, Object[] objects) {
 			int width = usageDataColumnProvider.getMaximumWidth(gc, objects) + 20;
+			width = Math.max(getColumn().getWidth(), width);
 			getColumn().setWidth(width);
 		}
 	

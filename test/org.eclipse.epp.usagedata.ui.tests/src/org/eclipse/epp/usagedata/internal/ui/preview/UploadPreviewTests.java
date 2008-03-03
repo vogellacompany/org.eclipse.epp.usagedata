@@ -22,7 +22,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 
 import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.adaptor.EclipseStarter;
 import org.eclipse.epp.usagedata.internal.recording.filtering.MockUsageDataEventFilter;
@@ -65,9 +64,9 @@ public class UploadPreviewTests {
 		shell.setLayout(new FillLayout());
 		preview.createControl(shell);
 		shell.open();
-	
-		preview.processFiles(new NullProgressMonitor());
-		preview.viewer.setInput((Object[]) preview.events.toArray(new Object[preview.events.size()]));
+		
+		preview.startContentJob();
+		preview.contentJob.join();
 	}
 	
 	@After
