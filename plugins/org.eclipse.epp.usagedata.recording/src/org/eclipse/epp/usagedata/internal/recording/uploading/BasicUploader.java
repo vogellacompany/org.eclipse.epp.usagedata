@@ -240,7 +240,7 @@ public class BasicUploader extends AbstractUploader {
 
 	void handleServerResponse(PostMethod post) {
 		// No point in doing any work if nobody's listening.
-		if (responseListeners.isEmpty()) return;
+		if (!shouldProcessServerResponse()) return;
 		
 		InputStream response = null;
 		try {
@@ -258,10 +258,19 @@ public class BasicUploader extends AbstractUploader {
 		}
 	}
 
+	private boolean shouldProcessServerResponse() {
+		if (getSettings().isLoggingServerActivity()) return true;
+		if (!responseListeners.isEmpty()) return true;
+		return false;
+	}
+
 	void handleServerResponse(BufferedReader response) throws IOException {
 		while (true) {
 			String line = response.readLine();
 			if (line == null) return;
+			if (getSettings().isLoggingServerActivity()) {
+				UsageDataRecordingActivator.getDefault().log(IStatus.INFO, line);
+			}
 			int colon = line.indexOf(':'); // first occurrence
 			if (colon != -1) {
 				String key = line.substring(0, colon);
