@@ -2,10 +2,10 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Usagedata Tests Plug-in (Incubation)
 Bundle-SymbolicName: org.eclipse.epp.usagedata.tests
-Bundle-Version: 0.5.2.qualifier
+Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Require-Bundle: org.junit4;bundle-version="[4.3.1,4.4.0)",
- org.eclipse.epp.usagedata.gathering;bundle-version="[0.5.2,1.0.0)",
- org.eclipse.epp.usagedata.recording;bundle-version="[0.5.2,1.0.0)",
- org.eclipse.epp.usagedata.ui;bundle-version="[0.5.2,1.0.0)"
+ org.eclipse.epp.usagedata.gathering;bundle-version="[1.0.0,2.0.0)",
+ org.eclipse.epp.usagedata.recording;bundle-version="[1.0.0,2.0.0)",
+ org.eclipse.epp.usagedata.ui;bundle-version="[1.0.0,2.0.0)"
 Bundle-Vendor: Eclipse.org
