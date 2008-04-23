@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.epp.usagedata.internal.gathering;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.epp.usagedata.internal.gathering.services.UsageDataService;
@@ -18,6 +19,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.IStartup;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.progress.UIJob;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.util.tracker.ServiceTracker;
@@ -53,11 +55,7 @@ public class UsageDataCaptureActivator extends AbstractUIPlugin implements IStar
 		settings = new UsageDataCaptureSettings();
 		
 		final UsageDataService service = new UsageDataService();
-		
-		if (settings.isEnabled()) {
-			service.startMonitoring();
-		}
-		
+				
 		getPreferenceStore().addPropertyChangeListener(new IPropertyChangeListener() {
 
 			public void propertyChange(PropertyChangeEvent event) {
@@ -85,6 +83,29 @@ public class UsageDataCaptureActivator extends AbstractUIPlugin implements IStar
 		
 		usageDataServiceTracker = new ServiceTracker(context, UsageDataService.class.getName(), null);
 		usageDataServiceTracker.open();
+		
+		/*
+		 * Create a job that starts the UsageDataService in the UI Thread. This
+		 * should happen well after this method has exited and the bundle is
+		 * done activating and is in the "started" state. This was initially
+		 * done to overcome a problem in which some of the monitors spun off
+		 * jobs that resulted in multiple threads inadvertently trying to
+		 * activate this bundle concurrently. The conditions that caused this
+		 * problem have been rectified.
+		 * 
+		 * In spite of the fact that the problem no longer exists, we're keeping
+		 * the UIJob as this is a potentially expensive operation.
+		 */
+		UIJob job = new UIJob("Usage Data Service Starter") {
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				if (settings.isEnabled()) {
+					service.startMonitoring();
+				}
+				return Status.OK_STATUS;
+			}
+			
+		};
+		job.schedule(1000);
 	}
 
 	/*

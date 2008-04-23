@@ -123,9 +123,9 @@ public class PartUsageMonitor implements UsageMonitor {
 	 */
 	public void startMonitoring(UsageDataService usageDataService) {
 		this.usageDataService = usageDataService;
-		IWorkbench workbench = PlatformUI.getWorkbench();
-		hookListeners(workbench);
+		IWorkbench workbench = PlatformUI.getWorkbench();		
 		perspectiveToBundleIdMapper = new ExtensionIdToBundleMapper("org.eclipse.ui.perspectives");
+		hookListeners(workbench);
 	}
 
 	/*
@@ -147,13 +147,18 @@ public class PartUsageMonitor implements UsageMonitor {
 	 */
 	private void hookListeners(final IWorkbench workbench) {
 		workbench.addWindowListener(windowListener);
-		workbench.getDisplay().asyncExec(new Runnable() {
-			public void run() {
+		/*
+		 * The syncExec code is no longer required. Previously,
+		 * we were only applying the listeners to the active workbench window and
+		 * Workbench#getActiveWorkbenchWindow() must be called in the ui thread.
+		 */
+//		workbench.getDisplay().syncExec(new Runnable() {
+//			public void run() {
 				for (IWorkbenchWindow window : workbench.getWorkbenchWindows()) {
 					hookListener(window);
 				}
-			}
-		});
+//			}
+//		});
 	}
 
 	private void unhookListeners(final IWorkbench workbench) {
@@ -166,13 +171,13 @@ public class PartUsageMonitor implements UsageMonitor {
 		
 		// Walk through the workbench windows and unhook the listeners from each
 		// of them.
-		workbench.getDisplay().asyncExec(new Runnable() {
-			public void run() {
+//		workbench.getDisplay().syncExec(new Runnable() {
+//			public void run() {
 				for (IWorkbenchWindow window : workbench.getWorkbenchWindows()) {
 					unhookListeners(window);
 				}
-			}
-		});
+//			}
+//		});
 	}
 	
 	private void hookListener(IWorkbenchWindow window) {
