@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.epp.usagedata.feature"
-      label="Usage Data Feature (Incubation)"
+      label="Usage Data Feature"
       version="1.0.0.qualifier"
       provider-name="Eclipse.org">
 
@@ -242,7 +242,7 @@ litigation.
    </license>
 
    <url>
-      <update label="EPP Update Site" url="http://download.eclipse.org/technology/epp/updates/1.0milestones/"/>
+      <update label="EPP Update Site" url="http://download.eclipse.org/technology/epp/updates/1.0/"/>
    </url>
 
    <requires>
