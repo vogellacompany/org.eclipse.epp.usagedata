@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Tests Fragment (Incubation)
+Bundle-Name: Tests Fragment
 Bundle-SymbolicName: org.eclipse.epp.usagedata.gathering.tests
 Bundle-Version: 1.0.0.qualifier
 Fragment-Host: org.eclipse.epp.usagedata.gathering;bundle-version="[1.0.0,2.0.0)"

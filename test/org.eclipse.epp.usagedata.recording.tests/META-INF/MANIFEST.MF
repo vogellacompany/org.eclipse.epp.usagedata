@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Usage Data Recording Tests Fragment (Incubation)
+Bundle-Name: Usage Data Recording Tests Fragment
 Bundle-SymbolicName: org.eclipse.epp.usagedata.recording.tests;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Fragment-Host: org.eclipse.epp.usagedata.recording;bundle-version="[1.0.0,2.0.0)"
