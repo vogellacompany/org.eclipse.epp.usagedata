@@ -22,6 +22,6 @@ ${JAVA} -jar ${BUILD_ROOT}/eclipse/plugins/org.eclipse.equinox.launcher_1.0.100.
         -DbuildId=${TIMESTAMP} \
         -Dtimestamp=${TIMESTAMP} \
         -DupdateSite=${UPDATE_SITE} \
-        -DbuildType=N \
+        -DbuildType=I \
         -Dudc.pack200=true \
         -Dudc.signJars=true
