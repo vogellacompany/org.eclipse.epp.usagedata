@@ -73,17 +73,29 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 	IPropertyChangeListener recordingPropertyChangeListener = new IPropertyChangeListener() {
 		public void propertyChange(PropertyChangeEvent event) {			
 			if (UsageDataRecordingSettings.ASK_TO_UPLOAD_KEY.equals(event.getProperty())) {
-				updateAskToUploadCheckbox();
+				getControl().getDisplay().syncExec(new Runnable() {
+					public void run() {
+						updateAskToUploadCheckbox();
+					}
+				});
 				return;
 			}
 
 			if (UsageDataRecordingSettings.UPLOAD_PERIOD_KEY.equals(event.getProperty())) {
-				updateUploadPeriodText();
+				getControl().getDisplay().syncExec(new Runnable() {
+					public void run() {
+						updateUploadPeriodText();
+					}
+				});				
 				return;
 			}
 			
 			if (UsageDataRecordingSettings.LAST_UPLOAD_KEY.equals(event.getProperty())) {
-				updateLastUploadText();
+				getControl().getDisplay().syncExec(new Runnable() {
+					public void run() {
+						updateLastUploadText();
+					}
+				});
 				return;
 			}
 		}		
@@ -129,7 +141,9 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 		return composite;
 	}
 
-
+	/*
+	 * Note that this method expects to be run in the UI Thread.
+	 */
 	private void initialize() {
 		updateAskToUploadCheckbox();		
 		updateUploadPeriodText();		
@@ -137,21 +151,32 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 		updateButtons();
 	}
 
-
+	/*
+	 * Note that this method expects to be run in the UI Thread.
+	 */
 	private void updateLastUploadText() {
 		lastUploadText.setText(getLastUploadDateAsString());
 	}
 
 
+	/*
+	 * Note that this method expects to be run in the UI Thread.
+	 */
 	private void updateUploadPeriodText() {
 		uploadPeriodText.setText(String.valueOf(getRecordingPreferences().getLong(UsageDataRecordingSettings.UPLOAD_PERIOD_KEY) / MILLISECONDS_IN_ONE_DAY));
 	}
 
 
+	/*
+	 * Note that this method expects to be run in the UI Thread.
+	 */
 	private void updateAskToUploadCheckbox() {
 		askBeforeUploadingCheckbox.setSelection(getRecordingPreferences().getBoolean(UsageDataRecordingSettings.ASK_TO_UPLOAD_KEY));
 	}
 	
+	/*
+	 * Note that this method expects to be run in the UI Thread.
+	 */
 	private void updateButtons() {
 		uploadNowButton.setEnabled(getCapturePreferenceStore().getBoolean(UsageDataCaptureSettings.CAPTURE_ENABLED_KEY));
 	}
@@ -162,6 +187,9 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 	}
 
 
+	/*
+	 * Note that this method expects to be run in the UI Thread.
+	 */
 	@Override
 	public boolean performOk() {		
 		getRecordingPreferences().setValue(UsageDataRecordingSettings.ASK_TO_UPLOAD_KEY, askBeforeUploadingCheckbox.getSelection());		
@@ -170,12 +198,18 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 		return super.performOk();
 	}
 	
+	/*
+	 * Note that this method expects to be run in the UI Thread.
+	 */
 	@Override
 	public boolean isValid() {
 		if (!isValidUploadPeriod(uploadPeriodText.getText())) return false;
 		return true;
 	}
 
+	/*
+	 * Note that this method expects to be run in the UI Thread.
+	 */
 	@Override
 	protected void performDefaults() {
 		askBeforeUploadingCheckbox.setSelection(getRecordingPreferences().getDefaultBoolean(UsageDataRecordingSettings.ASK_TO_UPLOAD_KEY));
@@ -186,6 +220,9 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 		super.performDefaults();
 	}
 
+	/*
+	 * Note that this method expects to be run in the UI Thread.
+	 */
 	private void createGeneralInformationArea(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, true, false));
@@ -197,6 +234,9 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 	}
 
 
+	/*
+	 * Note that this method expects to be run in the UI Thread.
+	 */
 	private void createUploadingArea(Composite parent) {
 		Group group = new Group(parent, SWT.NONE);
 		group.setText("Uploading");
@@ -212,6 +252,9 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 		createLastUploadField(group);
 	}
 		
+	/*
+	 * Note that this method expects to be run in the UI Thread.
+	 */
 	private void createUploadPeriodField(Group composite) {
 		Label label = new Label(composite, SWT.NONE);
 		label.setText("Upload Period:");
@@ -268,6 +311,9 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 		return FieldDecorationRegistry.getDefault().getFieldDecoration(FieldDecorationRegistry.DEC_ERROR).getImage();
 	}
 
+	/*
+	 * Note that this method expects to be run in the UI Thread.
+	 */
 	private void createLastUploadField(Group composite) {
 		label = new Label(composite, SWT.NONE);
 		label.setText("Last Upload:");
@@ -280,6 +326,9 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 		lastUploadText.setLayoutData(gridData);
 	}
 	
+	/*
+	 * Note that this method expects to be run in the UI Thread.
+	 */
 	private void createButtonsArea(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
@@ -289,6 +338,9 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 		createUploadNowButton(composite);
 	}
 
+	/*
+	 * Note that this method expects to be run in the UI Thread.
+	 */
 	protected IWorkbenchPage getPage() {
 		return PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 	}
@@ -299,6 +351,9 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 	}
 
 
+	/*
+	 * Note that this method expects to be run in the UI Thread.
+	 */
 	private void createUploadNowButton(Composite composite) {
 		uploadNowButton = new Button(composite, SWT.PUSH);
 		uploadNowButton.setText("Upload Now");
@@ -310,6 +365,9 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 		});
 	}
 	
+	/*
+	 * Note that this method expects to be run in the UI Thread.
+	 */
 	private void addOverrideWarning(Control control) {
 		FieldDecoration decoration = FieldDecorationRegistry.getDefault().getFieldDecoration(FieldDecorationRegistry.DEC_WARNING);
 		ControlDecoration warning = new ControlDecoration(control, SWT.BOTTOM | SWT.LEFT);

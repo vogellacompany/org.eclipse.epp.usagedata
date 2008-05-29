@@ -32,9 +32,13 @@ public class UsageDataCapturePreferencesPage extends PreferencePage
 	Button captureEnabledCheckbox;
 
 	IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener() {
-		public void propertyChange(PropertyChangeEvent event) {
+		public void propertyChange(final PropertyChangeEvent event) {
 			if (UsageDataCaptureSettings.CAPTURE_ENABLED_KEY.equals(event.getProperty())) {
-				captureEnabledCheckbox.setSelection((Boolean)event.getNewValue());
+				getControl().getDisplay().syncExec(new Runnable() {
+					public void run() {
+						captureEnabledCheckbox.setSelection((Boolean)event.getNewValue());
+					};
+				});				
 			}
 		}			
 	};
