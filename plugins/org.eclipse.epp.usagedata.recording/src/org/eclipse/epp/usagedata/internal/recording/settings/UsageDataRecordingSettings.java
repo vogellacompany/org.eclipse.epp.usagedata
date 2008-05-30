@@ -53,8 +53,7 @@ public class UsageDataRecordingSettings implements UploadSettings {
 	
 	public static final int PERIOD_REASONABLE_MINIMUM = 60000; 
 	// TODO 15 * 60 * 1000; // 15 minutes
-	static final int UPLOAD_PERIOD_DEFAULT = 1 * 24 * 60 * 60 * 1000; 
-	// TODO 5 * 24 * 60 * 60 * 1000; // five days
+	static final int UPLOAD_PERIOD_DEFAULT = 5 * 24 * 60 * 60 * 1000; // five days
 	static final String UPLOAD_URL_DEFAULT = "http://udc.eclipse.org/upload.php";
 	static final boolean ASK_TO_UPLOAD_DEFAULT = true;
 
