@@ -42,9 +42,10 @@ public class UsageDataCapturePreferencesPageTests {
 		Shell shell = new Shell(Display.getCurrent());
 
 		page = new UsageDataCapturePreferencesPage();
-		page.createContents(shell);
+		page.createControl(shell);
 		page.init(null);
 		
+		shell.open();
 		// Don't actually open the shell.
 	}
 

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.epp.usagedata.internal.ui;
 
-import org.eclipse.epp.usagedata.internal.recording.UsageDataGatheringTests;
 import org.eclipse.epp.usagedata.internal.ui.preferences.UsageDataCapturePreferencesPageTests;
 import org.eclipse.epp.usagedata.internal.ui.preview.UploadPreviewTests;
 import org.eclipse.epp.usagedata.internal.ui.preview.UsageDataEventWrapperTests;
@@ -22,7 +21,6 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses( { 
 	UsageDataEventWrapperTests.class,
 	UploadPreviewTests.class,
-	UsageDataGatheringTests.class,
 	UsageDataCapturePreferencesPageTests.class
 })
 public class AllTests {
