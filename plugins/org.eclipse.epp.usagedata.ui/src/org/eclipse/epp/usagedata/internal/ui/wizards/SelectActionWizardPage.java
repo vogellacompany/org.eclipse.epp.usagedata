@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.epp.usagedata.internal.ui.wizards;
 
+import java.net.URL;
+
+import org.eclipse.core.runtime.Status;
+import org.eclipse.epp.usagedata.internal.ui.Activator;
 import org.eclipse.epp.usagedata.internal.ui.uploaders.AskUserUploader;
 import org.eclipse.jface.dialogs.IDialogPage;
 import org.eclipse.jface.wizard.WizardPage;
@@ -21,11 +25,16 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormText;
 
 public class SelectActionWizardPage extends WizardPage {
+
+	// TODO Replace with proper values
+	private static final String UDC_URL = "http://www.eclipse.org/org/usagedata/index.php";
+	private static final String FAQ_URL = "http://www.eclipse.org/org/usagedata/faq.php";
 
 	private static final int WIDTH_HINT = 500;
 	
@@ -49,11 +58,17 @@ public class SelectActionWizardPage extends WizardPage {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout());
 		
-		FormText greeting = createFormText(composite, "<form><p>The Eclipse Usage Data Collector (UDC) has been collecting data on how you have been using the workbench. It would now like to upload the data to a server at the Eclipse Foundation.</p><p>You can preview the data before it is uploaded on the <a href=\"preview\">Preview page</a>.</p></form>");
+		FormText greeting = createFormText(composite, "<form><p>The Eclipse <a href=\"udc\">Usage Data Collector</a> (UDC) has been collecting data on how you have been using the workbench. It would now like to upload the data to a server at the Eclipse Foundation.</p><p>You can preview the data before it is uploaded on the <a href=\"preview\">Preview page</a>.</p><p>Questions about the UDC? Check out our <a href=\"faq\">Frequently Asked Questions</a>.</p></form>");
 		greeting.addHyperlinkListener(new HyperlinkAdapter() {
 			@Override
 			public void linkActivated(HyperlinkEvent event) {
-				((AskUserUploaderWizard)getWizard()).showPreviewPage();
+				if ("udc".equals(event.getHref())) {
+					browseTo(UDC_URL); 
+				} else if ("preview".equals(event.getHref())) {
+					((AskUserUploaderWizard)getWizard()).showPreviewPage();
+				} else if ("faq".equals(event.getHref())) {
+					browseTo(FAQ_URL);
+				}
 			}
 		});
 		createSpacer(composite);		
@@ -164,5 +179,13 @@ public class SelectActionWizardPage extends WizardPage {
 		if (dontUploadRadio.getSelection()) return true;
 		
 		return false;
+	}
+
+	private void browseTo(String url) {
+		try {
+			PlatformUI.getWorkbench().getBrowserSupport().getExternalBrowser().openURL(new URL(url));
+		} catch (Exception e) {
+			Activator.getDefault().getLog().log(new Status(Status.ERROR, Activator.PLUGIN_ID, "Error opening browser", e));
+		}
 	}
 }
