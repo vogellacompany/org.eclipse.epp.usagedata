@@ -221,6 +221,7 @@ public class UsageDataRecordingSettings implements UploadSettings {
 	 */
 	public void setLastUploadTime() {
 		getPreferencesStore().setValue(LAST_UPLOAD_KEY, System.currentTimeMillis());
+		UsageDataRecordingActivator.getDefault().savePluginPreferences();
 	}
 	
 	/**
@@ -348,6 +349,7 @@ public class UsageDataRecordingSettings implements UploadSettings {
 
 	public void setUserAcceptedTermsOfUse(boolean value) {
 		getCaptureSettings().setUserAcceptedTermsOfUse(value);
+		UsageDataRecordingActivator.getDefault().savePluginPreferences();
 	}
 	
 	private UsageDataCaptureSettings getCaptureSettings() {
@@ -363,10 +365,12 @@ public class UsageDataRecordingSettings implements UploadSettings {
 
 	public void setAskBeforeUploading(boolean value) {
 		getPreferencesStore().setValue(ASK_TO_UPLOAD_KEY, value);
+		UsageDataRecordingActivator.getDefault().savePluginPreferences();
 	}
 
 	public void setEnabled(boolean value) {
 		getCaptureSettings().setEnabled(value);
+		UsageDataRecordingActivator.getDefault().savePluginPreferences();
 	}
 
 	public void dispose() {
