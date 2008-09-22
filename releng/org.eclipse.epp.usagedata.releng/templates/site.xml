@@ -3,9 +3,9 @@
       mirrorsURL="http://www.eclipse.org/downloads/download.php?file=/technology/epp/updates/1.0milestones/site.xml&amp;format=xml"
       pack200="true">
    <feature 
-      url="features/org.eclipse.epp.usagedata.feature_1.0.0.XXXXXXXXXXXXX.jar" 
+      url="features/org.eclipse.epp.usagedata.feature_1.0.1.XXXXXXXXXXXXX.jar" 
       id="org.eclipse.epp.usagedata.feature" 
-      version="1.0.0.XXXXXXXXXXXXX">
+      version="1.0.1.XXXXXXXXXXXXX">
       <category name="UsageData"/>
    </feature>
    <category-def name="UsageData" label="Usage Data"/>
