@@ -52,6 +52,15 @@ public class UsageDataRecordingActivator extends AbstractUIPlugin implements ISt
 		usageDataRecorder = new UsageDataRecorder();
 		usageDataRecorder.start();
 		
+		/*
+		 * Our relationship with the service is wrong. We have a very hard dependency on the
+		 * UsageDataService *class* so there really is no benefit to using an OSGi service here,
+		 * other than as a convenient way to avoid having a singleton (which is honourable enough).
+		 * Perhaps at some future point, we can leverage the EventAdmin service or something.
+		 * More immediately since we have a Bundle-Require dependency on the 
+		 * org.eclipse.epp.usagedata.capture bundle, we can be sure that the UsageDataService
+		 * has been created before we attempt to acquire it from the tracker.
+		 */
 		usageDataServiceTracker = new ServiceTracker(context, UsageDataService.class.getName(), null);
 		usageDataServiceTracker.open();
 		
