@@ -18,6 +18,9 @@
       <monitor
             class="org.eclipse.epp.usagedata.internal.gathering.monitors.CommandUsageMonitor">
       </monitor>
+      <monitor
+            class="org.eclipse.epp.usagedata.internal.gathering.monitors.SystemInfoMonitor">
+      </monitor>
    </extension>
    <extension
          point="org.eclipse.core.runtime.preferences">
