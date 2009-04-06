@@ -5,7 +5,8 @@
    <extension-point id="org.eclipse.epp.usagedata.listeners.event" name="Event Listener" schema="schema/org.eclipse.epp.usagedata.listeners.event.exsd"/>
    <extension
          point="org.eclipse.ui.startup">
-      <startup></startup>
+      <startup
+            class="org.eclipse.epp.usagedata.internal.gathering.Startup"></startup>
    </extension>
    <extension
          point="org.eclipse.epp.usagedata.gathering.monitors">
