@@ -41,7 +41,6 @@
     <echo message="Running pack200" />
     <property name="pack200tempDir" value="${tempDir}/pack"/>
     <mkdir dir="${pack200tempDir}" />
-    <!-- TODO is there a possibility to get rid of this annoying version number in the jar reference -->
     <java 
       jar="${launcherJar}" 
       fork="true" 
