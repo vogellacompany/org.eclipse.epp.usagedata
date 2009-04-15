@@ -10,7 +10,7 @@
   <property name="udc.signOutputDir" value="${udc.signInputDir}/output" />
   <property name="udc.outputFile" value="${udc.signOutputDir}/${udc.archiveName}"/>
     
-  <target name="signJars" if="udc.signJars">
+  <target name="signJars" depends="test.signer.exists" if="udc.signJars">
     <mkdir dir="${udc.signOutputDir}"/>
     <chmod dir="${udc.signOutputDir}" perm="ugo+rw" />
     
@@ -35,5 +35,9 @@
     <copy file="${udc.outputFile}" todir="${udc.archiveDir}" overwrite="true" />
     
   </target>
-
+	
+	<!-- This target tests to see if the signer is available. We'll only attempt to sign if it does. -->
+	<target name="test.signer.exists">
+		<available file="/usr/bin/sign" property="signer.exists"/> 
+	</target>
 </project>
