@@ -22,6 +22,7 @@ import java.io.Reader;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.epp.usagedata.internal.gathering.events.UsageDataEvent;
+import org.eclipse.epp.usagedata.internal.recording.UsageDataRecorderUtils;
 
 public class UsageDataFileReader {
 	public interface Iterator {
@@ -60,7 +61,7 @@ public class UsageDataFileReader {
 	}
 
 	private UsageDataEvent createUsageDataEvent(String line) {
-		String[] tokens = line.split("\\,");
+		String[] tokens = UsageDataRecorderUtils.splitLine(line);
 		UsageDataEvent usageDataEvent = new UsageDataEvent(tokens[0], tokens[1], tokens[4], tokens[2], tokens[3], Long.valueOf(tokens[5]));
 		return usageDataEvent;
 	}

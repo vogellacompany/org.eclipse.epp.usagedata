@@ -22,6 +22,9 @@
       <monitor
             class="org.eclipse.epp.usagedata.internal.gathering.monitors.SystemInfoMonitor">
       </monitor>
+      <monitor
+            class="org.eclipse.epp.usagedata.internal.gathering.monitors.LogMonitor">
+      </monitor>
    </extension>
    <extension
          point="org.eclipse.core.runtime.preferences">
