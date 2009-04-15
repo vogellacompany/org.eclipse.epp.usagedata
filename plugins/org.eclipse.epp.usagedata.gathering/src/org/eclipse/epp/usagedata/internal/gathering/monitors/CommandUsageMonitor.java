@@ -24,6 +24,12 @@ import org.eclipse.ui.commands.ICommandService;
  * @author Wayne Beaton
  */
 public class CommandUsageMonitor implements UsageMonitor {
+	private static final String COMMANDS_EXTENSION_POINT = "org.eclipse.ui.commands"; //$NON-NLS-1$
+
+	private static final String COMMAND = "command"; //$NON-NLS-1$
+	private static final String EXECUTED = "executed"; //$NON-NLS-1$
+	private static final String FAILED = "failed"; //$NON-NLS-1$
+	private static final String NO_HANDLER = "no handler"; //$NON-NLS-1$
 
 	/**
 	 * The {@link #executionListener} is installed into the {@link ICommandService}
@@ -36,15 +42,15 @@ public class CommandUsageMonitor implements UsageMonitor {
 	public void startMonitoring(final UsageDataService usageDataService) {		
 		executionListener = new IExecutionListener() {
 			public void notHandled(String commandId, NotHandledException exception) {
-				recordEvent("no handler", usageDataService, commandId);				
+				recordEvent(NO_HANDLER, usageDataService, commandId);				
 			}
 
 			public void postExecuteFailure(String commandId, ExecutionException exception) {
-				recordEvent("failed", usageDataService, commandId);				
+				recordEvent(FAILED, usageDataService, commandId);				
 			}
 
 			public void postExecuteSuccess(String commandId, Object returnValue) {
-				recordEvent("executed", usageDataService, commandId);				
+				recordEvent(EXECUTED, usageDataService, commandId);				
 			}
 
 			public void preExecute(String commandId, ExecutionEvent event) {
@@ -52,7 +58,7 @@ public class CommandUsageMonitor implements UsageMonitor {
 			}			
 		};
 		getCommandService().addExecutionListener(executionListener);
-		commandToBundleIdMapper = new ExtensionIdToBundleMapper("org.eclipse.ui.commands");
+		commandToBundleIdMapper = new ExtensionIdToBundleMapper(COMMANDS_EXTENSION_POINT);
 	}
 
 	private ICommandService getCommandService() {
@@ -67,7 +73,7 @@ public class CommandUsageMonitor implements UsageMonitor {
 
 	private void recordEvent(String what,
 			final UsageDataService usageDataService, String commandId) {
-		usageDataService.recordEvent(what, "command", commandId, getBundleId(commandId));
+		usageDataService.recordEvent(what, COMMAND, commandId, getBundleId(commandId));
 	}
 	
 	/**

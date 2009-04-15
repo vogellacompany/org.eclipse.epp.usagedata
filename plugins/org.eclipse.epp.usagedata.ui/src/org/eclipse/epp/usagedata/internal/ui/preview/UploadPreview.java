@@ -138,7 +138,7 @@ public class UploadPreview  {
 		colorBlack = parent.getDisplay().getSystemColor(SWT.COLOR_BLACK);
 		busyCursor = parent.getDisplay().getSystemCursor(SWT.CURSOR_WAIT);
 		
-		xImage = Activator.getDefault().getImageDescriptor("/icons/x.png").createImage(parent.getDisplay());
+		xImage = Activator.getDefault().getImageDescriptor("/icons/x.png").createImage(parent.getDisplay()); //$NON-NLS-1$
 		
 		parent.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
@@ -149,8 +149,8 @@ public class UploadPreview  {
 
 	private void createDescriptionText(Composite parent) {
 		FormText text = new FormText(parent, SWT.NONE);
-		text.setImage("x", xImage);
-		text.setText("<form><p>The following events have been captured by the Usage Data Collector. Those events marked with an <img href=\"x\"/> will not be uploaded. You can control what is uploaded by adding filters.</p></form>", true, false);
+		text.setImage("x", xImage); //$NON-NLS-1$
+		text.setText(Messages.getString("UploadPreview.2"), true, false); //$NON-NLS-1$
 		GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, false);
 		layoutData.widthHint = 500;
 		text.setLayoutData(layoutData);
@@ -228,7 +228,7 @@ public class UploadPreview  {
 	
 	private void createWhatColumn() {
 		whatColumn = new UsageDataTableViewerColumn(SWT.LEFT);
-		whatColumn.setText("What");
+		whatColumn.setText(Messages.getString("UploadPreview.3")); //$NON-NLS-1$
 		whatColumn.setLabelProvider(new UsageDataColumnProvider() {
 			@Override
 			public String getText(UsageDataEventWrapper event) {
@@ -239,7 +239,7 @@ public class UploadPreview  {
 
 	private void createKindColumn() {
 		kindColumn = new UsageDataTableViewerColumn(SWT.LEFT);
-		kindColumn.setText("Kind");
+		kindColumn.setText(Messages.getString("UploadPreview.4")); //$NON-NLS-1$
 		kindColumn.setLabelProvider(new UsageDataColumnProvider() {
 			@Override
 			public String getText(UsageDataEventWrapper event) {
@@ -250,7 +250,7 @@ public class UploadPreview  {
 
 	private void createDescriptionColumn() {
 		descriptionColumn = new UsageDataTableViewerColumn(SWT.LEFT);
-		descriptionColumn.setText("Description");
+		descriptionColumn.setText(Messages.getString("UploadPreview.5")); //$NON-NLS-1$
 		descriptionColumn.setLabelProvider(new UsageDataColumnProvider() {
 			@Override
 			public String getText(UsageDataEventWrapper event) {
@@ -261,7 +261,7 @@ public class UploadPreview  {
 
 	private void createBundleIdColumn() {
 		bundleIdColumn = new UsageDataTableViewerColumn(SWT.LEFT);
-		bundleIdColumn.setText("Bundle Id");
+		bundleIdColumn.setText(Messages.getString("UploadPreview.6")); //$NON-NLS-1$
 		bundleIdColumn.setLabelProvider(new UsageDataColumnProvider() {
 			@Override
 			public String getText(UsageDataEventWrapper event) {
@@ -272,7 +272,7 @@ public class UploadPreview  {
 
 	private void createBundleVersionColumn() {
 		bundleVersionColumn = new UsageDataTableViewerColumn(SWT.LEFT);
-		bundleVersionColumn.setText("Version");
+		bundleVersionColumn.setText(Messages.getString("UploadPreview.7")); //$NON-NLS-1$
 		bundleVersionColumn.setLabelProvider(new UsageDataColumnProvider() {
 			@Override
 			public String getText(UsageDataEventWrapper event) {
@@ -283,7 +283,7 @@ public class UploadPreview  {
 
 	private void createTimestampColumn() {
 		timestampColumn = new UsageDataTableViewerColumn(SWT.LEFT);
-		timestampColumn.setText("When");
+		timestampColumn.setText(Messages.getString("UploadPreview.8")); //$NON-NLS-1$
 		timestampColumn.setLabelProvider(new UsageDataColumnProvider() {
 			@Override
 			public String getText(UsageDataEventWrapper event) {
@@ -322,7 +322,7 @@ public class UploadPreview  {
 	
 	private void createEclipseOnlyButton(Composite buttons) {
 		eclipseOnlyButton = new Button(buttons, SWT.CHECK);
-		eclipseOnlyButton.setText("Only upload events from \"org.eclipse\" bundles");
+		eclipseOnlyButton.setText(Messages.getString("UploadPreview.9")); //$NON-NLS-1$
 		eclipseOnlyButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -349,7 +349,7 @@ public class UploadPreview  {
 	private void createAddFilterButton(Composite parent) {
 		if (parameters.getFilter() instanceof PreferencesBasedFilter) {
 			addFilterButton = new Button(parent, SWT.PUSH);
-			addFilterButton.setText("Add filter...");
+			addFilterButton.setText(Messages.getString("UploadPreview.10")); //$NON-NLS-1$
 			addFilterButton.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
@@ -362,7 +362,7 @@ public class UploadPreview  {
 	private void createRemoveFilterButton(Composite parent) {
 		if (parameters.getFilter() instanceof PreferencesBasedFilter) {
 			removeFilterButton = new Button(parent, SWT.PUSH);
-			removeFilterButton.setText("Remove filter...");
+			removeFilterButton.setText(Messages.getString("UploadPreview.11")); //$NON-NLS-1$
 			removeFilterButton.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
@@ -407,7 +407,7 @@ public class UploadPreview  {
 	 */
 	synchronized void startContentJob() {
 		if (contentJob != null) return;
-		contentJob = new Job("Generate Usage Data Upload Preview") {
+		contentJob = new Job("Generate Usage Data Upload Preview") { //$NON-NLS-1$
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				setTableCursor(busyCursor);
@@ -433,7 +433,7 @@ public class UploadPreview  {
 
 	void processFiles(IProgressMonitor monitor) {
 		File[] files = parameters.getFiles();
-		monitor.beginTask("Process Files", files.length);	
+		monitor.beginTask("Process Files", files.length);	 //$NON-NLS-1$
 		for (File file : files) {
 			if (isDisposed()) break; 
 			if (monitor.isCanceled()) break;
@@ -473,7 +473,7 @@ public class UploadPreview  {
 			});
 			addEvents(events);
 		} catch (Exception e) {
-			Activator.getDefault().log(IStatus.WARNING, e, "An error occurred while trying to read %1$s", file.getAbsolutePath());
+			Activator.getDefault().log(IStatus.WARNING, e, "An error occurred while trying to read %1$s", file.getAbsolutePath()); //$NON-NLS-1$
 		} finally {
 			try {
 				reader.close();
@@ -699,7 +699,7 @@ public class UploadPreview  {
 		}
 		
 		public String getText(UsageDataEventWrapper element) {
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 		
 		public Image getImage(UsageDataEventWrapper element) {

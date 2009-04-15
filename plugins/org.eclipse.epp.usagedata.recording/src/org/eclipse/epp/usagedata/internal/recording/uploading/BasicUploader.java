@@ -55,7 +55,7 @@ public class BasicUploader extends AbstractUploader {
 	 * This value identifies the user's workstation (which may
 	 * include multiple Eclipse workspaces).
 	 */
-	private static final String HTTP_USERID = "USERID";
+	private static final String HTTP_USERID = "USERID"; //$NON-NLS-1$
 	
 	/**
 	 * The HTTP_WORKSPACE constant is the key for the HTTP header
@@ -64,7 +64,7 @@ public class BasicUploader extends AbstractUploader {
 	 * A user may have more than one workspace and each will have
 	 * a different workspace id.
 	 */
-	private static final String HTTP_WORKSPACEID = "WORKSPACEID";	
+	private static final String HTTP_WORKSPACEID = "WORKSPACEID";	 //$NON-NLS-1$
 
 	/**
 	 * The HTTP_TIME constant is the key for the HTTP header
@@ -73,9 +73,9 @@ public class BasicUploader extends AbstractUploader {
 	 * server, if desired, can account for differences in the clock
 	 * between the user's workstation and the server.
 	 */
-	private static final String HTTP_TIME = "TIME";
+	private static final String HTTP_TIME = "TIME"; //$NON-NLS-1$
 
-	private static final String USER_AGENT = "User-Agent";
+	private static final String USER_AGENT = "User-Agent"; //$NON-NLS-1$
 	
 	private boolean uploadInProgress = false;
 
@@ -99,7 +99,7 @@ public class BasicUploader extends AbstractUploader {
 		checkValues();
 		if (uploadInProgress) return;
 		uploadInProgress = true;
-		Job job = new Job("Uploading usage data...") {
+		Job job = new Job("Uploading usage data...") { //$NON-NLS-1$
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				UploadResult result = upload(monitor);
@@ -130,21 +130,21 @@ public class BasicUploader extends AbstractUploader {
 			long duration = System.currentTimeMillis() - start;
 			
 			if (result.isSuccess()) {
-				UsageDataRecordingActivator.getDefault().log(IStatus.INFO, "Usage data uploaded to %1$s in %2$s milliseconds.", getUploadUrl(), duration);
+				UsageDataRecordingActivator.getDefault().log(IStatus.INFO, "Usage data uploaded to %1$s in %2$s milliseconds.", getUploadUrl(), duration); //$NON-NLS-1$
 			} else {
-				UsageDataRecordingActivator.getDefault().log(IStatus.INFO, "Usage data upload to %1$s failed with error code %2$s.", getUploadUrl(), result.getReturnCode());
+				UsageDataRecordingActivator.getDefault().log(IStatus.INFO, "Usage data upload to %1$s failed with error code %2$s.", getUploadUrl(), result.getReturnCode()); //$NON-NLS-1$
 			}
 			
 		} catch (IllegalStateException e) {
-			UsageDataRecordingActivator.getDefault().log(IStatus.WARNING, e, "The URL provided for usage data upload, %1$s, is invalid.", getUploadUrl());
+			UsageDataRecordingActivator.getDefault().log(IStatus.WARNING, e, "The URL provided for usage data upload, %1$s, is invalid.", getUploadUrl()); //$NON-NLS-1$
 		} catch (UnknownHostException e) {
-			UsageDataRecordingActivator.getDefault().log(IStatus.WARNING, e, "The usage data upload server at %1$s could not be found.", getUploadUrl());
+			UsageDataRecordingActivator.getDefault().log(IStatus.WARNING, e, "The usage data upload server at %1$s could not be found.", getUploadUrl()); //$NON-NLS-1$
 		} catch (ConnectException e) {
-			UsageDataRecordingActivator.getDefault().log(IStatus.WARNING, e, "Could not connect to the usage data upload server at %1$s.", getUploadUrl());
+			UsageDataRecordingActivator.getDefault().log(IStatus.WARNING, e, "Could not connect to the usage data upload server at %1$s.", getUploadUrl()); //$NON-NLS-1$
 		} catch (InterruptedIOException e) {
-			UsageDataRecordingActivator.getDefault().log(IStatus.WARNING, e, "A socket timeout occurred while trying to upload usage data.");			
+			UsageDataRecordingActivator.getDefault().log(IStatus.WARNING, e, "A socket timeout occurred while trying to upload usage data.");			 //$NON-NLS-1$
 		} catch (Exception e) {
-			UsageDataRecordingActivator.getDefault().log(IStatus.WARNING, e, "An exception occurred while trying to upload usage data.");
+			UsageDataRecordingActivator.getDefault().log(IStatus.WARNING, e, "An exception occurred while trying to upload usage data."); //$NON-NLS-1$
 		}
 		
 		return result;
@@ -167,7 +167,7 @@ public class BasicUploader extends AbstractUploader {
 	 * @throws Exception 
 	 */
 	UploadResult doUpload(IProgressMonitor monitor) throws Exception {
-		monitor.beginTask("Upload", getUploadParameters().getFiles().length + 3);
+		monitor.beginTask("Upload", getUploadParameters().getFiles().length + 3); //$NON-NLS-1$
 		/*
 		 * The files that we have been provided with were determined while the recorder
 		 * was suspended. We should be safe to work with these files without worrying
@@ -177,7 +177,7 @@ public class BasicUploader extends AbstractUploader {
 		 */
 		
 		// TODO Does it make sense to create a custom exception for this?
-		if (!hasUserAuthorizedUpload()) throw new Exception("User has not authorized upload.");
+		if (!hasUserAuthorizedUpload()) throw new Exception("User has not authorized upload."); //$NON-NLS-1$
 	
 		/*
 		 * There appears to be some mechanism on some versions of HttpClient that
@@ -193,7 +193,7 @@ public class BasicUploader extends AbstractUploader {
 
 		boolean loggingServerActivity = getSettings().isLoggingServerActivity();
 		if (loggingServerActivity) {
-			post.setRequestHeader("LOGGING", "true");
+			post.setRequestHeader("LOGGING", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		post.setRequestEntity(new MultipartRequestEntity(getFileParts(monitor), post.getParams()));
 		
@@ -247,7 +247,7 @@ public class BasicUploader extends AbstractUploader {
 			response = post.getResponseBodyAsStream();
 			handleServerResponse(new BufferedReader(new InputStreamReader(response)));
 		} catch (IOException e) {
-			UsageDataRecordingActivator.getDefault().log(IStatus.WARNING, e, "Exception raised while parsing the server response");
+			UsageDataRecordingActivator.getDefault().log(IStatus.WARNING, e, "Exception raised while parsing the server response"); //$NON-NLS-1$
 		} finally {
 			try {
 				response.close();
@@ -277,7 +277,7 @@ public class BasicUploader extends AbstractUploader {
 				String value = line.substring(colon + 1);
 				handleServerResponse(key, value);
 			} else {
-				handleServerResponse("", line);
+				handleServerResponse("", line); //$NON-NLS-1$
 			}
 		}
 	}
@@ -311,7 +311,7 @@ public class BasicUploader extends AbstractUploader {
 		for (File file : getUploadParameters().getFiles()) {
 			try {
 				// TODO Hook in a custom FilePart that filters contents.
-				fileParts.add(new FilteredFilePart(monitor, "uploads[]", file));
+				fileParts.add(new FilteredFilePart(monitor, "uploads[]", file)); //$NON-NLS-1$
 			} catch (FileNotFoundException e) {
 				// If an exception occurs while creating the FilePart, 
 				// ignore the error and move on. If this has happened,

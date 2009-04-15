@@ -43,6 +43,6 @@ public abstract class AbstractUploader implements Uploader {
 	}
 	
 	protected void checkValues() {
-		if (uploadParameters == null) throw new RuntimeException("The UploadParameters must be set.");
+		if (uploadParameters == null) throw new RuntimeException("The UploadParameters must be set."); //$NON-NLS-1$
 	}
 }

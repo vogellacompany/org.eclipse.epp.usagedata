@@ -75,7 +75,7 @@ public class UsageDataFileReader {
 	}
 
 	public void iterate(IProgressMonitor monitor, Iterator iterator) throws Exception {
-		monitor.beginTask("Iterate over usage data file", IProgressMonitor.UNKNOWN);
+		monitor.beginTask("Iterate over usage data file", IProgressMonitor.UNKNOWN); //$NON-NLS-1$
 		try {
 			// The first line is the header.
 			iterator.header(reader.readLine());

@@ -54,7 +54,7 @@ public class UsageDataUploadingTermsOfUsePage extends PreferencePage
 		browser.setUrl(getTermsOfUseUrl());
 		
 		acceptTermsButton = new Button(composite, SWT.CHECK);
-		acceptTermsButton.setText("I accept the Terms of Use");
+		acceptTermsButton.setText(Messages.getString("UsageDataUploadingTermsOfUsePage.0")); //$NON-NLS-1$
 		GridData gridData = new GridData(SWT.BEGINNING, SWT.FILL, true, false);
 		acceptTermsButton.setLayoutData(gridData);		
 		
@@ -71,7 +71,7 @@ public class UsageDataUploadingTermsOfUsePage extends PreferencePage
 	}
 	
 	private String getTermsOfUseUrl() {
-		URL terms = FileLocator.find(Activator.getDefault().getBundle(), new Path("terms.html"), null);
+		URL terms = FileLocator.find(Activator.getDefault().getBundle(), new Path("terms.html"), null); //$NON-NLS-1$
 		try {
 			return FileLocator.toFileURL(terms).toString();
 		} catch (IOException e) {

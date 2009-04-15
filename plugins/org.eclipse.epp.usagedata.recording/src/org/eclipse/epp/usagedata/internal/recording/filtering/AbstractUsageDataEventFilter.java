@@ -41,8 +41,8 @@ public abstract class AbstractUsageDataEventFilter implements UsageDataEventFilt
 		StringBuilder builder = new StringBuilder();
 		for(int index=0;index<filter.length();index++) {
 			char next = filter.charAt(index);
-			if (next == '*') builder.append(".*");
-			else if (next == '.') builder.append("\\.");
+			if (next == '*') builder.append(".*"); //$NON-NLS-1$
+			else if (next == '.') builder.append("\\."); //$NON-NLS-1$
 			else builder.append(next);
 		}
 		return builder.toString();

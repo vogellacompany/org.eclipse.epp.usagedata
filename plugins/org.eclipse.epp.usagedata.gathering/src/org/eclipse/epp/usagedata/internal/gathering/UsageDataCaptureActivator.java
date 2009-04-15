@@ -30,7 +30,7 @@ import org.osgi.util.tracker.ServiceTracker;
 public class UsageDataCaptureActivator extends AbstractUIPlugin implements IStartup {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "org.eclipse.epp.usagedata.gathering";
+	public static final String PLUGIN_ID = "org.eclipse.epp.usagedata.gathering"; //$NON-NLS-1$
 
 	// The shared instance
 	private static UsageDataCaptureActivator plugin;
@@ -96,7 +96,7 @@ public class UsageDataCaptureActivator extends AbstractUIPlugin implements IStar
 		 * In spite of the fact that the problem no longer exists, we're keeping
 		 * the UIJob as this is a potentially expensive operation.
 		 */
-		UIJob job = new UIJob("Usage Data Service Starter") {
+		UIJob job = new UIJob("Usage Data Service Starter") { //$NON-NLS-1$
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				if (settings.isEnabled()) {
 					service.startMonitoring();

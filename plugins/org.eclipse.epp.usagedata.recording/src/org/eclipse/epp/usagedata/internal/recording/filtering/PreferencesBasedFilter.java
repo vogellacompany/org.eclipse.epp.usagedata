@@ -67,7 +67,7 @@ public class PreferencesBasedFilter extends AbstractUsageDataEventFilter {
 
 	public boolean includes(UsageDataEvent event) {
 		if (includeOnlyEclipseDotOrgBundles()) {
-			return event.bundleId.startsWith("org.eclipse.");
+			return event.bundleId.startsWith("org.eclipse."); //$NON-NLS-1$
 		}
 		for (String filter : getFilterPatterns()) {
 			if (matches(filter, event.bundleId)) return false;
@@ -77,8 +77,8 @@ public class PreferencesBasedFilter extends AbstractUsageDataEventFilter {
 
 	public String[] getFilterPatterns() {
 		String patternString = getPreferenceStore().getString(UsageDataRecordingSettings.FILTER_PATTERNS_KEY);
-		if ("".equals(patternString)) return new String[0];
-		return patternString.split("\n");
+		if ("".equals(patternString)) return new String[0]; //$NON-NLS-1$
+		return patternString.split("\n"); //$NON-NLS-1$
 	}
 
 	private boolean includeOnlyEclipseDotOrgBundles() {
@@ -94,7 +94,7 @@ public class PreferencesBasedFilter extends AbstractUsageDataEventFilter {
 		if (patternString.trim().length() == 0) {
 			patternString = value;
 		} else {
-			patternString += "\n" + value;
+			patternString += "\n" + value; //$NON-NLS-1$
 		}
 		getPreferenceStore().setValue(UsageDataRecordingSettings.FILTER_PATTERNS_KEY, patternString);
 		UsageDataRecordingActivator.getDefault().savePluginPreferences();
@@ -109,14 +109,14 @@ public class PreferencesBasedFilter extends AbstractUsageDataEventFilter {
 
 	public void removeFilterPatterns(Object[] toRemove) {
 		String patternString = getPreferenceStore().getString(UsageDataRecordingSettings.FILTER_PATTERNS_KEY);
-		String[] patterns = patternString.split("\n");
+		String[] patterns = patternString.split("\n"); //$NON-NLS-1$
 		StringBuilder builder = new StringBuilder();
-		String separator = "";
+		String separator = ""; //$NON-NLS-1$
 		for (String pattern : patterns) {
 			if (!shouldRemovePattern(pattern, toRemove)) {
 				builder.append(separator);
 				builder.append(pattern);
-				separator = "\n";
+				separator = "\n"; //$NON-NLS-1$
 			}
 		}
 		getPreferenceStore().setValue(UsageDataRecordingSettings.FILTER_PATTERNS_KEY, builder.toString());

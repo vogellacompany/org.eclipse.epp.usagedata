@@ -33,9 +33,9 @@ public class TermsOfUseWizardPage extends WizardPage {
 	private final AskUserUploader uploader;
 
 	public TermsOfUseWizardPage(AskUserUploader uploader) {
-		super("wizardPage");
+		super("wizardPage"); //$NON-NLS-1$
 		this.uploader = uploader;
-		setTitle("Terms of Use");
+		setTitle(Messages.getString("TermsOfUseWizardPage.1")); //$NON-NLS-1$
 		//setDescription("This wizard uploads captured usage data. Clearly a better description is required.");
 	}
 
@@ -51,7 +51,7 @@ public class TermsOfUseWizardPage extends WizardPage {
 		browser.setUrl(getTermsOfUseUrl());
 		
 		final Button acceptTermsButton = new Button(container, SWT.CHECK);
-		acceptTermsButton.setText("I accept the Terms of Use");
+		acceptTermsButton.setText(Messages.getString("TermsOfUseWizardPage.2")); //$NON-NLS-1$
 		GridData gridData = new GridData(SWT.BEGINNING, SWT.FILL, true, false);
 		acceptTermsButton.setLayoutData(gridData);
 		acceptTermsButton.setSelection(uploader.hasUserAcceptedTermsOfUse());
@@ -68,7 +68,7 @@ public class TermsOfUseWizardPage extends WizardPage {
 	}
 
 	private String getTermsOfUseUrl() {
-		URL terms = FileLocator.find(Activator.getDefault().getBundle(), new Path("terms.html"), null);
+		URL terms = FileLocator.find(Activator.getDefault().getBundle(), new Path("terms.html"), null); //$NON-NLS-1$
 		try {
 			return FileLocator.toFileURL(terms).toString();
 		} catch (IOException e) {

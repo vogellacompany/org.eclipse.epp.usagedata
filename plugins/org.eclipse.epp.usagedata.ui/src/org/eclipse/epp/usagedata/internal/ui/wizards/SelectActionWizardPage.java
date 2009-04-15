@@ -33,8 +33,8 @@ import org.eclipse.ui.forms.widgets.FormText;
 public class SelectActionWizardPage extends WizardPage {
 
 	// TODO Replace with proper values
-	private static final String UDC_URL = "http://www.eclipse.org/org/usagedata/index.php";
-	private static final String FAQ_URL = "http://www.eclipse.org/org/usagedata/faq.php";
+	private static final String UDC_URL = "http://www.eclipse.org/org/usagedata/index.php"; //$NON-NLS-1$
+	private static final String FAQ_URL = "http://www.eclipse.org/org/usagedata/faq.php"; //$NON-NLS-1$
 
 	private static final int WIDTH_HINT = 500;
 	
@@ -45,10 +45,10 @@ public class SelectActionWizardPage extends WizardPage {
 	private Button uploadNowRadio;
 
 	public SelectActionWizardPage(AskUserUploader uploader) {
-		super("wizardPage");
+		super("wizardPage"); //$NON-NLS-1$
 		this.uploader = uploader;
-		setTitle("Usage Data Upload");
-		setDescription("It's time to upload your usage data.");
+		setTitle(Messages.getString("SelectActionWizardPage.3")); //$NON-NLS-1$
+		setDescription(Messages.getString("SelectActionWizardPage.4")); //$NON-NLS-1$
 	}
 
 	/**
@@ -58,15 +58,15 @@ public class SelectActionWizardPage extends WizardPage {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout());
 		
-		FormText greeting = createFormText(composite, "<form><p>The Eclipse <a href=\"udc\">Usage Data Collector</a> (UDC) has been collecting data on how you have been using the workbench. It would now like to upload the data to a server at the Eclipse Foundation.</p><p>You can preview the data before it is uploaded on the <a href=\"preview\">Preview page</a>.</p><p>Questions about the UDC? Check out our <a href=\"faq\">Frequently Asked Questions</a>.</p></form>");
+		FormText greeting = createFormText(composite, Messages.getString("SelectActionWizardPage.5")); //$NON-NLS-1$
 		greeting.addHyperlinkListener(new HyperlinkAdapter() {
 			@Override
 			public void linkActivated(HyperlinkEvent event) {
-				if ("udc".equals(event.getHref())) {
+				if ("udc".equals(event.getHref())) { //$NON-NLS-1$
 					browseTo(UDC_URL); 
-				} else if ("preview".equals(event.getHref())) {
+				} else if ("preview".equals(event.getHref())) { //$NON-NLS-1$
 					((AskUserUploaderWizard)getWizard()).showPreviewPage();
-				} else if ("faq".equals(event.getHref())) {
+				} else if ("faq".equals(event.getHref())) { //$NON-NLS-1$
 					browseTo(FAQ_URL);
 				}
 			}
@@ -97,7 +97,7 @@ public class SelectActionWizardPage extends WizardPage {
 	}
 
 	private String getTermsText() {
-		return "<form><p>You agree to provide this data under the Usage Data Collector <a href=\"terms\">Terms of Use</a>.</p></form>";
+		return Messages.getString("SelectActionWizardPage.9"); //$NON-NLS-1$
 	}
 
 	private void createSpacer(Composite parent) {
@@ -108,23 +108,23 @@ public class SelectActionWizardPage extends WizardPage {
 	}
 
 	private void createUploadNowRadio(Composite parent) {
-		uploadNowRadio = createRadio(parent, "Upload now", AskUserUploader.UPLOAD_NOW);
-		createDescriptionText(parent, "Upload the usage data now. Ask before uploading again.");
+		uploadNowRadio = createRadio(parent, Messages.getString("SelectActionWizardPage.10"), AskUserUploader.UPLOAD_NOW); //$NON-NLS-1$
+		createDescriptionText(parent, Messages.getString("SelectActionWizardPage.11")); //$NON-NLS-1$
 	}
 
 	private void createUploadAlwaysRadio(Composite parent) {
-		uploadAlwaysRadio = createRadio(parent, "Upload always", AskUserUploader.UPLOAD_ALWAYS);
-		createDescriptionText(parent, "Upload the usage data now. Don't ask next time; just do the upload in the background. Note that you can change this setting in the preferences.");
+		uploadAlwaysRadio = createRadio(parent, Messages.getString("SelectActionWizardPage.12"), AskUserUploader.UPLOAD_ALWAYS); //$NON-NLS-1$
+		createDescriptionText(parent, Messages.getString("SelectActionWizardPage.13")); //$NON-NLS-1$
 	}
 
 	private void createDontUploadRadio(Composite parent) {
-		dontUploadRadio = createRadio(parent, "Don't upload now", AskUserUploader.DONT_UPLOAD);		
-		createDescriptionText(parent, "Do not upload usage data at this time. You will be asked to do the upload later.");
+		dontUploadRadio = createRadio(parent, Messages.getString("SelectActionWizardPage.14"), AskUserUploader.DONT_UPLOAD);		 //$NON-NLS-1$
+		createDescriptionText(parent, Messages.getString("SelectActionWizardPage.15")); //$NON-NLS-1$
 	}
 
 	private void createNeverUploadRadio(Composite parent) {
-		neverUploadRadio = createRadio(parent, "Turn UDC feature off",AskUserUploader.NEVER_UPLOAD);	
-		createDescriptionText(parent, "Stop collecting data. The UDC will be turned off and data will never be uploaded.");		
+		neverUploadRadio = createRadio(parent, Messages.getString("SelectActionWizardPage.16"),AskUserUploader.NEVER_UPLOAD);	 //$NON-NLS-1$
+		createDescriptionText(parent, Messages.getString("SelectActionWizardPage.17"));		 //$NON-NLS-1$
 	}
 
 	private Button createRadio(Composite parent, String label, final int action) {
@@ -185,7 +185,7 @@ public class SelectActionWizardPage extends WizardPage {
 		try {
 			PlatformUI.getWorkbench().getBrowserSupport().getExternalBrowser().openURL(new URL(url));
 		} catch (Exception e) {
-			Activator.getDefault().getLog().log(new Status(Status.ERROR, Activator.PLUGIN_ID, "Error opening browser", e));
+			Activator.getDefault().getLog().log(new Status(Status.ERROR, Activator.PLUGIN_ID, "Error opening browser", e)); //$NON-NLS-1$
 		}
 	}
 }

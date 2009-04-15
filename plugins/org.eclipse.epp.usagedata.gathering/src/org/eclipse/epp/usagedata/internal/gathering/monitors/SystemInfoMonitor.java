@@ -28,13 +28,13 @@ import org.eclipse.epp.usagedata.internal.gathering.services.UsageDataService;
  */
 public class SystemInfoMonitor implements UsageMonitor {
 	
-	private static final String SYSINFO = "sysinfo";
+	private static final String SYSINFO = "sysinfo"; //$NON-NLS-1$
 	
-	private static final String INFO_PROCESSORS = "processors";
-	private static final String INFO_LOCALE = "locale";
-	private static final String INFO_WS = "ws";
-	private static final String INFO_ARCH = "arch";
-	private static final String INFO_OS = "os";
+	private static final String INFO_PROCESSORS = "processors"; //$NON-NLS-1$
+	private static final String INFO_LOCALE = "locale"; //$NON-NLS-1$
+	private static final String INFO_WS = "ws"; //$NON-NLS-1$
+	private static final String INFO_ARCH = "arch"; //$NON-NLS-1$
+	private static final String INFO_OS = "os"; //$NON-NLS-1$
 	
 	/**
 	 * This property contains a list of system properties that
@@ -48,20 +48,20 @@ public class SystemInfoMonitor implements UsageMonitor {
 	 * of a personal nature.
 	 */
 	private static final String[] SYSTEM_PROPERTIES = {
-		"java.runtime.name",
-		"java.runtime.version",
-		"java.specification.name",
-		"java.specification.vendor",
-		"java.specification.version",
-		"java.vendor",
-		"java.version",
-		"java.vm.info",
-		"java.vm.name",
-		"java.vm.specification.name",
-		"java.vm.specification.vendor",
-		"java.vm.specification.version",
-		"java.vm.vendor",
-		"java.vm.version"
+		"java.runtime.name", //$NON-NLS-1$
+		"java.runtime.version", //$NON-NLS-1$
+		"java.specification.name", //$NON-NLS-1$
+		"java.specification.vendor", //$NON-NLS-1$
+		"java.specification.version", //$NON-NLS-1$
+		"java.vendor", //$NON-NLS-1$
+		"java.version", //$NON-NLS-1$
+		"java.vm.info", //$NON-NLS-1$
+		"java.vm.name", //$NON-NLS-1$
+		"java.vm.specification.name", //$NON-NLS-1$
+		"java.vm.specification.vendor", //$NON-NLS-1$
+		"java.vm.specification.version", //$NON-NLS-1$
+		"java.vm.vendor", //$NON-NLS-1$
+		"java.vm.version" //$NON-NLS-1$
 	};
 	
 	public void startMonitoring(UsageDataService usageDataService) {
@@ -76,7 +76,7 @@ public class SystemInfoMonitor implements UsageMonitor {
 			usageDataService.recordEvent(INFO_WS, SYSINFO, Platform.getWS(), null);
 			usageDataService.recordEvent(INFO_LOCALE, SYSINFO, Platform.getNL(), null);
 		} catch (Exception e) {
-			UsageDataCaptureActivator.getDefault().logException("Exception occurred while obtaining platform properties.", e);
+			UsageDataCaptureActivator.getDefault().logException("Exception occurred while obtaining platform properties.", e); //$NON-NLS-1$
 		}
 		
 		usageDataService.recordEvent(INFO_PROCESSORS, SYSINFO, String.valueOf(Runtime.getRuntime().availableProcessors()), null);

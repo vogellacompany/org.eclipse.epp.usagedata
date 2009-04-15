@@ -53,7 +53,7 @@ import org.eclipse.epp.usagedata.internal.gathering.monitors.UsageMonitor;
  */
 @SuppressWarnings("restriction")
 public class UsageDataService {
-	private static final String MONITORS_EXTENSION_POINT = UsageDataCaptureActivator.PLUGIN_ID + ".monitors";
+	private static final String MONITORS_EXTENSION_POINT = UsageDataCaptureActivator.PLUGIN_ID + ".monitors"; //$NON-NLS-1$
 
 	private boolean monitoring = false;
 
@@ -148,7 +148,7 @@ public class UsageDataService {
 		// TODO Decide if the job is more trouble than it's worth.
 		if (eventConsumerJob != null) return;
 		
-		eventConsumerJob = new Job("Usage Data Event consumer") {
+		eventConsumerJob = new Job("Usage Data Event consumer") { //$NON-NLS-1$
 			boolean cancelled = false;
 
 			public IStatus run(IProgressMonitor monitor) {
@@ -309,7 +309,7 @@ public class UsageDataService {
 			listener.accept(event);
 		} catch (Throwable e) {
 			// TODO Add some logic to remove repeat offenders.
-			UsageDataCaptureActivator.getDefault().logException("The listener (" + listener.getClass() + ") threw an exception", e);
+			UsageDataCaptureActivator.getDefault().logException("The listener (" + listener.getClass() + ") threw an exception", e); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	
@@ -337,8 +337,8 @@ public class UsageDataService {
 		 * events will be relatively rare for the kinds of bundles we actually
 		 * care about. 
 		 */
-		if (!("bundle".equals(event.kind))) return;
-		if (!("started".equals(event.what))) return;
+		if (!("bundle".equals(event.kind))) return; //$NON-NLS-1$
+		if (!("started".equals(event.what))) return; //$NON-NLS-1$
 		
 		synchronized (bundleVersionMap) {
 			bundleVersionMap.put(event.bundleId, event.bundleVersion);
@@ -370,10 +370,10 @@ public class UsageDataService {
 				.getConfigurationElementsFor(
 						MONITORS_EXTENSION_POINT);
 		for (IConfigurationElement element : elements) {
-			if ("monitor".equals(element.getName())) {
+			if ("monitor".equals(element.getName())) { //$NON-NLS-1$
 
 				try {
-					Object monitor = element.createExecutableExtension("class");
+					Object monitor = element.createExecutableExtension("class"); //$NON-NLS-1$
 					if (monitor instanceof UsageMonitor) {
 						startMonitor((UsageMonitor) monitor);
 					}

@@ -24,10 +24,10 @@ public class UploadPreviewPage extends WizardPage {
 	private final AskUserUploader uploader;
 
 	public UploadPreviewPage(AskUserUploader uploader) {
-		super("wizardPage");
+		super("wizardPage"); //$NON-NLS-1$
 		this.uploader = uploader;
-		setTitle("Upload Preview");
-		setDescription("The following data will be uploaded.");
+		setTitle(Messages.getString("UploadPreviewPage.1")); //$NON-NLS-1$
+		setDescription(Messages.getString("UploadPreviewPage.2")); //$NON-NLS-1$
 	}
 
 	public void createControl(Composite parent) {

@@ -34,16 +34,16 @@ public class FilterUtils {
 			index++;
 		}
 		if (builder.length() == 0) return getDefaultFilterSuggestion();
-		builder.append("*");
+		builder.append("*"); //$NON-NLS-1$
 		return builder.toString();
 	}
 	
 	public static String getDefaultFilterSuggestion() {
-		return "com.*";
+		return "com.*"; //$NON-NLS-1$
 	}
 	
 	public static boolean isValidBundleIdPattern(String pattern) {
-		return pattern.matches("[a-zA-Z0-9\\*]+?(\\.[a-zA-Z0-9\\*]+?)*?");
+		return pattern.matches("[a-zA-Z0-9\\*]+?(\\.[a-zA-Z0-9\\*]+?)*?"); //$NON-NLS-1$
 	}
 
 }

@@ -102,7 +102,7 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 	};
 
 	public UsageDataUploadingPreferencesPage() {
-		setDescription("Information gathered by the Usage Data Collector is periodically uploaded to servers hosted by The Eclipse Foundation. ");
+		setDescription(Messages.getString("UsageDataUploadingPreferencesPage.0")); //$NON-NLS-1$
 		setPreferenceStore(UsageDataRecordingActivator.getDefault().getPreferenceStore());
 	}
 
@@ -230,7 +230,7 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 		composite.setLayout(new GridLayout());
 				
 		askBeforeUploadingCheckbox = new Button(composite, SWT.CHECK | SWT.LEFT);
-		askBeforeUploadingCheckbox.setText("Ask before uploading"); 
+		askBeforeUploadingCheckbox.setText(Messages.getString("UsageDataUploadingPreferencesPage.1"));  //$NON-NLS-1$
 	}
 
 
@@ -239,7 +239,7 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 	 */
 	private void createUploadingArea(Composite parent) {
 		Group group = new Group(parent, SWT.NONE);
-		group.setText("Uploading");
+		group.setText(Messages.getString("UsageDataUploadingPreferencesPage.2")); //$NON-NLS-1$
 		group.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
 		group.setLayout(new GridLayout(3, false));
@@ -257,7 +257,7 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 	 */
 	private void createUploadPeriodField(Group composite) {
 		Label label = new Label(composite, SWT.NONE);
-		label.setText("Upload Period:");
+		label.setText(Messages.getString("UsageDataUploadingPreferencesPage.3")); //$NON-NLS-1$
 		
 		uploadPeriodText = new Text(composite, SWT.SINGLE | SWT.BORDER | SWT.RIGHT);
 		uploadPeriodText.setTextLimit(2);
@@ -270,10 +270,10 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 		gc.dispose();
 		uploadPeriodText.setLayoutData(gridData);
 		
-		new Label(composite, SWT.NONE).setText("days");
+		new Label(composite, SWT.NONE).setText(Messages.getString("UsageDataUploadingPreferencesPage.4")); //$NON-NLS-1$
 		
 		final ControlDecoration rangeErrorDecoration = new ControlDecoration(uploadPeriodText, SWT.LEFT | SWT.TOP);
-		rangeErrorDecoration.setDescriptionText(MessageFormat.format("Enter a period between {0} and {1} days.", MINIMUM_PERIOD_IN_DAYS, MAXIMUM_PERIOD_IN_DAYS));
+		rangeErrorDecoration.setDescriptionText(MessageFormat.format(Messages.getString("UsageDataUploadingPreferencesPage.5"), MINIMUM_PERIOD_IN_DAYS, MAXIMUM_PERIOD_IN_DAYS)); //$NON-NLS-1$
 		rangeErrorDecoration.setImage(getErrorImage());
 		rangeErrorDecoration.hide();
 		
@@ -316,7 +316,7 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 	 */
 	private void createLastUploadField(Group composite) {
 		label = new Label(composite, SWT.NONE);
-		label.setText("Last Upload:");
+		label.setText(Messages.getString("UsageDataUploadingPreferencesPage.6")); //$NON-NLS-1$
 		
 		lastUploadText = new Text(composite, SWT.SINGLE | SWT.BORDER);
 		lastUploadText.setEnabled(false);
@@ -356,7 +356,7 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 	 */
 	private void createUploadNowButton(Composite composite) {
 		uploadNowButton = new Button(composite, SWT.PUSH);
-		uploadNowButton.setText("Upload Now");
+		uploadNowButton.setText(Messages.getString("UsageDataUploadingPreferencesPage.7")); //$NON-NLS-1$
 		uploadNowButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -372,7 +372,7 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 		FieldDecoration decoration = FieldDecorationRegistry.getDefault().getFieldDecoration(FieldDecorationRegistry.DEC_WARNING);
 		ControlDecoration warning = new ControlDecoration(control, SWT.BOTTOM | SWT.LEFT);
 		warning.setImage(decoration.getImage());
-		warning.setDescriptionText("This value is being overridden by a System property.");
+		warning.setDescriptionText(Messages.getString("UsageDataUploadingPreferencesPage.8")); //$NON-NLS-1$
 	}
 
 	private String getLastUploadDateAsString() {

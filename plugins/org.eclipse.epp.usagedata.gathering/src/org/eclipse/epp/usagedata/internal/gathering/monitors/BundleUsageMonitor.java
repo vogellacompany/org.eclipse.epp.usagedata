@@ -27,6 +27,19 @@ import org.osgi.framework.BundleListener;
  */
 public class BundleUsageMonitor implements UsageMonitor {
 
+	private static final String BUNDLE_VERSION = "Bundle-Version"; //$NON-NLS-1$
+	private static final String UNKNOWN = "unknown"; //$NON-NLS-1$
+	private static final String UPDATED = "updated"; //$NON-NLS-1$
+	private static final String UNRESOLVED = "unresolved"; //$NON-NLS-1$
+	private static final String UNINSTALLED = "uninstalled"; //$NON-NLS-1$
+	private static final String STOPPING = "stopping"; //$NON-NLS-1$
+	private static final String STOPPED = "stopped"; //$NON-NLS-1$
+	private static final String STARTING = "starting"; //$NON-NLS-1$
+	private static final String RESOLVED = "resolved"; //$NON-NLS-1$
+	private static final String LAZY_ACTIVATION = "lazy_activation"; //$NON-NLS-1$
+	private static final String INSTALLED = "installed"; //$NON-NLS-1$
+	private static final String STARTED = "started"; //$NON-NLS-1$
+	private static final String BUNDLE = "bundle"; //$NON-NLS-1$
 	private BundleListener bundleUsageListener;
 
 	public void startMonitoring(final UsageDataService usageDataService) {
@@ -36,7 +49,7 @@ public class BundleUsageMonitor implements UsageMonitor {
 		// Create an install a listener on the bundle context.
 		bundleUsageListener = new BundleListener() {
 			public void bundleChanged(BundleEvent event) {
-				usageDataService.recordEvent(getWhatHappenedString(event), "bundle", event.getBundle().getSymbolicName(), event.getBundle().getSymbolicName(), getBundleVersion(event));
+				usageDataService.recordEvent(getWhatHappenedString(event), BUNDLE, event.getBundle().getSymbolicName(), event.getBundle().getSymbolicName(), getBundleVersion(event));
 			}			
 		};
 		getBundleContext().addBundleListener(bundleUsageListener);
@@ -47,7 +60,7 @@ public class BundleUsageMonitor implements UsageMonitor {
 		for (Bundle bundle : getBundleContext().getBundles()) {
 			if (bundle.getState() != Bundle.ACTIVE) continue;
 			String bundleId = bundle.getSymbolicName();
-			usageDataService.recordEvent("started", "bundle", bundleId, bundleId, getBundleVersion(bundle));
+			usageDataService.recordEvent(STARTED, BUNDLE, bundleId, bundleId, getBundleVersion(bundle));
 		}
 	}
 
@@ -61,17 +74,17 @@ public class BundleUsageMonitor implements UsageMonitor {
 	 */
 	protected String getWhatHappenedString(BundleEvent event) {
 		switch (event.getType()) {
-			case BundleEvent.INSTALLED: return "installed";
-			case BundleEvent.LAZY_ACTIVATION: return "lazy_activation";
-			case BundleEvent.RESOLVED: return "resolved";
-			case BundleEvent.STARTED: return "started";
-			case BundleEvent.STARTING: return "starting";
-			case BundleEvent.STOPPED: return "stopped";
-			case BundleEvent.STOPPING: return "stopping";
-			case BundleEvent.UNINSTALLED: return "uninstalled";
-			case BundleEvent.UNRESOLVED: return "unresolved";
-			case BundleEvent.UPDATED: return "updated";
-			default: return "unknown";
+			case BundleEvent.INSTALLED: return INSTALLED;
+			case BundleEvent.LAZY_ACTIVATION: return LAZY_ACTIVATION;
+			case BundleEvent.RESOLVED: return RESOLVED;
+			case BundleEvent.STARTED: return STARTED;
+			case BundleEvent.STARTING: return STARTING;
+			case BundleEvent.STOPPED: return STOPPED;
+			case BundleEvent.STOPPING: return STOPPING;
+			case BundleEvent.UNINSTALLED: return UNINSTALLED;
+			case BundleEvent.UNRESOLVED: return UNRESOLVED;
+			case BundleEvent.UPDATED: return UPDATED;
+			default: return UNKNOWN;
 		}
 	}
 
@@ -80,7 +93,7 @@ public class BundleUsageMonitor implements UsageMonitor {
 	}
 
 	private String getBundleVersion(Bundle bundle) {
-		return (String)bundle.getHeaders().get("Bundle-Version");
+		return (String)bundle.getHeaders().get(BUNDLE_VERSION);
 	}
 
 

@@ -95,7 +95,7 @@ public class ExtensionIdToBundleMapper {
 		map = new HashMap<String, String>();
 		IConfigurationElement[] elements = Platform.getExtensionRegistry().getConfigurationElementsFor(extensionPointId);
 		for (IConfigurationElement element : elements) {
-			map.put(element.getAttribute("id"), element.getContributor().getName());
+			map.put(element.getAttribute("id"), element.getContributor().getName()); //$NON-NLS-1$
 		}
 	}
 }

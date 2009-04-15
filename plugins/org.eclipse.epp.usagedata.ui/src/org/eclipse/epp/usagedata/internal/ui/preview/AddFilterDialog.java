@@ -25,7 +25,7 @@ public class AddFilterDialog {
 	}
 
 	public void prompt(Shell shell, String suggestion) {
-		InputDialog dialog = new InputDialog(shell, "New filter", "Provide a bundle name pattern. Bundles ids that match this pattern will not be uploaded.",suggestion, getValidator());
+		InputDialog dialog = new InputDialog(shell, Messages.getString("AddFilterDialog.0"), Messages.getString("AddFilterDialog.1"),suggestion, getValidator()); //$NON-NLS-1$ //$NON-NLS-2$
 		dialog.open();
 		if (dialog.getReturnCode() != InputDialog.OK) return;
 		
@@ -38,8 +38,8 @@ public class AddFilterDialog {
 				if (pattern == null) return null;
 				pattern = pattern.trim();
 				if (pattern.length() == 0) return null;
-				if (alreadyHasPattern(pattern)) return "You are already filtering this pattern.";
-				if (!FilterUtils.isValidBundleIdPattern(pattern)) return "The pattern is not valid.";
+				if (alreadyHasPattern(pattern)) return Messages.getString("AddFilterDialog.2"); //$NON-NLS-1$
+				if (!FilterUtils.isValidBundleIdPattern(pattern)) return Messages.getString("AddFilterDialog.3"); //$NON-NLS-1$
 				return null;
 			}
 		};

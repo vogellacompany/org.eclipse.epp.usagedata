@@ -15,12 +15,12 @@ import org.eclipse.jface.preference.IPreferenceStore;
 
 public class UsageDataCaptureSettings {
 
-	public static final String CAPTURE_ENABLED_KEY = UsageDataCaptureActivator.PLUGIN_ID + ".enabled";
-	public static final String USER_ACCEPTED_TERMS_OF_USE_KEY = UsageDataCaptureActivator.PLUGIN_ID + ".terms_accepted";
+	public static final String CAPTURE_ENABLED_KEY = UsageDataCaptureActivator.PLUGIN_ID + ".enabled"; //$NON-NLS-1$
+	public static final String USER_ACCEPTED_TERMS_OF_USE_KEY = UsageDataCaptureActivator.PLUGIN_ID + ".terms_accepted"; //$NON-NLS-1$
 
 	public boolean isEnabled() {
 		if (System.getProperties().containsKey(CAPTURE_ENABLED_KEY)) {
-			return "true".equals(System.getProperty(CAPTURE_ENABLED_KEY));
+			return "true".equals(System.getProperty(CAPTURE_ENABLED_KEY)); //$NON-NLS-1$
 		} else if (getPreferencesStore().contains(CAPTURE_ENABLED_KEY)) {
 			return getPreferencesStore().getBoolean(CAPTURE_ENABLED_KEY);
 		} else {

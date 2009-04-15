@@ -127,11 +127,11 @@ public class UploadManager {
 	 */
 	private Uploader getUploader() {
 		IConfigurationElement[] elements = Platform.getExtensionRegistry()
-				.getConfigurationElementsFor(UsageDataRecordingActivator.PLUGIN_ID + ".uploader");
+				.getConfigurationElementsFor(UsageDataRecordingActivator.PLUGIN_ID + ".uploader"); //$NON-NLS-1$
 		for (IConfigurationElement element : elements) {
-			if ("uploader".equals(element.getName())) {
+			if ("uploader".equals(element.getName())) { //$NON-NLS-1$
 				try {
-					Object uploader = element.createExecutableExtension("class");
+					Object uploader = element.createExecutableExtension("class"); //$NON-NLS-1$
 					if (uploader instanceof Uploader) {
 						return (Uploader) uploader;
 					}

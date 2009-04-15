@@ -149,7 +149,7 @@ public class UsageDataRecorder implements UsageDataEventListener {
 			}
 			events.clear();
 		} catch (IOException e) {
-			handleException(e, "Error writing events to file.");
+			handleException(e, "Error writing events to file."); //$NON-NLS-1$
 		} finally {
 			close(writer);
 		}
@@ -157,7 +157,7 @@ public class UsageDataRecorder implements UsageDataEventListener {
 
 	private void handleException(IOException e, String message) {
 		if (exceptionCount++ > EXCEPTION_THRESHOLD) {
-			UsageDataRecordingActivator.getDefault().log(IStatus.INFO, e, "The UsageDataRecorder has been stopped because it has caused too many exceptions");
+			UsageDataRecordingActivator.getDefault().log(IStatus.INFO, e, "The UsageDataRecorder has been stopped because it has caused too many exceptions"); //$NON-NLS-1$
 			stop();
 		}
 		UsageDataRecordingActivator.getDefault().log(IStatus.ERROR, e, message);

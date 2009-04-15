@@ -29,18 +29,18 @@ public class UsageDataRecorderUtils {
 	 *             if writing to the {@link Writer} fails.
 	 */
 	public static void writeHeader(Writer writer) throws IOException {
-		writer.write("what");
-		writer.write(",");
-		writer.write("kind");
-		writer.write(",");
-		writer.write("bundleId");
-		writer.write(",");
-		writer.write("bundleVersion");
-		writer.write(",");
-		writer.write("description");
-		writer.write(",");
-		writer.write("time");
-		writer.write("\n");
+		writer.write("what"); //$NON-NLS-1$
+		writer.write(","); //$NON-NLS-1$
+		writer.write("kind"); //$NON-NLS-1$
+		writer.write(","); //$NON-NLS-1$
+		writer.write("bundleId"); //$NON-NLS-1$
+		writer.write(","); //$NON-NLS-1$
+		writer.write("bundleVersion"); //$NON-NLS-1$
+		writer.write(","); //$NON-NLS-1$
+		writer.write("description"); //$NON-NLS-1$
+		writer.write(","); //$NON-NLS-1$
+		writer.write("time"); //$NON-NLS-1$
+		writer.write("\n"); //$NON-NLS-1$
 	}
 	
 	/**
@@ -58,17 +58,17 @@ public class UsageDataRecorderUtils {
 	 */
 	public static void writeEvent(Writer writer, UsageDataEvent event) throws IOException {
 		writer.write(event.what);
-		writer.write(",");
+		writer.write(","); //$NON-NLS-1$
 		writer.write(event.kind);
-		writer.write(",");
-		writer.write(event.bundleId != null ? event.bundleId : "");
-		writer.write(",");
-		writer.write(event.bundleVersion != null ? event.bundleVersion : "");
-		writer.write(",");
-		writer.write(event.description != null ? encode(event.description) : "");
-		writer.write(",");
+		writer.write(","); //$NON-NLS-1$
+		writer.write(event.bundleId != null ? event.bundleId : ""); //$NON-NLS-1$
+		writer.write(","); //$NON-NLS-1$
+		writer.write(event.bundleVersion != null ? event.bundleVersion : ""); //$NON-NLS-1$
+		writer.write(","); //$NON-NLS-1$
+		writer.write(event.description != null ? encode(event.description) : ""); //$NON-NLS-1$
+		writer.write(","); //$NON-NLS-1$
 		writer.write(String.valueOf(event.when));
-		writer.write("\n");
+		writer.write("\n"); //$NON-NLS-1$
 	}
 
 	/**
@@ -98,22 +98,22 @@ public class UsageDataRecorderUtils {
 				builder.append(next);
 				break;
 			case '\\' :
-				builder.append("\\\\");
+				builder.append("\\\\"); //$NON-NLS-1$
 				break;
 			case '\n' :
-				builder.append("\\n");
+				builder.append("\\n"); //$NON-NLS-1$
 				break;
 			case '\r' :
-				builder.append("\\r");
+				builder.append("\\r"); //$NON-NLS-1$
 				break;
 			case '\b' :
-				builder.append("\\b");
+				builder.append("\\b"); //$NON-NLS-1$
 				break;
 			case '\t' :
-				builder.append("\\t");
+				builder.append("\\t"); //$NON-NLS-1$
 				break;
 			case '\f' :
-				builder.append("\\f");
+				builder.append("\\f"); //$NON-NLS-1$
 				break;				
 			default :
 				builder.append(next);
@@ -146,15 +146,15 @@ public class UsageDataRecorderUtils {
 	 */
 	public static String[] splitLine(String line) {
 		List<String> strings = new java.util.ArrayList<String>(); 
-		Matcher matcher = Pattern.compile("(\"([^\"]|\"\")*\"|[^,]*)(,|$)").matcher(line);
+		Matcher matcher = Pattern.compile("(\"([^\"]|\"\")*\"|[^,]*)(,|$)").matcher(line); //$NON-NLS-1$
 		while (matcher.find()) {
 			String string = matcher.group();
 			// Remove leading commas.
-			string = string.replaceAll(",$", "");
+			string = string.replaceAll(",$", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			// Remove optional leading and trailing double-quotes.
-			string = string.replaceAll("^?\"(.*)\"$", "$1");
+			string = string.replaceAll("^?\"(.*)\"$", "$1"); //$NON-NLS-1$ //$NON-NLS-2$
 			// Replace double double-quotes with a single double-quote
-			string = string.replaceAll("\"\"", "\"");
+			string = string.replaceAll("\"\"", "\""); //$NON-NLS-1$ //$NON-NLS-2$
 			
 			strings.add( string ); 
 		}

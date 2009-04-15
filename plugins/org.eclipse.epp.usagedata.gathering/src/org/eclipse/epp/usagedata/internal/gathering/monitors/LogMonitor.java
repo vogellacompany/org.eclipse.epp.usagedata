@@ -25,8 +25,8 @@ import org.eclipse.epp.usagedata.internal.gathering.services.UsageDataService;
  */
 public class LogMonitor implements UsageMonitor {
 	
-	private static final String WHAT_ERROR = "error";
-	private static final String KIND_LOG = "log";
+	private static final String WHAT_ERROR = "error"; //$NON-NLS-1$
+	private static final String KIND_LOG = "log"; //$NON-NLS-1$
 	
 	private UsageDataService usageDataService;
 	ILogListener listener = new ILogListener() {

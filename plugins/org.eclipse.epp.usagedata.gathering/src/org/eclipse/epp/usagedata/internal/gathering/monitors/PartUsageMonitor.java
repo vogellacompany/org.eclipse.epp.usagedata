@@ -45,25 +45,40 @@ import org.eclipse.ui.PlatformUI;
  * 
  */
 public class PartUsageMonitor implements UsageMonitor {
+	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
+
+	private static final String WORKBENCH_BUNDLE_ID = "org.eclipse.ui.workbench"; //$NON-NLS-1$
+	private static final String PERSPECTIVES_EXTENSION_POINT = "org.eclipse.ui.perspectives"; //$NON-NLS-1$
+
+	private static final String WORKBENCH = "workbench"; //$NON-NLS-1$
+	private static final String PERSPECTIVE = "perspective"; //$NON-NLS-1$
+	private static final String DEACTIVATED = "deactivated"; //$NON-NLS-1$
+	private static final String ACTIVATED = "activated"; //$NON-NLS-1$
+	private static final String CLOSED = "closed"; //$NON-NLS-1$
+	private static final String OPENED = "opened"; //$NON-NLS-1$
+	private static final String PART = "part"; //$NON-NLS-1$
+	private static final String VIEW = "view"; //$NON-NLS-1$
+	private static final String EDITOR = "editor"; //$NON-NLS-1$
+
 	private UsageDataService usageDataService;
 	
 	private IWindowListener windowListener = new IWindowListener() {
 		public void windowOpened(IWorkbenchWindow window) {
-			recordEvent("opened", window);
+			recordEvent(OPENED, window);
 			hookListener(window);
 		}
 
 		public void windowClosed(IWorkbenchWindow window) {
-			recordEvent("closed", window);
+			recordEvent(CLOSED, window);
 			unhookListeners(window);
 		}
 
 		public void windowActivated(IWorkbenchWindow window) {
-			recordEvent("activated", window);
+			recordEvent(ACTIVATED, window);
 		}
 
 		public void windowDeactivated(IWorkbenchWindow window) {
-			recordEvent("deactivated", window);
+			recordEvent(DEACTIVATED, window);
 		}
 
 	};
@@ -84,7 +99,7 @@ public class PartUsageMonitor implements UsageMonitor {
 	
 	private IPartListener partListener = new IPartListener() {
 		public void partActivated(IWorkbenchPart part) {
-			recordEvent("activated", part);
+			recordEvent(ACTIVATED, part);
 		}
 
 		public void partDeactivated(IWorkbenchPart part) {
@@ -96,17 +111,17 @@ public class PartUsageMonitor implements UsageMonitor {
 		}
 
 		public void partClosed(IWorkbenchPart part) {
-			recordEvent("closed", part);
+			recordEvent(CLOSED, part);
 		}
 
 		public void partOpened(IWorkbenchPart part) {
-			recordEvent("opened", part);
+			recordEvent(OPENED, part);
 		}
 	};
 
 	private IPerspectiveListener perspectiveListener = new IPerspectiveListener() {
 		public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
-			recordEvent("activated", perspective);
+			recordEvent(ACTIVATED, perspective);
 		}
 
 		public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {			
@@ -124,7 +139,7 @@ public class PartUsageMonitor implements UsageMonitor {
 	public void startMonitoring(UsageDataService usageDataService) {
 		this.usageDataService = usageDataService;
 		IWorkbench workbench = PlatformUI.getWorkbench();		
-		perspectiveToBundleIdMapper = new ExtensionIdToBundleMapper("org.eclipse.ui.perspectives");
+		perspectiveToBundleIdMapper = new ExtensionIdToBundleMapper(PERSPECTIVES_EXTENSION_POINT);
 		hookListeners(workbench);
 	}
 
@@ -201,7 +216,7 @@ public class PartUsageMonitor implements UsageMonitor {
 	private void hookListeners(IWorkbenchPage page) {
 		IPerspectiveDescriptor perspective = page.getPerspective();
 		if (perspective != null) {
-			recordEvent("activated", perspective);
+			recordEvent(ACTIVATED, perspective);
 		}
 		page.addPartListener(partListener);
 	}
@@ -213,12 +228,12 @@ public class PartUsageMonitor implements UsageMonitor {
 	protected void recordEvent(String event, IWorkbenchWindow window) {
 		// TODO Hardcoding bundle id for now.
 		// TODO Does an IWorkbenchWindow have an id?
-		usageDataService.recordEvent(event, "workbench", "", "org.eclipse.ui.workbench");
+		usageDataService.recordEvent(event, WORKBENCH, EMPTY_STRING, WORKBENCH_BUNDLE_ID);
 	}
 
 	protected void recordEvent(String event, IPerspectiveDescriptor perspective) {
 		String id = perspective.getId();
-		usageDataService.recordEvent(event, "perspective", id, perspectiveToBundleIdMapper.getBundleId(id));
+		usageDataService.recordEvent(event, PERSPECTIVE, id, perspectiveToBundleIdMapper.getBundleId(id));
 	}
 	
 	private void recordEvent(String event, IWorkbenchPart part) {
@@ -239,9 +254,9 @@ public class PartUsageMonitor implements UsageMonitor {
 	 */
 	private String getKind(IWorkbenchPartSite site) {
 		if (site instanceof IEditorSite)
-			return "editor";
+			return EDITOR;
 		else if (site instanceof IViewSite)
-			return "view";
-		return "part";
+			return VIEW;
+		return PART;
 	}
 }

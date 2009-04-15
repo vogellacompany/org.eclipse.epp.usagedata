@@ -38,23 +38,23 @@ import org.eclipse.ui.PlatformUI;
  */
 public class UsageDataRecordingSettings implements UploadSettings {
 
-	private static final String DEFAULT_ID = "unknown";
+	private static final String DEFAULT_ID = "unknown"; //$NON-NLS-1$
 
-	private static final String UPLOAD_FILE_PREFIX = "upload";
+	private static final String UPLOAD_FILE_PREFIX = "upload"; //$NON-NLS-1$
 
-	public static final String UPLOAD_PERIOD_KEY = UsageDataRecordingActivator.PLUGIN_ID + ".period";
-	public static final String LAST_UPLOAD_KEY = UsageDataRecordingActivator.PLUGIN_ID + ".last-upload";
-	public static final String ASK_TO_UPLOAD_KEY = UsageDataRecordingActivator.PLUGIN_ID + ".ask";
-	public static final String LOG_SERVER_ACTIVITY_KEY = UsageDataRecordingActivator.PLUGIN_ID + ".log-server";
-	public static final String FILTER_ECLIPSE_BUNDLES_ONLY_KEY = UsageDataRecordingActivator.PLUGIN_ID + ".filter-eclipse-only";
-	public static final String FILTER_PATTERNS_KEY = UsageDataRecordingActivator.PLUGIN_ID + ".filter-patterns";
+	public static final String UPLOAD_PERIOD_KEY = UsageDataRecordingActivator.PLUGIN_ID + ".period"; //$NON-NLS-1$
+	public static final String LAST_UPLOAD_KEY = UsageDataRecordingActivator.PLUGIN_ID + ".last-upload"; //$NON-NLS-1$
+	public static final String ASK_TO_UPLOAD_KEY = UsageDataRecordingActivator.PLUGIN_ID + ".ask"; //$NON-NLS-1$
+	public static final String LOG_SERVER_ACTIVITY_KEY = UsageDataRecordingActivator.PLUGIN_ID + ".log-server"; //$NON-NLS-1$
+	public static final String FILTER_ECLIPSE_BUNDLES_ONLY_KEY = UsageDataRecordingActivator.PLUGIN_ID + ".filter-eclipse-only"; //$NON-NLS-1$
+	public static final String FILTER_PATTERNS_KEY = UsageDataRecordingActivator.PLUGIN_ID + ".filter-patterns"; //$NON-NLS-1$
 	
-	static final String UPLOAD_URL_KEY = UsageDataRecordingActivator.PLUGIN_ID + ".upload-url";
+	static final String UPLOAD_URL_KEY = UsageDataRecordingActivator.PLUGIN_ID + ".upload-url"; //$NON-NLS-1$
 	
 	public static final int PERIOD_REASONABLE_MINIMUM = 60000; 
 	// TODO 15 * 60 * 1000; // 15 minutes
 	static final int UPLOAD_PERIOD_DEFAULT = 5 * 24 * 60 * 60 * 1000; // five days
-	static final String UPLOAD_URL_DEFAULT = "http://udc.eclipse.org/upload.php";
+	static final String UPLOAD_URL_DEFAULT = "http://udc.eclipse.org/upload.php"; //$NON-NLS-1$
 	static final boolean ASK_TO_UPLOAD_DEFAULT = true;
 
 	private PreferencesBasedFilter filter = new PreferencesBasedFilter();
@@ -79,7 +79,7 @@ public class UsageDataRecordingSettings implements UploadSettings {
 				// If we can't get it from this source, we'll pick it up some
 				// other way. Long the problem and move on.
 				UsageDataRecordingActivator.getDefault().log(IStatus.WARNING,
-						e, "The UsageDataUploader cannot parse the %1$s system property (\"%2$s\"", UPLOAD_PERIOD_KEY, value);
+						e, "The UsageDataUploader cannot parse the %1$s system property (\"%2$s\"", UPLOAD_PERIOD_KEY, value); //$NON-NLS-1$
 			}
 		} else if (getPreferencesStore().contains(UPLOAD_PERIOD_KEY)) {
 			period = getPreferencesStore().getLong(UPLOAD_PERIOD_KEY);
@@ -134,7 +134,7 @@ public class UsageDataRecordingSettings implements UploadSettings {
 	 * @return the {@link File} where usage data events are persisted.
 	 */
 	public File getEventFile() {
-		return new File(getWorkingDirectory(), "usagedata.csv");
+		return new File(getWorkingDirectory(), "usagedata.csv"); //$NON-NLS-1$
 	}
 
 	/**
@@ -152,7 +152,7 @@ public class UsageDataRecordingSettings implements UploadSettings {
 		File file = null;
 		// TODO Unlikely (impossible?), but what if this spins forever.
 		while (true) {
-			file = new File(parent, UPLOAD_FILE_PREFIX + index++ + ".csv");
+			file = new File(parent, UPLOAD_FILE_PREFIX + index++ + ".csv"); //$NON-NLS-1$
 			if (!file.exists())
 				return file;
 		}
@@ -168,8 +168,8 @@ public class UsageDataRecordingSettings implements UploadSettings {
 	 * @return an identifier for the workstation.
 	 */
 	public String getUserId() {
-		return getExistingOrGenerateId(new File(System.getProperty("user.home")), "." + UsageDataRecordingActivator.PLUGIN_ID
-				+ ".userId");
+		return getExistingOrGenerateId(new File(System.getProperty("user.home")), "." + UsageDataRecordingActivator.PLUGIN_ID //$NON-NLS-1$ //$NON-NLS-2$
+				+ ".userId"); //$NON-NLS-1$
 	}
 
 	/**
@@ -181,8 +181,8 @@ public class UsageDataRecordingSettings implements UploadSettings {
 	 * @return an identifier for the workspace.
 	 */
 	public String getWorkspaceId() {
-		return getExistingOrGenerateId(getWorkingDirectory(), "."
-				+ UsageDataRecordingActivator.PLUGIN_ID + ".workspaceId");
+		return getExistingOrGenerateId(getWorkingDirectory(), "." //$NON-NLS-1$
+				+ UsageDataRecordingActivator.PLUGIN_ID + ".workspaceId"); //$NON-NLS-1$
 	}
 
 
@@ -197,7 +197,7 @@ public class UsageDataRecordingSettings implements UploadSettings {
 	 * @see UploadSettings#isLoggingServerActivity()
 	 */
 	public boolean isLoggingServerActivity() {
-		return "true".equals(System.getProperty(LOG_SERVER_ACTIVITY_KEY));
+		return "true".equals(System.getProperty(LOG_SERVER_ACTIVITY_KEY)); //$NON-NLS-1$
 	}
 
 	/**
@@ -278,7 +278,7 @@ public class UsageDataRecordingSettings implements UploadSettings {
 	}
 
 	private void handleCannotReadFileException(File file, IOException e) {
-		UsageDataRecordingActivator.getDefault().log(IStatus.WARNING,	e, "Cannot read the existing id from %1$s; using the default.", file.toString());
+		UsageDataRecordingActivator.getDefault().log(IStatus.WARNING,	e, "Cannot read the existing id from %1$s; using the default.", file.toString()); //$NON-NLS-1$
 	}
 
 	private IPreferenceStore getPreferencesStore() {
@@ -325,7 +325,7 @@ public class UsageDataRecordingSettings implements UploadSettings {
 
 	public boolean shouldAskBeforeUploading() {
 		if (System.getProperties().containsKey(ASK_TO_UPLOAD_KEY)) {
-			return "true".equals(System.getProperty(ASK_TO_UPLOAD_KEY));
+			return "true".equals(System.getProperty(ASK_TO_UPLOAD_KEY)); //$NON-NLS-1$
 		} else if (getPreferencesStore().contains(ASK_TO_UPLOAD_KEY)) {
 			return getPreferencesStore().getBoolean(ASK_TO_UPLOAD_KEY);
 		} else {
@@ -378,7 +378,7 @@ public class UsageDataRecordingSettings implements UploadSettings {
 	}
 
 	public String getUserAgent() {
-		return "Eclipse UDC/" + UsageDataRecordingActivator.getDefault().getBundle().getHeaders().get("Bundle-Version");
+		return "Eclipse UDC/" + UsageDataRecordingActivator.getDefault().getBundle().getHeaders().get("Bundle-Version"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public String getUploadUrl() {
