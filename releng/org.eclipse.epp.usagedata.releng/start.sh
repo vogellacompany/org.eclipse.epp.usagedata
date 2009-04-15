@@ -9,7 +9,7 @@ BUILD_DATE=`date +%Y%m%d`
 BUILD_TIME=`date +%H%M`
 TIMESTAMP=${BUILD_DATE}${BUILD_TIME}
 
-rm -r ${BUILD_ROOT}/workspace
+rm -rf ${BUILD_ROOT}/workspace
 
 cd ${BUILD_ROOT}
 cvs -d :pserver:anonymous@dev.eclipse.org:/cvsroot/technology co org.eclipse.epp/releng/org.eclipse.epp.usagedata.releng/
