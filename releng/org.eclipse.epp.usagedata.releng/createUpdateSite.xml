@@ -43,7 +43,7 @@
     <mkdir dir="${pack200tempDir}" />
     <!-- TODO is there a possibility to get rid of this annoying version number in the jar reference -->
     <java 
-      jar="${eclipse.home}/plugins/org.eclipse.equinox.launcher_1.0.100.v20071211.jar" 
+      jar="${launcherJar}" 
       fork="true" 
       failonerror="true" 
       dir="${tempDir}"

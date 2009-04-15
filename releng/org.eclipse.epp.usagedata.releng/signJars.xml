@@ -10,7 +10,7 @@
   <property name="udc.signOutputDir" value="${udc.signInputDir}/output" />
   <property name="udc.outputFile" value="${udc.signOutputDir}/${udc.archiveName}"/>
     
-  <target name="signJars" depends="test.signer.exists" if="udc.signJars">
+  <target name="signJars" depends="test.signer.exists" if="signer.exists">
     <mkdir dir="${udc.signOutputDir}"/>
     <chmod dir="${udc.signOutputDir}" perm="ugo+rw" />
     
