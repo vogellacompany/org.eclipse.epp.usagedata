@@ -34,7 +34,7 @@ fi
 # Take build type from the command-line; assume 'N' if not specified.
 BUILD_TYPE=${1:-N} 
 
-ECLIPSE_ROOT=${ECLIPSE_BASES}/eclipse-SDK-3.5M6-linux-gtk/eclipse
+ECLIPSE_ROOT=${ECLIPSE_BASES}/eclipse-SDK-3.5M7-linux-gtk/eclipse
 UPDATE_SITE=${UPDATE_ROOT}/${BUILD_TYPE}
 
 BUILD_DATE=`date +%Y%m%d`
