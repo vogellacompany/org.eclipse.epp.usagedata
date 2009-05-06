@@ -12,7 +12,6 @@ package org.eclipse.epp.usagedata.internal.ui.preview;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -60,6 +59,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.forms.widgets.FormText;
+
+import com.ibm.icu.text.DateFormat;
 
 public class UploadPreview  {
 
@@ -150,7 +151,7 @@ public class UploadPreview  {
 	private void createDescriptionText(Composite parent) {
 		FormText text = new FormText(parent, SWT.NONE);
 		text.setImage("x", xImage); //$NON-NLS-1$
-		text.setText(Messages.getString("UploadPreview.2"), true, false); //$NON-NLS-1$
+		text.setText(Messages.UploadPreview_2, true, false); 
 		GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, false);
 		layoutData.widthHint = 500;
 		text.setLayoutData(layoutData);
@@ -228,7 +229,7 @@ public class UploadPreview  {
 	
 	private void createWhatColumn() {
 		whatColumn = new UsageDataTableViewerColumn(SWT.LEFT);
-		whatColumn.setText(Messages.getString("UploadPreview.3")); //$NON-NLS-1$
+		whatColumn.setText(Messages.UploadPreview_3); 
 		whatColumn.setLabelProvider(new UsageDataColumnProvider() {
 			@Override
 			public String getText(UsageDataEventWrapper event) {
@@ -239,7 +240,7 @@ public class UploadPreview  {
 
 	private void createKindColumn() {
 		kindColumn = new UsageDataTableViewerColumn(SWT.LEFT);
-		kindColumn.setText(Messages.getString("UploadPreview.4")); //$NON-NLS-1$
+		kindColumn.setText(Messages.UploadPreview_4); 
 		kindColumn.setLabelProvider(new UsageDataColumnProvider() {
 			@Override
 			public String getText(UsageDataEventWrapper event) {
@@ -250,7 +251,7 @@ public class UploadPreview  {
 
 	private void createDescriptionColumn() {
 		descriptionColumn = new UsageDataTableViewerColumn(SWT.LEFT);
-		descriptionColumn.setText(Messages.getString("UploadPreview.5")); //$NON-NLS-1$
+		descriptionColumn.setText(Messages.UploadPreview_5); 
 		descriptionColumn.setLabelProvider(new UsageDataColumnProvider() {
 			@Override
 			public String getText(UsageDataEventWrapper event) {
@@ -261,7 +262,7 @@ public class UploadPreview  {
 
 	private void createBundleIdColumn() {
 		bundleIdColumn = new UsageDataTableViewerColumn(SWT.LEFT);
-		bundleIdColumn.setText(Messages.getString("UploadPreview.6")); //$NON-NLS-1$
+		bundleIdColumn.setText(Messages.UploadPreview_6); 
 		bundleIdColumn.setLabelProvider(new UsageDataColumnProvider() {
 			@Override
 			public String getText(UsageDataEventWrapper event) {
@@ -272,7 +273,7 @@ public class UploadPreview  {
 
 	private void createBundleVersionColumn() {
 		bundleVersionColumn = new UsageDataTableViewerColumn(SWT.LEFT);
-		bundleVersionColumn.setText(Messages.getString("UploadPreview.7")); //$NON-NLS-1$
+		bundleVersionColumn.setText(Messages.UploadPreview_7); 
 		bundleVersionColumn.setLabelProvider(new UsageDataColumnProvider() {
 			@Override
 			public String getText(UsageDataEventWrapper event) {
@@ -283,7 +284,7 @@ public class UploadPreview  {
 
 	private void createTimestampColumn() {
 		timestampColumn = new UsageDataTableViewerColumn(SWT.LEFT);
-		timestampColumn.setText(Messages.getString("UploadPreview.8")); //$NON-NLS-1$
+		timestampColumn.setText(Messages.UploadPreview_8); 
 		timestampColumn.setLabelProvider(new UsageDataColumnProvider() {
 			@Override
 			public String getText(UsageDataEventWrapper event) {
@@ -322,7 +323,7 @@ public class UploadPreview  {
 	
 	private void createEclipseOnlyButton(Composite buttons) {
 		eclipseOnlyButton = new Button(buttons, SWT.CHECK);
-		eclipseOnlyButton.setText(Messages.getString("UploadPreview.9")); //$NON-NLS-1$
+		eclipseOnlyButton.setText(Messages.UploadPreview_9); 
 		eclipseOnlyButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -349,7 +350,7 @@ public class UploadPreview  {
 	private void createAddFilterButton(Composite parent) {
 		if (parameters.getFilter() instanceof PreferencesBasedFilter) {
 			addFilterButton = new Button(parent, SWT.PUSH);
-			addFilterButton.setText(Messages.getString("UploadPreview.10")); //$NON-NLS-1$
+			addFilterButton.setText(Messages.UploadPreview_10); 
 			addFilterButton.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
@@ -362,7 +363,7 @@ public class UploadPreview  {
 	private void createRemoveFilterButton(Composite parent) {
 		if (parameters.getFilter() instanceof PreferencesBasedFilter) {
 			removeFilterButton = new Button(parent, SWT.PUSH);
-			removeFilterButton.setText(Messages.getString("UploadPreview.11")); //$NON-NLS-1$
+			removeFilterButton.setText(Messages.UploadPreview_11); 
 			removeFilterButton.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {

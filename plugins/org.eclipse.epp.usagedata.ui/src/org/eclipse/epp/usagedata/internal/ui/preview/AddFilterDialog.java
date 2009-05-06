@@ -25,7 +25,7 @@ public class AddFilterDialog {
 	}
 
 	public void prompt(Shell shell, String suggestion) {
-		InputDialog dialog = new InputDialog(shell, Messages.getString("AddFilterDialog.0"), Messages.getString("AddFilterDialog.1"),suggestion, getValidator()); //$NON-NLS-1$ //$NON-NLS-2$
+		InputDialog dialog = new InputDialog(shell, Messages.AddFilterDialog_0, Messages.AddFilterDialog_1,suggestion, getValidator()); 
 		dialog.open();
 		if (dialog.getReturnCode() != InputDialog.OK) return;
 		
@@ -38,8 +38,8 @@ public class AddFilterDialog {
 				if (pattern == null) return null;
 				pattern = pattern.trim();
 				if (pattern.length() == 0) return null;
-				if (alreadyHasPattern(pattern)) return Messages.getString("AddFilterDialog.2"); //$NON-NLS-1$
-				if (!FilterUtils.isValidBundleIdPattern(pattern)) return Messages.getString("AddFilterDialog.3"); //$NON-NLS-1$
+				if (alreadyHasPattern(pattern)) return Messages.AddFilterDialog_2; 
+				if (!FilterUtils.isValidBundleIdPattern(pattern)) return Messages.AddFilterDialog_3; 
 				return null;
 			}
 		};

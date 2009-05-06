@@ -35,7 +35,7 @@ public class TermsOfUseWizardPage extends WizardPage {
 	public TermsOfUseWizardPage(AskUserUploader uploader) {
 		super("wizardPage"); //$NON-NLS-1$
 		this.uploader = uploader;
-		setTitle(Messages.getString("TermsOfUseWizardPage.1")); //$NON-NLS-1$
+		setTitle(Messages.TermsOfUseWizardPage_1); 
 		//setDescription("This wizard uploads captured usage data. Clearly a better description is required.");
 	}
 
@@ -51,7 +51,7 @@ public class TermsOfUseWizardPage extends WizardPage {
 		browser.setUrl(getTermsOfUseUrl());
 		
 		final Button acceptTermsButton = new Button(container, SWT.CHECK);
-		acceptTermsButton.setText(Messages.getString("TermsOfUseWizardPage.2")); //$NON-NLS-1$
+		acceptTermsButton.setText(Messages.TermsOfUseWizardPage_2); 
 		GridData gridData = new GridData(SWT.BEGINNING, SWT.FILL, true, false);
 		acceptTermsButton.setLayoutData(gridData);
 		acceptTermsButton.setSelection(uploader.hasUserAcceptedTermsOfUse());

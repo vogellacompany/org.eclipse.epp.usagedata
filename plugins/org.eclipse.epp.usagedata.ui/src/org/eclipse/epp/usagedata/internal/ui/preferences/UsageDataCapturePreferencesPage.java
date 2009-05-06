@@ -44,7 +44,7 @@ public class UsageDataCapturePreferencesPage extends PreferencePage
 	};
 	
 	public UsageDataCapturePreferencesPage() {
-		setDescription(Messages.getString("UsageDataCapturePreferencesPage.0")); //$NON-NLS-1$
+		setDescription(Messages.UsageDataCapturePreferencesPage_0); 
 		setPreferenceStore(UsageDataCaptureActivator.getDefault().getPreferenceStore());
 	}
 	
@@ -103,7 +103,7 @@ public class UsageDataCapturePreferencesPage extends PreferencePage
 		composite.setLayout(new GridLayout());
 		
 		captureEnabledCheckbox = new Button(composite, SWT.CHECK | SWT.LEFT);
-		captureEnabledCheckbox.setText(Messages.getString("UsageDataCapturePreferencesPage.1"));  //$NON-NLS-1$
+		captureEnabledCheckbox.setText(Messages.UsageDataCapturePreferencesPage_1);  
 	}
 
 

@@ -47,8 +47,8 @@ public class SelectActionWizardPage extends WizardPage {
 	public SelectActionWizardPage(AskUserUploader uploader) {
 		super("wizardPage"); //$NON-NLS-1$
 		this.uploader = uploader;
-		setTitle(Messages.getString("SelectActionWizardPage.3")); //$NON-NLS-1$
-		setDescription(Messages.getString("SelectActionWizardPage.4")); //$NON-NLS-1$
+		setTitle(Messages.SelectActionWizardPage_3); 
+		setDescription(Messages.SelectActionWizardPage_4); 
 	}
 
 	/**
@@ -58,7 +58,7 @@ public class SelectActionWizardPage extends WizardPage {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout());
 		
-		FormText greeting = createFormText(composite, Messages.getString("SelectActionWizardPage.5")); //$NON-NLS-1$
+		FormText greeting = createFormText(composite, Messages.SelectActionWizardPage_5); 
 		greeting.addHyperlinkListener(new HyperlinkAdapter() {
 			@Override
 			public void linkActivated(HyperlinkEvent event) {
@@ -97,7 +97,7 @@ public class SelectActionWizardPage extends WizardPage {
 	}
 
 	private String getTermsText() {
-		return Messages.getString("SelectActionWizardPage.9"); //$NON-NLS-1$
+		return Messages.SelectActionWizardPage_9; 
 	}
 
 	private void createSpacer(Composite parent) {
@@ -108,23 +108,23 @@ public class SelectActionWizardPage extends WizardPage {
 	}
 
 	private void createUploadNowRadio(Composite parent) {
-		uploadNowRadio = createRadio(parent, Messages.getString("SelectActionWizardPage.10"), AskUserUploader.UPLOAD_NOW); //$NON-NLS-1$
-		createDescriptionText(parent, Messages.getString("SelectActionWizardPage.11")); //$NON-NLS-1$
+		uploadNowRadio = createRadio(parent, Messages.SelectActionWizardPage_10, AskUserUploader.UPLOAD_NOW); 
+		createDescriptionText(parent, Messages.SelectActionWizardPage_11); 
 	}
 
 	private void createUploadAlwaysRadio(Composite parent) {
-		uploadAlwaysRadio = createRadio(parent, Messages.getString("SelectActionWizardPage.12"), AskUserUploader.UPLOAD_ALWAYS); //$NON-NLS-1$
-		createDescriptionText(parent, Messages.getString("SelectActionWizardPage.13")); //$NON-NLS-1$
+		uploadAlwaysRadio = createRadio(parent, Messages.SelectActionWizardPage_12, AskUserUploader.UPLOAD_ALWAYS); 
+		createDescriptionText(parent, Messages.SelectActionWizardPage_13); 
 	}
 
 	private void createDontUploadRadio(Composite parent) {
-		dontUploadRadio = createRadio(parent, Messages.getString("SelectActionWizardPage.14"), AskUserUploader.DONT_UPLOAD);		 //$NON-NLS-1$
-		createDescriptionText(parent, Messages.getString("SelectActionWizardPage.15")); //$NON-NLS-1$
+		dontUploadRadio = createRadio(parent, Messages.SelectActionWizardPage_14, AskUserUploader.DONT_UPLOAD);		 
+		createDescriptionText(parent, Messages.SelectActionWizardPage_15); 
 	}
 
 	private void createNeverUploadRadio(Composite parent) {
-		neverUploadRadio = createRadio(parent, Messages.getString("SelectActionWizardPage.16"),AskUserUploader.NEVER_UPLOAD);	 //$NON-NLS-1$
-		createDescriptionText(parent, Messages.getString("SelectActionWizardPage.17"));		 //$NON-NLS-1$
+		neverUploadRadio = createRadio(parent, Messages.SelectActionWizardPage_16,AskUserUploader.NEVER_UPLOAD);	 
+		createDescriptionText(parent, Messages.SelectActionWizardPage_17);		 
 	}
 
 	private Button createRadio(Composite parent, String label, final int action) {

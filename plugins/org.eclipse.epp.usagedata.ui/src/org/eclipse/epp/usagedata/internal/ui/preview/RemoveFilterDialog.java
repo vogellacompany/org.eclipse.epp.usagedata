@@ -25,8 +25,8 @@ public class RemoveFilterDialog {
 				return super.getTableStyle() - SWT.SINGLE + SWT.MULTI;
 			}
 		};
-		dialog.setTitle(Messages.getString("RemoveFilterDialog.0")); //$NON-NLS-1$
-		dialog.setMessage(Messages.getString("RemoveFilterDialog.1")); //$NON-NLS-1$
+		dialog.setTitle(Messages.RemoveFilterDialog_0); 
+		dialog.setMessage(Messages.RemoveFilterDialog_1); 
 		dialog.setAddCancelButton(true);
 		dialog.setLabelProvider(new LabelProvider() {
 			@Override

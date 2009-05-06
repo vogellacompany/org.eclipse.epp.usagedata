@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.epp.usagedata.internal.ui.preferences;
 
-import java.text.MessageFormat;
 import java.util.Date;
 
 import org.eclipse.epp.usagedata.internal.gathering.UsageDataCaptureActivator;
@@ -44,6 +43,8 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
+
+import com.ibm.icu.text.MessageFormat;
 
 public class UsageDataUploadingPreferencesPage extends PreferencePage
 	implements IWorkbenchPreferencePage {
@@ -102,7 +103,7 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 	};
 
 	public UsageDataUploadingPreferencesPage() {
-		setDescription(Messages.getString("UsageDataUploadingPreferencesPage.0")); //$NON-NLS-1$
+		setDescription(Messages.UsageDataUploadingPreferencesPage_0); 
 		setPreferenceStore(UsageDataRecordingActivator.getDefault().getPreferenceStore());
 	}
 
@@ -230,7 +231,7 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 		composite.setLayout(new GridLayout());
 				
 		askBeforeUploadingCheckbox = new Button(composite, SWT.CHECK | SWT.LEFT);
-		askBeforeUploadingCheckbox.setText(Messages.getString("UsageDataUploadingPreferencesPage.1"));  //$NON-NLS-1$
+		askBeforeUploadingCheckbox.setText(Messages.UsageDataUploadingPreferencesPage_1);  
 	}
 
 
@@ -239,7 +240,7 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 	 */
 	private void createUploadingArea(Composite parent) {
 		Group group = new Group(parent, SWT.NONE);
-		group.setText(Messages.getString("UsageDataUploadingPreferencesPage.2")); //$NON-NLS-1$
+		group.setText(Messages.UsageDataUploadingPreferencesPage_2); 
 		group.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
 		group.setLayout(new GridLayout(3, false));
@@ -257,7 +258,7 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 	 */
 	private void createUploadPeriodField(Group composite) {
 		Label label = new Label(composite, SWT.NONE);
-		label.setText(Messages.getString("UsageDataUploadingPreferencesPage.3")); //$NON-NLS-1$
+		label.setText(Messages.UsageDataUploadingPreferencesPage_3); 
 		
 		uploadPeriodText = new Text(composite, SWT.SINGLE | SWT.BORDER | SWT.RIGHT);
 		uploadPeriodText.setTextLimit(2);
@@ -270,10 +271,10 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 		gc.dispose();
 		uploadPeriodText.setLayoutData(gridData);
 		
-		new Label(composite, SWT.NONE).setText(Messages.getString("UsageDataUploadingPreferencesPage.4")); //$NON-NLS-1$
+		new Label(composite, SWT.NONE).setText(Messages.UsageDataUploadingPreferencesPage_4); 
 		
 		final ControlDecoration rangeErrorDecoration = new ControlDecoration(uploadPeriodText, SWT.LEFT | SWT.TOP);
-		rangeErrorDecoration.setDescriptionText(MessageFormat.format(Messages.getString("UsageDataUploadingPreferencesPage.5"), MINIMUM_PERIOD_IN_DAYS, MAXIMUM_PERIOD_IN_DAYS)); //$NON-NLS-1$
+		rangeErrorDecoration.setDescriptionText(MessageFormat.format(Messages.UsageDataUploadingPreferencesPage_5, new Object[] {MINIMUM_PERIOD_IN_DAYS, MAXIMUM_PERIOD_IN_DAYS})); 
 		rangeErrorDecoration.setImage(getErrorImage());
 		rangeErrorDecoration.hide();
 		
@@ -316,7 +317,7 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 	 */
 	private void createLastUploadField(Group composite) {
 		label = new Label(composite, SWT.NONE);
-		label.setText(Messages.getString("UsageDataUploadingPreferencesPage.6")); //$NON-NLS-1$
+		label.setText(Messages.UsageDataUploadingPreferencesPage_6); 
 		
 		lastUploadText = new Text(composite, SWT.SINGLE | SWT.BORDER);
 		lastUploadText.setEnabled(false);
@@ -356,7 +357,7 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 	 */
 	private void createUploadNowButton(Composite composite) {
 		uploadNowButton = new Button(composite, SWT.PUSH);
-		uploadNowButton.setText(Messages.getString("UsageDataUploadingPreferencesPage.7")); //$NON-NLS-1$
+		uploadNowButton.setText(Messages.UsageDataUploadingPreferencesPage_7); 
 		uploadNowButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -372,7 +373,7 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 		FieldDecoration decoration = FieldDecorationRegistry.getDefault().getFieldDecoration(FieldDecorationRegistry.DEC_WARNING);
 		ControlDecoration warning = new ControlDecoration(control, SWT.BOTTOM | SWT.LEFT);
 		warning.setImage(decoration.getImage());
-		warning.setDescriptionText(Messages.getString("UsageDataUploadingPreferencesPage.8")); //$NON-NLS-1$
+		warning.setDescriptionText(Messages.UsageDataUploadingPreferencesPage_8); 
 	}
 
 	private String getLastUploadDateAsString() {

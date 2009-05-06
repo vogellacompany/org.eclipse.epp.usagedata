@@ -26,8 +26,8 @@ public class UploadPreviewPage extends WizardPage {
 	public UploadPreviewPage(AskUserUploader uploader) {
 		super("wizardPage"); //$NON-NLS-1$
 		this.uploader = uploader;
-		setTitle(Messages.getString("UploadPreviewPage.1")); //$NON-NLS-1$
-		setDescription(Messages.getString("UploadPreviewPage.2")); //$NON-NLS-1$
+		setTitle(Messages.UploadPreviewPage_1); 
+		setDescription(Messages.UploadPreviewPage_2); 
 	}
 
 	public void createControl(Composite parent) {

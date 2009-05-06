@@ -54,7 +54,7 @@ public class UsageDataUploadingTermsOfUsePage extends PreferencePage
 		browser.setUrl(getTermsOfUseUrl());
 		
 		acceptTermsButton = new Button(composite, SWT.CHECK);
-		acceptTermsButton.setText(Messages.getString("UsageDataUploadingTermsOfUsePage.0")); //$NON-NLS-1$
+		acceptTermsButton.setText(Messages.UsageDataUploadingTermsOfUsePage_0); 
 		GridData gridData = new GridData(SWT.BEGINNING, SWT.FILL, true, false);
 		acceptTermsButton.setLayoutData(gridData);		
 		
