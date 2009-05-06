@@ -3,7 +3,7 @@
       id="org.eclipse.epp.usagedata.feature"
       label="Usage Data Collector"
       version="1.1.0.qualifier"
-      provider-name="Eclipse.org">
+      provider-name="Eclipse Packaging Project">
 
    <description url="http://www.eclipse.org/epp/usagedata/index.php">
       The Usage Data Collector collects information
@@ -50,7 +50,7 @@ http://www.eclipse.org/legal/epl-v10.html
    </license>
 
    <url>
-      <update label="EPP Update Site" url="http://download.eclipse.org/technology/epp/updates/1.0/"/>
+      <update label="EPP Update Site" url="http://download.eclipse.org/technology/epp/updates/1.1/"/>
    </url>
 
    <requires>
