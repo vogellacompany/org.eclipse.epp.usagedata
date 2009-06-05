@@ -11,6 +11,8 @@
 package org.eclipse.epp.usagedata.internal.recording;
 
 import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
 import java.io.Writer;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -138,6 +140,9 @@ public class UsageDataRecorderUtils {
 	 * <p>
 	 * The value: "first,\"\"\"second\"\", third\",fourth" will be parsed into
 	 * three strings: "first", "\"second\", third", and "fourth".
+	 * <p>
+	 * Note that callers can safely assume that all entries in the resulting
+	 * array will be non-<code>null</code>.
 	 * 
 	 * @param line
 	 *            a {@link String}. Must not be <code>null</code>.
@@ -146,18 +151,48 @@ public class UsageDataRecorderUtils {
 	 */
 	public static String[] splitLine(String line) {
 		List<String> strings = new java.util.ArrayList<String>(); 
-		Matcher matcher = Pattern.compile("(\"([^\"]|\"\")*\"|[^,]*)(,|$)").matcher(line); //$NON-NLS-1$
-		while (matcher.find()) {
-			String string = matcher.group();
-			// Remove leading commas.
-			string = string.replaceAll(",$", ""); //$NON-NLS-1$ //$NON-NLS-2$
-			// Remove optional leading and trailing double-quotes.
-			string = string.replaceAll("^?\"(.*)\"$", "$1"); //$NON-NLS-1$ //$NON-NLS-2$
-			// Replace double double-quotes with a single double-quote
-			string = string.replaceAll("\"\"", "\""); //$NON-NLS-1$ //$NON-NLS-2$
-			
-			strings.add( string ); 
+		try {
+			splitLine(line, strings);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		return (String[]) strings.toArray(new String[strings.size()]);
+	}
+
+	private static void splitLine(String line, List<String> strings) throws IOException {
+		/*
+		 * There is a potential issue with this implementation in the case
+		 * where a quoted-wrapped field starts with an escaped quote. i.e.
+		 * the string \"\"\"value\"\"\" will be read as escaped-quote, followed
+		 * by quote rather than as quote followed by escaped-quote as is
+		 * intended. The net result is the same (evidenced in the test cases).
+		 */
+		Reader reader = new StringReader(line);
+		int next = 0;
+		StringBuilder builder = new StringBuilder();
+		boolean inQuote = false;
+		while ((next = reader.read()) != -1) {
+			if (next == '"') {
+				reader.mark(1);
+				if (reader.read() == '"') {
+					builder.append('"');
+				} else {
+					reader.reset();
+					inQuote = !inQuote;
+				}
+			} else if (next == ',') {
+				if (inQuote) {
+					builder.append(',');
+				} else {
+					strings.add(builder.toString());
+					builder = new StringBuilder();
+				}
+				
+			} else {
+				builder.append((char)next);
+			}
+		}
+		strings.add(builder.toString());
 	}
 }

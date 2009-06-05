@@ -60,9 +60,28 @@ public class UsageDataFileReader {
 		reader = bufferedReader;
 	}
 
+	/**
+	 * Curiously enough, this method creates and returns a
+	 * {@link UsageDataEvent} object from the given {@link String}. If an error
+	 * occurs while processing the string, <code>null</code> is returned
+	 * instead.
+	 * 
+	 * @param line
+	 *            A single line in CSV format representing a UDC event.
+	 * @return An instance of {@link UsageDataEvent} containing the information
+	 *         found in the given string.
+	 */
 	private UsageDataEvent createUsageDataEvent(String line) {
 		String[] tokens = UsageDataRecorderUtils.splitLine(line);
-		UsageDataEvent usageDataEvent = new UsageDataEvent(tokens[0], tokens[1], tokens[4], tokens[2], tokens[3], Long.valueOf(tokens[5]));
+		if (tokens == null) return null;
+		if (tokens.length != 6) return null;
+		Long when;
+		try {
+			when = Long.valueOf(tokens[5].trim());
+		} catch (NumberFormatException e) {
+			return null; // How's that for error recovery?
+		}
+		UsageDataEvent usageDataEvent = new UsageDataEvent(tokens[0], tokens[1], tokens[4], tokens[2], tokens[3], when);
 		return usageDataEvent;
 	}
 
@@ -70,10 +89,36 @@ public class UsageDataFileReader {
 		reader.close();
 	}
 
+	/**
+	 * This method provides a mechanism for visiting the contents of
+	 * a file containing UDC data.
+	 * 
+	 * @see #iterate(IProgressMonitor, Iterator)
+	 * 
+	 * @param iterator instance of {@link Iterator} to notify.
+	 * @throws Exception
+	 */
 	public void iterate(Iterator iterator) throws Exception {
 		iterate(new NullProgressMonitor(), iterator);
 	}
 
+	/**
+	 * This method provides a mechanism for visiting the contents of
+	 * a file containing UDC data. Essentially, it implements a visitor
+	 * pattern (and in retrospect, we probably should have called this
+	 * method &quot;visit&quot; or something equally clever). The 
+	 * {@link Iterator} is sent a separate message for the header, and
+	 * then for each line in the file that we're processing.
+	 * 
+	 * <p>Lines in the file that cause errors on parsing attempts
+	 * are skipped.</p>
+	 * 
+	 * @see #iterate(IProgressMonitor, Iterator)
+	 * 
+	 * @param monitor a progress monitor
+	 * @param iterator instance of {@link Iterator} to notify.
+	 * @throws Exception
+	 */
 	public void iterate(IProgressMonitor monitor, Iterator iterator) throws Exception {
 		monitor.beginTask("Iterate over usage data file", IProgressMonitor.UNKNOWN); //$NON-NLS-1$
 		try {
@@ -84,7 +129,7 @@ public class UsageDataFileReader {
 				String line = reader.readLine();
 				if (line == null) break;
 				UsageDataEvent event = createUsageDataEvent(line);
-				iterator.event(line, event);
+				if (event != null) iterator.event(line, event);
 			}
 		} finally {
 			monitor.done();
