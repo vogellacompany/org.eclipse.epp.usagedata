@@ -51,8 +51,7 @@ public class UsageDataRecordingSettings implements UploadSettings {
 	
 	static final String UPLOAD_URL_KEY = UsageDataRecordingActivator.PLUGIN_ID + ".upload-url"; //$NON-NLS-1$
 	
-	public static final int PERIOD_REASONABLE_MINIMUM = 60000; 
-	// TODO 15 * 60 * 1000; // 15 minutes
+	public static final int PERIOD_REASONABLE_MINIMUM = 15 * 60 * 1000; // 15 minutes
 	static final int UPLOAD_PERIOD_DEFAULT = 5 * 24 * 60 * 60 * 1000; // five days
 	static final String UPLOAD_URL_DEFAULT = "http://udc.eclipse.org/upload.php"; //$NON-NLS-1$
 	static final boolean ASK_TO_UPLOAD_DEFAULT = true;
