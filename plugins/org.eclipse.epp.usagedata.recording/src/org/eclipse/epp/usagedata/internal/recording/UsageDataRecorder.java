@@ -43,7 +43,7 @@ public class UsageDataRecorder implements UsageDataEventListener {
 	 * When the file holding upload data exceeds this number
 	 * of bytes, it is moved so that it can be uploaded.
 	 */
-	private static final long FILE_SIZE_THRESHOLD = 1000; // TODO Increase to 10KB.
+	private static final long FILE_SIZE_THRESHOLD = 25000; 
 
 	/**
 	 * This list holds events as they are received. Once the number of events in
