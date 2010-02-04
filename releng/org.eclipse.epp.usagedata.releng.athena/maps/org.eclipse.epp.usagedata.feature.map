@@ -1,0 +1,9 @@
+# map file that uses HEAD to build the EPP Usage Data Collector
+
+# feature
+feature@org.eclipse.epp.usagedata.feature=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.epp/features/org.eclipse.epp.usagedata.feature
+
+# plugins
+plugin@org.eclipse.epp.usagedata.gathering=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.epp/plugins/org.eclipse.epp.usagedata.gathering
+plugin@org.eclipse.epp.usagedata.recording=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.epp/plugins/org.eclipse.epp.usagedata.recording
+plugin@org.eclipse.epp.usagedata.ui=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.epp/plugins/org.eclipse.epp.usagedata.ui
