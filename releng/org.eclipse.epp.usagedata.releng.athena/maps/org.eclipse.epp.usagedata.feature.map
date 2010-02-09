@@ -1,9 +1,18 @@
 # map file that uses HEAD to build the EPP Usage Data Collector
 
-# feature
+# Feature
 feature@org.eclipse.epp.usagedata.feature=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.epp/features/org.eclipse.epp.usagedata.feature
 
-# plugins
+# Bundles
 plugin@org.eclipse.epp.usagedata.gathering=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.epp/plugins/org.eclipse.epp.usagedata.gathering
 plugin@org.eclipse.epp.usagedata.recording=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.epp/plugins/org.eclipse.epp.usagedata.recording
 plugin@org.eclipse.epp.usagedata.ui=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.epp/plugins/org.eclipse.epp.usagedata.ui
+
+# Bundles from Orbit
+plugin@org.apache.commons.codec,1.3.0=p2IU,id=org.apache.commons.codec,version=1.3.0.v20080530-1600,repository=http://download.eclipse.org/tools/orbit/downloads/drops/R20090825191606/updateSite
+plugin@org.apache.commons.httpclient,3.1.0=p2IU,id=org.apache.commons.httpclient,version=3.1.0.v20080605-1935,repository=http://download.eclipse.org/tools/orbit/downloads/drops/R20090825191606/updateSite
+plugin@org.apache.commons.logging,1.0.4=p2IU,id=org.apache.commons.logging,version=1.0.4.v200904062259,repository=http://download.eclipse.org/tools/orbit/downloads/drops/R20090825191606/updateSite
+
+#plugin@org.apache.commons.codec,1.3.0=GET,http://download.eclipse.org/tools/orbit/downloads/drops/S20100120144102/bundles/org.apache.commons.codec_1.3.0.v20100106-1700.jar
+#plugin@org.apache.commons.httpclient,3.1.0=GET,http://download.eclipse.org/tools/orbit/downloads/drops/S20100120144102/bundles/org.apache.commons.httpclient_3.1.0.v20080605-1935.jar
+#plugin@org.apache.commons.logging,1.0.4=GET,http://download.eclipse.org/tools/orbit/downloads/drops/S20100120144102/bundles/org.apache.commons.logging_1.0.4.v200904062259.jar
