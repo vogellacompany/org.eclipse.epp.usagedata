@@ -13,10 +13,9 @@ package org.eclipse.epp.usagedata.internal.ui.wizards;
 import org.eclipse.epp.usagedata.internal.ui.uploaders.AskUserUploader;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 
-public class AskUserUploaderWizard extends Wizard implements INewWizard {
+public class AskUserUploaderWizard extends Wizard {
 	private final AskUserUploader uploader;
 	private TermsOfUseWizardPage termsPage;
 	private UploadPreviewPage previewPage;
