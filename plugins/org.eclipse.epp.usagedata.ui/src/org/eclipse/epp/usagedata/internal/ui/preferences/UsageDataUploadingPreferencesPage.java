@@ -251,6 +251,7 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 			
 		createUploadPeriodField(group);
 		createLastUploadField(group);
+		createUploadUrlField(group);
 	}
 		
 	/*
@@ -311,7 +312,7 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 	private Image getErrorImage() {
 		return FieldDecorationRegistry.getDefault().getFieldDecoration(FieldDecorationRegistry.DEC_ERROR).getImage();
 	}
-
+	
 	/*
 	 * Note that this method expects to be run in the UI Thread.
 	 */
@@ -325,6 +326,26 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 		gridData.horizontalIndent = FieldDecorationRegistry.getDefault().getMaximumDecorationWidth();
 		gridData.horizontalSpan = 2;
 		lastUploadText.setLayoutData(gridData);
+	}
+	
+	/*
+	 * The Upload URL is not expected to change during execution, so
+	 * we make not consideration for changes while the preferences
+	 * page is open.
+	 * 
+	 * Note that this method expects to be run in the UI Thread.
+	 */
+	private void createUploadUrlField(Group composite) {
+		label = new Label(composite, SWT.NONE);
+		label.setText(Messages.UsageDataUploadingPreferencesPage_9); 
+		
+		Text uploadUrlText = new Text(composite, SWT.SINGLE | SWT.BORDER);
+		uploadUrlText.setEnabled(false);
+		GridData gridData = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		gridData.horizontalIndent = FieldDecorationRegistry.getDefault().getMaximumDecorationWidth();
+		gridData.horizontalSpan = 2;
+		uploadUrlText.setLayoutData(gridData);
+		uploadUrlText.setText(getSettings().getUploadUrl());
 	}
 	
 	/*
