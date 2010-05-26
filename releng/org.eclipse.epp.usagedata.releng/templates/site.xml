@@ -8,5 +8,5 @@
       version="1.3.0.XXXXXXXXXXXXX">
       <category name="UsageData"/>
    </feature>
-   <category-def name="UsageData" label="Usage Data"/>
+   <category-def name="UsageData" label="EPP Usage Data Collector"/>
 </site>
