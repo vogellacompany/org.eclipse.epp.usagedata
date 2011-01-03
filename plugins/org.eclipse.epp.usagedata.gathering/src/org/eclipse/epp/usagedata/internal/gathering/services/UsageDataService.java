@@ -149,24 +149,14 @@ public class UsageDataService {
 		if (eventConsumerJob != null) return;
 		
 		eventConsumerJob = new Job("Usage Data Event consumer") { //$NON-NLS-1$
-			boolean cancelled = false;
-
 			public IStatus run(IProgressMonitor monitor) {
 				waitForWorkbenchToFinishStarting();
-				while (!isCancelled()) {
+				while (!monitor.isCanceled()) {
 					UsageDataEvent event = getQueuedEvent();
 					dispatchEvent(event);
 				}
 				return Status.OK_STATUS;
-			}
-		
-			synchronized boolean isCancelled() {
-				return cancelled;
-			}
-			
-			protected synchronized void canceling() {
-				cancelled = true;
-			}			
+			}	
 		};
 		eventConsumerJob.setSystem(true);
 		eventConsumerJob.setPriority(Job.LONG);
@@ -204,7 +194,18 @@ public class UsageDataService {
 	
 	protected void stopEventConsumerJob() {
 		eventConsumerJob.cancel();
-		
+		// Interrupt the thread to make sure that the
+		// job gets the chance to terminate gracefully. Then join
+		// the thread to make sure that it gets enough time to 
+		// properly shutdown. See Bug 306449.
+		Thread thread = eventConsumerJob.getThread();
+		if (thread != null) 
+			thread.interrupt();
+		try {
+			eventConsumerJob.join();
+		} catch (InterruptedException e) {
+			// Oh well, we tried...
+		}
 		eventConsumerJob = null;
 	}
 	
@@ -288,6 +289,7 @@ public class UsageDataService {
 	 *            the {@link UsageDataEvent} to dispatch.
 	 */
 	private void dispatchEvent(UsageDataEvent event) {
+		if (event == null) return;
 		registerBundleVersion(event);
 		if (event.bundleVersion == null) event.bundleVersion = getBundleVersion(event.bundleId);
 		Object[] listeners = eventListeners.getListeners();
