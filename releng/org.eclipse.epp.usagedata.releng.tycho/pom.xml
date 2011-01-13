@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.eclipse.epp.usagedata</groupId>
+	<artifactId>workspace</artifactId>
+	<version>1.3.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<modules>
+		<module>../org.eclipse.epp.usagedata.feature</module>
+		<module>../org.eclipse.epp.usagedata.gathering</module>
+		<module>../org.eclipse.epp.usagedata.gathering.tests</module>
+		<module>../org.eclipse.epp.usagedata.recording</module>
+		<module>../org.eclipse.epp.usagedata.recording.tests</module>
+		<module>../org.eclipse.epp.usagedata.repository</module>
+		<module>../org.eclipse.epp.usagedata.tests</module>
+		<module>../org.eclipse.epp.usagedata.ui</module>
+		<module>../org.eclipse.epp.usagedata.ui.tests</module>
+	</modules>
+	<repositories>
+		<repository>
+			<id>helios</id>
+			<layout>p2</layout>
+			<url>http://download.eclipse.org/releases/helios</url>
+		</repository>
+	</repositories>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.sonatype.tycho</groupId>
+				<artifactId>tycho-maven-plugin</artifactId>
+				<version>0.10.0</version>
+				<extensions>true</extensions>
+			</plugin>
+		</plugins>
+	</build>
+</project>

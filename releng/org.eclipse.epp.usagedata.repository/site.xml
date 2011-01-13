@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/org.eclipse.epp.usagedata.feature_1.3.0.qualifier.jar" id="org.eclipse.epp.usagedata.feature" version="1.3.0.qualifier">
+      <category name="udc"/>
+   </feature>
+   <category-def name="udc" label="Usage Data Collector"/>
+</site>
