@@ -14,7 +14,7 @@
 		<module>../org.eclipse.epp.usagedata.recording</module>
 		<module>../org.eclipse.epp.usagedata.recording.tests</module>
 		<module>../org.eclipse.epp.usagedata.repository</module>
-		<module>../org.eclipse.epp.usagedata.tests</module>
+		<!-- <module>../org.eclipse.epp.usagedata.tests</module> --->
 		<module>../org.eclipse.epp.usagedata.ui</module>
 		<module>../org.eclipse.epp.usagedata.ui.tests</module>
 	</modules>
