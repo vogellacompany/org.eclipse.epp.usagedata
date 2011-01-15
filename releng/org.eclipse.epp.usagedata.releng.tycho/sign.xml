@@ -3,7 +3,7 @@
 	name="Sign all jar files with Eclipse Foundation key">
 
 	<property name="target.dir" value="${WORKSPACE}/org.eclipse.epp/releng/org.eclipse.epp.usagedata.repository/target/" />
-	<property name="archive.name" value="org.eclipse.epp.usagedata.feature-${BUILD_TAG}.zip" />
+	<property name="archive.name" value="${WORKSPACE}/org.eclipse.epp.usagedata-${BUILD_TAG}.zip" />
 	<property name="udc.archiveDir" value="${buildDirectory}/${buildLabel}" />
 	<property name="udc.signInputDir" value="/home/data/httpd/download-staging.priv/technology/epp" />
 	<property name="udc.inputFile" value="${udc.signInputDir}/${udc.archiveName}" />
