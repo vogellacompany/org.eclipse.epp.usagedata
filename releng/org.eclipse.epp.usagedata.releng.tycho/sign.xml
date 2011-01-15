@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="signJars"
+	name="Sign all jar files with Eclipse Foundation key">
+
+	<property name="udc.archiveName"
+		value="org.eclipse.epp.usagedata.feature-${buildId}.zip" />
+	<property name="udc.archiveDir" value="${buildDirectory}/${buildLabel}" />
+	<property name="udc.signInputDir"
+		value="/home/data/httpd/download-staging.priv/technology/epp" />
+	<property name="udc.inputFile" value="${udc.signInputDir}/${udc.archiveName}" />
+	<property name="udc.signOutputDir" value="${udc.signInputDir}/output" />
+	<property name="udc.outputFile" value="${udc.signOutputDir}/${udc.archiveName}" />
+
+	<target name="signJars" depends="test.signer.exists" if="signer.exists">
+		<mkdir dir="${udc.signOutputDir}" />
+		<chmod dir="${udc.signOutputDir}" perm="ugo+rw" />
+
+		<copy file="${udc.archiveDir}/${udc.archiveName}" todir="${udc.signInputDir}"
+			overwrite="true" />
+		<!-- TODO add pack.properties to zip file -->
+
+		<echo message="Start the external sign script" />
+		<exec executable="/usr/bin/sign" dir="${udc.signInputDir}"
+			output="sign.out" error="sign.err" append="true">
+			<arg value="${udc.inputFile}" />
+			<arg value="mail" />
+			<arg value="${udc.signOutputDir}" />
+		</exec>
+
+		<echo message="Waiting for file ${udc.outputFile}" />
+		<waitfor maxwait="15" maxwaitunit="minute" checkevery="5"
+			checkeveryunit="second">
+			<available file="${udc.outputFile}" />
+		</waitfor>
+
+		<sleep seconds="10" />
+		<echo message="Copying signed zip file to old location" />
+		<copy file="${udc.outputFile}" todir="${udc.archiveDir}"
+			overwrite="true" />
+
+	</target>
+
+	<!-- This target tests to see if the signer is available. We'll only attempt 
+		to sign if it does. -->
+	<target name="test.signer.exists">
+		<available file="/usr/bin/sign" property="signer.exists" />
+	</target>
+</project>

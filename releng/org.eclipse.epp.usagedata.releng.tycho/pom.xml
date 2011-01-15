@@ -15,11 +15,11 @@
 	</properties>
 
 	<modules>
-		<module>../org.eclipse.epp.usagedata.feature</module>
-		<module>../org.eclipse.epp.usagedata.gathering</module>
-		<module>../org.eclipse.epp.usagedata.recording</module>
-		<module>../org.eclipse.epp.usagedata.ui</module>
-		<module>../org.eclipse.epp.usagedata.repository</module>
+		<module>../../features/org.eclipse.epp.usagedata.feature</module>
+		<module>../../plugins/org.eclipse.epp.usagedata.gathering</module>
+		<module>../../plugins/org.eclipse.epp.usagedata.recording</module>
+		<module>../../plugins/org.eclipse.epp.usagedata.ui</module>
+		<module>../../releng/org.eclipse.epp.usagedata.repository</module>
 		<!-- <module>../org.eclipse.epp.usagedata.tests</module> -->
 		<!-- <module>../org.eclipse.epp.usagedata.gathering.tests</module> -->
 		<!-- <module>../org.eclipse.epp.usagedata.recording.tests</module> -->
