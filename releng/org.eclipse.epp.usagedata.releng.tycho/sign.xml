@@ -2,11 +2,10 @@
 <project default="makeZip"
 	name="Sign all jar files with Eclipse Foundation key">
 
-	<property name="target.dir" value="org.eclipse.epp/releng/org.eclipse.epp.usagedata.repository/target/" />
+	<property name="target.dir" value="${WORKSPACE}/org.eclipse.epp/releng/org.eclipse.epp.usagedata.repository/target/" />
 	<property name="archive.name" value="org.eclipse.epp.usagedata.feature-${BUILD_TAG}.zip" />
 	<property name="udc.archiveDir" value="${buildDirectory}/${buildLabel}" />
-	<property name="udc.signInputDir"
-		value="/home/data/httpd/download-staging.priv/technology/epp" />
+	<property name="udc.signInputDir" value="/home/data/httpd/download-staging.priv/technology/epp" />
 	<property name="udc.inputFile" value="${udc.signInputDir}/${udc.archiveName}" />
 	<property name="udc.signOutputDir" value="${udc.signInputDir}/output" />
 	<property name="udc.outputFile" value="${udc.signOutputDir}/${udc.archiveName}" />
