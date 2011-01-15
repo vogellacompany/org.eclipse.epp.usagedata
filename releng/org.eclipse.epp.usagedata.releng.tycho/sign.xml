@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project default="signJars"
+<project default="makeZip"
 	name="Sign all jar files with Eclipse Foundation key">
 
-	<property name="udc.archiveName"
-		value="org.eclipse.epp.usagedata.feature-${buildId}.zip" />
+	<property name="target.dir" value="org.eclipse.epp/releng/org.eclipse.epp.usagedata.repository/target/" />
+	<property name="archiveName" value="org.eclipse.epp.usagedata.feature-${BUILD_TAG}.zip" />
 	<property name="udc.archiveDir" value="${buildDirectory}/${buildLabel}" />
 	<property name="udc.signInputDir"
 		value="/home/data/httpd/download-staging.priv/technology/epp" />
@@ -11,6 +11,15 @@
 	<property name="udc.signOutputDir" value="${udc.signInputDir}/output" />
 	<property name="udc.outputFile" value="${udc.signOutputDir}/${udc.archiveName}" />
 
+	<target name="makeZip" depends="test.update.site.exists" if="update.size.exists">
+		<echo message="Zipping update site into ${archiveName}" />
+		<zip destfile="archiveName" basedir="${target.dir}"/>
+	</target>
+	
+	<target name="test.update.site.exists">
+		<available file="${target.dir}" type="dir" property="update.site.exists" />
+	</target>
+	
 	<target name="signJars" depends="test.signer.exists" if="signer.exists">
 		<mkdir dir="${udc.signOutputDir}" />
 		<chmod dir="${udc.signOutputDir}" perm="ugo+rw" />
