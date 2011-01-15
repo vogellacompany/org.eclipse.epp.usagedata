@@ -11,7 +11,7 @@
 	<property name="udc.signOutputDir" value="${udc.signInputDir}/output" />
 	<property name="udc.outputFile" value="${udc.signOutputDir}/${udc.archiveName}" />
 
-	<target name="makeZip" depends="test.update.site.exists" if="update.size.exists">
+	<target name="makeZip" depends="test.update.site.exists" if="update.site.exists">
 		<echo message="Zipping update site into ${archiveName}" />
 		<zip destfile="archiveName" basedir="${target.dir}"/>
 	</target>
