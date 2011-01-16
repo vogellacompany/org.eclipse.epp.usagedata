@@ -41,7 +41,7 @@
 		<sleep seconds="10" />
 		<echo message="Copying signed zip file to old location" />
 		<copy todir="${signed.dir}" overwrite="true">
-			<fileset dir="$signer.output.dir" />
+			<fileset dir="${signer.output.dir}" />
 		</copy>
 
 	</target>
