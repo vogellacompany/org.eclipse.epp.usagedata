@@ -88,9 +88,9 @@
 								</goals>
 								<configuration>
 									<tasks>
-										<mkdir dir="/home/data/httpd/download.eclipse.org/technology/epp/updates/1.3/1.3.1.${buildQualifier}"/>
+										<mkdir dir="/shared/technology/epp/updates/1.3/1.3.1.${buildQualifier}"/>
 										<copy includeemptydirs="false"
-											todir="/home/data/httpd/download.eclipse.org/technology/epp/updates/1.3/1.3.1.${buildQualifier}">
+											todir="/shared/technology/epp/updates/1.3/1.3.1.${buildQualifier}">
 											<fileset dir="target/checksumFix">
 												<include name="**" />
 											</fileset>
