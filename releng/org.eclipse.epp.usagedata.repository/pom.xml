@@ -13,6 +13,19 @@
 	<artifactId>org.eclipse.epp.usagedata.repository</artifactId>
 	<version>1.3.1-SNAPSHOT</version>
 	<packaging>eclipse-update-site</packaging>
+	<name>Usage Data Collector Repository</name>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.sonatype.tycho</groupId>
+				<artifactId>maven-osgi-packaging-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<configuration>
+					<archiveSite>true</archiveSite>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 	<profiles>
 		<profile>
 			<id>build-server</id>
