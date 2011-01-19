@@ -47,6 +47,9 @@
 							<!-- the sign remote -->
 							<execution>
 								<id>sign</id>
+								<configuration>
+									<wagonPath>/home/data/httpd/download-staging.priv/technology/epp</wagonPath>
+								</configuration>
 								<phase>package</phase>
 								<goals>
 									<goal>sign</goal>
