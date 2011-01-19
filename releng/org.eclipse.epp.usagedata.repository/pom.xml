@@ -35,6 +35,9 @@
 						<groupId>org.mortbay.jetty.toolchain</groupId>
 						<artifactId>eclipse-signing-maven-plugin</artifactId>
 						<version>1.0-SNAPSHOT</version>
+						<configuration>
+							<signerInputDirectory>/home/data/httpd/download-staging.priv/technology/epp</signerInputDirectory>
+						</configuration>
 						<executions>
 							<!-- example of executing locally for pack -->
 							<execution>
@@ -47,9 +50,6 @@
 							<!-- the sign remote -->
 							<execution>
 								<id>sign</id>
-								<configuration>
-									<wagonPath>/home/data/httpd/download-staging.priv/technology/epp</wagonPath>
-								</configuration>
 								<phase>package</phase>
 								<goals>
 									<goal>sign</goal>
@@ -76,7 +76,31 @@
 							</execution>
 						</executions>
 					</plugin>
+
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>deploy</id>
+								<phase>install</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<tasks>
+										<copy includeemptydirs="false"
+											todir="/home/data/httpd/download.eclipse.org/downloads/technology/epp/updates/1.3/1.3.1_SNAPSHOT">
+											<fileset dir="target/checksumFix">
+												<include name="**" />
+											</fileset>
+										</copy>
+									</tasks>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
 				</plugins>
+			</plugins>
 			</build>
 		</profile>
 	</profiles>
