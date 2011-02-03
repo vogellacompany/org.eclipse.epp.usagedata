@@ -33,5 +33,6 @@ java -jar ${launcher} \
  -artifactRepository file:${target}/publish \
  -source ${target}/site \
  -compress \
+ -reusePack200Files \
  -publishArtifacts
  
