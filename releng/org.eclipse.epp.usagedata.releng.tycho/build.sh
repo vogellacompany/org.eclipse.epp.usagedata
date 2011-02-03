@@ -56,7 +56,7 @@ echo "Starting Pack200"
 #echo "- Found JAR Processor at ${jarprocessor}"
 #java -jar ${jarprocessor} -verbose -outputDir ${repository}/target/pack200/ -processAll -repack -pack ${repository}/target/site_assembly.zip 
     
-launcher=`find ${eclipse} -type f -name 'org.eclipse.equinox.launcher_*.jar ' -print0`
+launcher=`find ${eclipse} -type f -name 'org.eclipse.equinox.launcher_*.jar' -print0`
 output=${repository}/target/optimized
 java -jar ${launcher} -application org.eclipse.update.core.siteOptimizer -digestBuilder \
   -jarProcessor -verbose -outputDir ${optimized} -processAll -repack -pack ${repository}/target/site_assembly.zip
