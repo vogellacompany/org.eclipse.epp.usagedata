@@ -10,6 +10,7 @@
 # *    Wayne Beaton (Eclipse Foundation) - Initial implementation
 # *******************************************************************************/
 #
+# This script will build the UDC 
 root=:pserver:anonymous@dev.eclipse.org:/cvsroot/technology
 path=org.eclipse.epp
 releng=$path/releng/org.eclipse.epp.usagedata.releng.tycho
@@ -29,7 +30,7 @@ do
 		user=`echo $arg | sed 's/[-a-zA-Z0-9]*=//'`
 		;;
 		--help)
-		echo -e "./build.sh [--tag={tag}} [--eclipse={path}]\nWhere {tag} is the CVS tag to build (default: HEAD) and {path} points to an Eclipse install (for Pack200)"
+		echo -e "./build.sh [--tag={tag}} [--eclipse={path}]\n Where {tag} is the CVS tag to build (default: HEAD) and\n {path} points to an Eclipse install (default ~/Eclipse/eclipse-rcp-helios-SR1-linux-gtk/eclipse/)"
 		exit
 		;;
   	esac
