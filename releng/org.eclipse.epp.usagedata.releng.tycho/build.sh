@@ -14,6 +14,6 @@ cvs -d $root checkout -r $tag $path/test/org.eclipse.epp.usagedata.recording.tes
 cvs -d $root checkout -r $tag $path/test/org.eclipse.epp.usagedata.ui.tests
 cvs -d $root checkout -r $tag $path/releng/org.eclipse.epp.usagedata.repository
 cvs -d $root checkout -r $tag $path/releng/org.eclipse.epp.usagedata.releng.tycho
-cd $path/org.eclipse.epp.usagedata.releng.tycho
+cd $path/releng/org.eclipse.epp.usagedata.releng.tycho
 mvn clean install
 
