@@ -29,8 +29,8 @@ target=org.eclipse.epp/releng/org.eclipse.epp.usagedata.repository/target/site
 launcher=`find ${eclipse} -type f -name 'org.eclipse.equinox.launcher_*.jar' -print0`
 java -jar ${launcher} \
  -application org.eclipse.equinox.p2.publisher.UpdateSitePublisher \
- -metadataRepository ${target} \
- -artifactRepository ${target} \
+ -metadataRepository ${target}/meta \
+ -artifactRepository ${target}/art \
  -source org.eclipse.epp/releng/org.eclipse.epp.usagedata.repository/target/site \
  -compress \
  -publishArtifacts
