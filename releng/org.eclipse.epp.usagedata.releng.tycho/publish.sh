@@ -10,6 +10,11 @@
 # *    Wayne Beaton (Eclipse Foundation) - Initial implementation
 # *******************************************************************************/
 #
+
+usage() {
+	echo -e "./publish.sh [--eclipse={path}]\n Where {path} points to an Eclipse install (default ~/Eclipse/eclipse-rcp-helios-SR1-linux-gtk/eclipse/)"
+}		
+
 eclipse=~/Eclipse/eclipse-rcp-helios-SR1-linux-gtk/eclipse/
 
 for arg in $*
@@ -19,19 +24,26 @@ do
 		user=`echo $arg | sed 's/[-a-zA-Z0-9]*=//'`
 		;;
 		--help)
-		echo -e "./publish.sh [--eclipse={path}]\n Where {path} points to an Eclipse install (default ~/Eclipse/eclipse-rcp-helios-SR1-linux-gtk/eclipse/)"
+		usage
 		exit
 		;;
+		*)
+		source=$arg
   	esac
 done
 
-target=`pwd`/org.eclipse.epp/releng/org.eclipse.epp.usagedata.repository/target
+if [ "$source" = "" ]; then
+	usage
+	exit
+fi
+
+target=`pwd`/${source}/../publish
 launcher=`find ${eclipse} -type f -name 'org.eclipse.equinox.launcher_*.jar' -print0`
 java -jar ${launcher} \
  -application org.eclipse.equinox.p2.publisher.UpdateSitePublisher \
- -metadataRepository file:${target}/publish \
- -artifactRepository file:${target}/publish \
- -source ${target}/site \
+ -metadataRepository file:${target} \
+ -artifactRepository file:${target} \
+ -source ${source} \
  -compress \
  -reusePack200Files \
  -publishArtifacts

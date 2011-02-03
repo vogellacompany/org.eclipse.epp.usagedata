@@ -15,7 +15,7 @@ root=:pserver:anonymous@dev.eclipse.org:/cvsroot/technology
 path=org.eclipse.epp
 releng=$path/releng/org.eclipse.epp.usagedata.releng.tycho
 repository=$path/releng/org.eclipse.epp.usagedata.repository
-target=workspace
+
 #defaults
 tag=HEAD
 eclipse=~/Eclipse/eclipse-rcp-helios-SR1-linux-gtk/eclipse/
@@ -52,11 +52,11 @@ echo "Starting Maven build..."
 mvn -B --file ${releng}/pom.xml clean install
 
 echo "Starting Pack200"
-#jarprocessor=`find ${eclipse} -type f -name 'org.eclipse.equinox.p2.jarprocessor_*.jar' -print0`
-#echo "- Found JAR Processor at ${jarprocessor}"
-#java -jar ${jarprocessor} -verbose -outputDir ${repository}/target/pack200/ -processAll -repack -pack ${repository}/target/site_assembly.zip 
+jarprocessor=`find ${eclipse} -type f -name 'org.eclipse.equinox.p2.jarprocessor_*.jar' -print0`
+echo "- Found JAR Processor at ${jarprocessor}"
+java -jar ${jarprocessor} -verbose -outputDir ${repository}/target/pack200/ -processAll -repack -pack ${repository}/target/site_assembly.zip 
     
-launcher=`find ${eclipse} -type f -name 'org.eclipse.equinox.launcher_*.jar' -print0`
-output=${repository}/target/optimized
-java -jar ${launcher} -application org.eclipse.update.core.siteOptimizer -digestBuilder \
-  -jarProcessor -verbose -outputDir ${optimized} -processAll -repack -pack ${repository}/target/site_assembly.zip
+#launcher=`find ${eclipse} -type f -name 'org.eclipse.equinox.launcher_*.jar' -print0`
+#output=${repository}/target/optimized
+#java -jar ${launcher} -application org.eclipse.update.core.siteOptimizer -digestBuilder \
+#  -jarProcessor -verbose -outputDir ${optimized} -processAll -repack -pack ${repository}/target/site_assembly.zip
