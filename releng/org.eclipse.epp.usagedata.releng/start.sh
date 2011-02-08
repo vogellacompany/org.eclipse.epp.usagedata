@@ -33,12 +33,12 @@ fi
 # Take build type from the command-line; assume 'N' if not specified.
 BUILD_TYPE=${1:-N} 
 
-ECLIPSE_ROOT=${ECLIPSE_BASES}/eclipse-SDK-3.5RC4-linux-gtk/eclipse
-UPDATE_SITE=${UPDATE_ROOT}/${BUILD_TYPE}
-
 BUILD_DATE=`date +%Y%m%d`
 BUILD_TIME=`date +%H%M`
 TIMESTAMP=${BUILD_DATE}${BUILD_TIME}
+
+ECLIPSE_ROOT=${ECLIPSE_BASES}/eclipse-SDK-3.5RC4-linux-gtk/eclipse
+UPDATE_SITE=${UPDATE_ROOT}/${BUILD_TYPE}${TIMESTAMP}
 
 echo "Starting build..."
 echo "Build Type: ${BUILD_TYPE}, timestamp: ${TIMESTAMP}"
