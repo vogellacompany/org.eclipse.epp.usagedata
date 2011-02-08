@@ -9,7 +9,7 @@
 	<packaging>pom</packaging>
 
 	<properties>
-		<tycho-version>0.9.0</tycho-version>
+		<tycho-version>0.11.0</tycho-version>
 		<eclipse-site>http://download.eclipse.org/releases/staging</eclipse-site>
 		<orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/S20110124210048/repository</orbit-site>
 	</properties>
