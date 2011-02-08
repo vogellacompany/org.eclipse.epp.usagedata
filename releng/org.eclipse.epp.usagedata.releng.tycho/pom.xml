@@ -10,8 +10,8 @@
 
 	<properties>
 		<tycho-version>0.10.0</tycho-version>
-		<eclipse-site>http://download.eclipse.org/releases/helios</eclipse-site>
-		<orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/R20100114021427/updateSite</orbit-site>
+		<eclipse-site>http://download.eclipse.org/releases/staging</eclipse-site>
+		<orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/S20110124210048/repository</orbit-site>
 	</properties>
 
 	<modules>
