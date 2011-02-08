@@ -19,7 +19,7 @@
 #====================================================================================
 
 JAVA=java
-if [ -f /shared/technology/epp/udc_build ]; then
+if [ -d /shared/technology/epp/udc_build ]; then
 	BUILD_ROOT=/shared/technology/epp/udc_build
 	ECLIPSE_BASES=${BUILD_ROOT}/bases
 	UPDATE_ROOT=/home/data/httpd/download.eclipse.org/technology/epp/updates/testing
