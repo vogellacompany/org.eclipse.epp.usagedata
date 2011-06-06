@@ -37,7 +37,7 @@ BUILD_DATE=`date +%Y%m%d`
 BUILD_TIME=`date +%H%M`
 TIMESTAMP=${BUILD_DATE}${BUILD_TIME}
 
-ECLIPSE_ROOT=${ECLIPSE_BASES}/eclipse-platform-3.7RC4-linux-gtk/eclipse
+ECLIPSE_ROOT=${ECLIPSE_BASES}/eclipse-SDK-3.7RC4-linux-gtk/eclipse
 UPDATE_SITE=${UPDATE_ROOT}/${BUILD_TYPE}${TIMESTAMP}
 
 echo "Starting build..."
