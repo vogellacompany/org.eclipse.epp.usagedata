@@ -47,10 +47,6 @@ v1.0 which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/epl-v10.html
    </copyright>
 
-   <license url="http://www.eclipse.org/legal/epl-v10.html">
-      %license
-   </license>
-
    <url>
       <discovery label="UDC Updates" url="http://download.eclipse.org/technology/epp/updates/udc/"/>
    </url>
