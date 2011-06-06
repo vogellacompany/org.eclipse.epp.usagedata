@@ -67,6 +67,10 @@ ${JAVA} -jar ${LAUNCHER_JAR} \
         -Dudc.pack200=true \
         -DlauncherJar=${LAUNCHER_JAR} 
         
+# Temporary; just make it work
+ECLIPSE_ROOT=${ECLIPSE_BASES}/eclipse-SDK-3.5RC4-linux-gtk/eclipse
+LAUNCHER_JAR=`find ${ECLIPSE_ROOT} -type f -name 'org.eclipse.equinox.launcher_*.jar' -print0`
+# /Temporary
 ${JAVA} -jar ${LAUNCHER_JAR} \
    -application org.eclipse.equinox.p2.metadata.generator.EclipseGenerator \
    -updateSite ${UPDATE_SITE} \
