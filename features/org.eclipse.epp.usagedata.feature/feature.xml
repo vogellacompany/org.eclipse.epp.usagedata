@@ -52,7 +52,7 @@ http://www.eclipse.org/legal/epl-v10.html
    </license>
 
    <url>
-      <update label="EPP Update Site" url="http://download.eclipse.org/technology/epp/updates/1.3/"/>
+      <discovery label="UDC Updates" url="http://download.eclipse.org/technology/epp/updates/udc/"/>
    </url>
 
    <requires>
