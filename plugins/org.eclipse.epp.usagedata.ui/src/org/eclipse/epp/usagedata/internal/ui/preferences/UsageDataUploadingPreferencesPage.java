@@ -44,7 +44,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 
-import com.ibm.icu.text.MessageFormat;
+import java.text.MessageFormat;
 
 public class UsageDataUploadingPreferencesPage extends PreferencePage
 	implements IWorkbenchPreferencePage {

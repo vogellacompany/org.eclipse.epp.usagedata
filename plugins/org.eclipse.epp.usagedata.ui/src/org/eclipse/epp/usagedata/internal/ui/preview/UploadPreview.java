@@ -12,6 +12,7 @@ package org.eclipse.epp.usagedata.internal.ui.preview;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -35,7 +36,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -59,8 +60,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.forms.widgets.FormText;
-
-import com.ibm.icu.text.DateFormat;
 
 public class UploadPreview  {
 
@@ -573,7 +572,7 @@ public class UploadPreview  {
 			}	
 		};
 		
-		private ViewerSorter sorter = new ViewerSorter() {
+		private ViewerComparator sorter = new ViewerComparator() {
 			@Override
 			public int compare(Viewer viewer, Object object1, Object object2) {
 				return comparator.compare((UsageDataEventWrapper)object1, (UsageDataEventWrapper)object2);
@@ -600,7 +599,7 @@ public class UploadPreview  {
 		public void setSortColumn() {
 			getTable().setSortColumn(getColumn());
 			getTable().setSortDirection(SWT.DOWN);
-			viewer.setSorter(sorter);
+			viewer.setComparator(sorter);
 		}
 
 		private void initialize() {
