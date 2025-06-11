@@ -1,1 +1,15 @@
 **/bin/*
+*.class
+*.log
+*.tmp
+*.swp
+*.swo
+target/
+build/
+tmp/
+*.iml
+.idea/
+*.DS_Store
+*.orig
+.polyglot*
+pom.tycho
