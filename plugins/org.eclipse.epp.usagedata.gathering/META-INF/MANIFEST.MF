@@ -12,5 +12,5 @@ Export-Package: org.eclipse.epp.usagedata.internal.gathering;x-friends:="org.ecl
  org.eclipse.epp.usagedata.internal.gathering.monitors;x-friends:="org.eclipse.epp.usagedata.recording,org.eclipse.epp.usagedata.ui",
  org.eclipse.epp.usagedata.internal.gathering.services;x-friends:="org.eclipse.epp.usagedata.recording,org.eclipse.epp.usagedata.ui",
  org.eclipse.epp.usagedata.internal.gathering.settings;x-friends:="org.eclipse.epp.usagedata.recording,org.eclipse.epp.usagedata.ui"
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Vendor: %Bundle-Vendor.0

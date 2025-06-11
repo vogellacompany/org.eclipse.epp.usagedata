@@ -3,9 +3,7 @@
       id="org.eclipse.epp.usagedata.feature"
       label="Usage Data Collector"
       version="1.4.0.qualifier"
-      provider-name="Eclipse Packaging Project"
-      license-feature="org.eclipse.platform"
-      license-feature-version="3.7.0.qualifier">
+      provider-name="Eclipse Packaging Project">
 
    <description url="http://www.eclipse.org/epp/usagedata/index.php">
       The Usage Data Collector collects information
@@ -51,31 +49,16 @@ http://www.eclipse.org/legal/epl-v10.html
       <discovery label="UDC Updates" url="http://download.eclipse.org/technology/epp/updates/udc/"/>
    </url>
 
-   <requires>
-      <import plugin="org.eclipse.core.runtime" version="3.3.0" match="compatible"/>
-      <import plugin="org.eclipse.ui" version="3.3.0" match="compatible"/>
-      <import plugin="org.eclipse.ui.forms" version="3.3.0" match="compatible"/>
-   </requires>
-
    <plugin
          id="org.eclipse.epp.usagedata.gathering"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+         version="0.0.0"/>
 
    <plugin
          id="org.eclipse.epp.usagedata.recording"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+         version="0.0.0"/>
 
    <plugin
          id="org.eclipse.epp.usagedata.ui"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+         version="0.0.0"/>
 
 </feature>
