@@ -1,0 +1,9 @@
+== Usage data collector
+
+=== How to build
+
+Use the following command to build the collector:
+
+```bash
+mvn clean verify
+```
