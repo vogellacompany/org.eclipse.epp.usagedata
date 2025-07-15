@@ -26,25 +26,11 @@ public class Activator extends AbstractUIPlugin {
 	// The shared instance
 	private static Activator plugin;
 	
-	/**
-	 * The constructor
-	 */
-	public Activator() {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
-	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
-	 */
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
 		super.stop(context);
@@ -68,20 +54,11 @@ public class Activator extends AbstractUIPlugin {
 		return descriptor;
 	}
 	
-	public void log(int status, String message, Object ... arguments) {
-		log(status, (Exception)null, message, arguments);
-	}
-	
 	public void log(int status, Exception exception, String message, Object ... arguments) {
 		log(status, exception, String.format(message, arguments));
 	}
 	
 	public void log(int status, Exception e, String message) {
 		getLog().log(new Status(status, PLUGIN_ID, message, e));
-	}
-	
-
-	public void log(Status status) {
-		getLog().log(status);
 	}
 }

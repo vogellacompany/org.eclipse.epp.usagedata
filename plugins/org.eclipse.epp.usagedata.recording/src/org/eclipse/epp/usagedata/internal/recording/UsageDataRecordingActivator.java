@@ -38,10 +38,6 @@ public class UsageDataRecordingActivator extends AbstractUIPlugin implements ISt
 
 	private ServiceTracker usageDataServiceTracker;
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
-	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
@@ -67,10 +63,6 @@ public class UsageDataRecordingActivator extends AbstractUIPlugin implements ISt
 		getUsageDataService().addUsageDataEventListener(usageDataRecorder);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
-	 */
 	public void stop(BundleContext context) throws Exception {
 		usageDataRecorder.stop();
 		getUsageDataService().removeUsageDataEventListener(usageDataRecorder);
@@ -109,11 +101,6 @@ public class UsageDataRecordingActivator extends AbstractUIPlugin implements ISt
 		getLog().log(new Status(status, PLUGIN_ID, message, e));
 	}
 	
-
-	public void log(Status status) {
-		getLog().log(status);
-	}
-
 	public void earlyStartup() {
 		// Don't actually need to do anything, but still need the method.		
 	}

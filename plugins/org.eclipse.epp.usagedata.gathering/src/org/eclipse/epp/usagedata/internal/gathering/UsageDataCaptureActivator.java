@@ -43,10 +43,6 @@ public class UsageDataCaptureActivator extends AbstractUIPlugin implements IStar
 
 	private BundleContext context;
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.core.runtime.Plugins#start(org.osgi.framework.BundleContext)
-	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
@@ -108,10 +104,6 @@ public class UsageDataCaptureActivator extends AbstractUIPlugin implements IStar
 		job.schedule(1000);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
-	 */
 	public void stop(BundleContext context) throws Exception {		
 		this.context = context;
 		UsageDataService service = getUsageDataCaptureService();
