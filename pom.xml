@@ -10,23 +10,8 @@
 
 	<properties>
 		<tycho.version>4.0.13</tycho.version>
-		<eclipse-site>https://download.eclipse.org/releases/helios</eclipse-site>
-		<orbit-site>https://download.eclipse.org/tools/orbit/downloads/drops/R20150519210750/repository</orbit-site>
 	</properties>
 
-
-	<repositories>
-		<repository>
-			<id>helios</id>
-			<layout>p2</layout>
-			<url>${eclipse-site}</url>
-		</repository>
-		<repository>
-			<id>orbit</id>
-			<layout>p2</layout>
-			<url>${orbit-site}</url>
-		</repository>
-	</repositories>
 
     <build>
 
@@ -78,6 +63,9 @@
                 <artifactId>target-platform-configuration</artifactId>
                 <version>${tycho.version}</version>
                 <configuration>
+                	<target>
+              			<file>../../target-platform/target-platform.target</file>
+                 	</target>    
                     <resolveWithExecutionEnvironmentConstraints>false</resolveWithExecutionEnvironmentConstraints>
 
                     <environments>
