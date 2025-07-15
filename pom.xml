@@ -95,8 +95,8 @@
 		<module>./features/org.eclipse.epp.usagedata.feature</module>
 		<module>./plugins/org.eclipse.epp.usagedata.recording</module>
 		<module>./plugins/org.eclipse.epp.usagedata.ui</module>
-        <!-- 
 		<module>./releng/org.eclipse.epp.usagedata.repository</module>
+        <!-- 
 		Uncomment additional modules if needed -->
 	</modules>
 

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature id="org.eclipse.epp.usagedata.feature">
+      <category name="udc"/>
+   </feature>
+   <category-def name="udc" label="Usage Data Collector"/>
+</site>
