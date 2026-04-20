@@ -50,7 +50,7 @@ The plugin also exposes the `org.eclipse.epp.usagedata.listeners.event` extensio
 The `recording` plugin implements the event listener extension point. `UsageDataRecorder` receives events from the gathering layer and persists them to local storage. It also owns the upload lifecycle:
 
 - **Filtering** -- rules that determine which events should be kept or discarded before upload.
-- **Uploading** -- manages the transfer of recorded data to the collection server. The `uploader` extension point allows the upload mechanism to be replaced.
+- **Uploading** -- manages the transfer of recorded data to the collection server. The `org.eclipse.epp.usagedata.recording.uploader` extension point allows the upload mechanism to be replaced.
 
 ### UI
 
