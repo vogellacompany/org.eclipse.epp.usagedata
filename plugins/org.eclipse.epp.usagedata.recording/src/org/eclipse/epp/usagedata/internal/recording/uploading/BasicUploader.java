@@ -211,7 +211,7 @@ public class BasicUploader extends AbstractUploader {
 		monitor.worked(1);
 
 		HttpClient client = HttpClient.newBuilder()
-			.connectTimeout(Duration.ofMillis(getSocketTimeout()))
+			.connectTimeout(Duration.ofSeconds(30))
 			.build();
 
 		HttpResponse<InputStream> response = client.send(
@@ -274,8 +274,8 @@ public class BasicUploader extends AbstractUploader {
 
 	byte[] getFilteredFileContent(File file) throws Exception {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		Writer writer = new OutputStreamWriter(out, StandardCharsets.UTF_8);
-		try (InputStream input = new FileInputStream(file)) {
+		try (Writer writer = new OutputStreamWriter(out, StandardCharsets.UTF_8);
+				InputStream input = new FileInputStream(file)) {
 			new UsageDataFileReader(input).iterate(new UsageDataFileReader.Iterator() {
 				public void header(String header) throws Exception {
 					writer.append(header);
@@ -288,7 +288,6 @@ public class BasicUploader extends AbstractUploader {
 					}
 				}
 			});
-			writer.flush();
 		}
 		return out.toByteArray();
 	}
@@ -298,7 +297,7 @@ public class BasicUploader extends AbstractUploader {
 		if (!shouldProcessServerResponse()) return;
 
 		try (InputStream body = response.body();
-			 BufferedReader reader = new BufferedReader(new InputStreamReader(body))) {
+			 BufferedReader reader = new BufferedReader(new InputStreamReader(body, StandardCharsets.UTF_8))) {
 			handleServerResponse(reader);
 		} catch (IOException e) {
 			UsageDataRecordingActivator.getDefault().log(IStatus.WARNING, e, "Exception raised while parsing the server response"); //$NON-NLS-1$
