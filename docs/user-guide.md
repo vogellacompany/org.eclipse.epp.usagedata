@@ -4,7 +4,13 @@ The Usage Data Collector (UDC) records anonymized information about how you use 
 
 ## Installation
 
-UDC is distributed as the feature `org.eclipse.epp.usagedata.feature` and can be installed through **Help > Install New Software...** using the update site produced by this repository (`releng/org.eclipse.epp.usagedata.repository`). Once installed and restarted, data capture is enabled by default.
+UDC is distributed as the feature `org.eclipse.epp.usagedata.feature`. There is currently no published update site; install it by building the p2 repository from source and pointing **Help > Install New Software...** at the resulting local directory:
+
+```bash
+mvn clean verify
+```
+
+The update site is then available under `releng/org.eclipse.epp.usagedata.repository/target/repository/`. Once installed and Eclipse restarted, data capture is enabled by default.
 
 ## Preferences
 
