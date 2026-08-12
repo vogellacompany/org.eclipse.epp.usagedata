@@ -7,3 +7,29 @@ Use the following command to build the collector:
 ```bash
 mvn clean verify
 ```
+
+=== System properties for development and testing
+
+The recording bundle reads a few system properties that can be set via `-D` VM arguments. They are primarily intended for development, debugging, and integration testing — end users normally configure the collector via the preference pages.
+
+[cols="1,3"]
+|===
+| Property | Description
+
+| `org.eclipse.epp.usagedata.recording.period`
+| Time (in milliseconds) between uploads. Overrides the value stored in the preferences. Values below the 15-minute minimum (`PERIOD_REASONABLE_MINIMUM`) are clamped up to 15 minutes, so setting `0` effectively means "upload as soon as possible".
+
+| `org.eclipse.epp.usagedata.recording.upload-url`
+| Target URL the collected data is POSTed to. Overrides the default (`http://udc.eclipse.org/upload.php`). Useful for pointing a development instance at a local server.
+
+| `org.eclipse.epp.usagedata.recording.log-server`
+| When set to `true`, asks the server to return a log of its activity in the response. Useful for debugging the upload protocol.
+|===
+
+Example (as passed to a PDE runtime workbench):
+
+```
+-Dorg.eclipse.epp.usagedata.recording.period=0
+-Dorg.eclipse.epp.usagedata.recording.upload-url=http://local.udc.eclipse.org/upload2.php
+-Dorg.eclipse.epp.usagedata.recording.log-server=true
+```
