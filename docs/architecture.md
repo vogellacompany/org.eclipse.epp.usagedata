@@ -5,17 +5,17 @@ The Usage Data Collector (UDC) captures anonymized usage data from the Eclipse I
 ## Project Structure
 
 ```
-plugins/
-  org.eclipse.epp.usagedata.gathering    # Monitors user activity
-  org.eclipse.epp.usagedata.recording    # Stores and uploads collected data
-  org.eclipse.epp.usagedata.ui           # Preference pages and upload UI
-features/
-  org.eclipse.epp.usagedata.feature      # Groups plugins for installation
-  org.eclipse.epp.usagedata.tests.feature
-test/                                    # Test bundles for each plugin
-releng/
-  org.eclipse.epp.usagedata.repository   # Generates the p2 update site
-target-platform/                         # Eclipse target platform definition
+org.eclipse.epp.usagedata.gathering    # Monitors user activity
+org.eclipse.epp.usagedata.recording    # Stores and uploads collected data
+org.eclipse.epp.usagedata.ui           # Preference pages and upload UI
+org.eclipse.epp.usagedata.feature      # Groups plugins for installation
+org.eclipse.epp.usagedata.tests.feature
+org.eclipse.epp.usagedata.gathering.tests   # Test bundles for each plugin
+org.eclipse.epp.usagedata.recording.tests
+org.eclipse.epp.usagedata.ui.tests
+org.eclipse.epp.usagedata.tests
+org.eclipse.epp.usagedata.repository   # Generates the p2 update site
+target-platform/                       # Eclipse target platform definition
 ```
 
 ## Architecture
@@ -81,7 +81,7 @@ Requires Java 21 and Maven. The build uses the Tycho plugin to resolve OSGi depe
 mvn clean verify
 ```
 
-This compiles all plugins, runs the test suites, and assembles the p2 update site under `releng/org.eclipse.epp.usagedata.repository/target/`.
+This compiles all plugins, runs the test suites, and assembles the p2 update site under `org.eclipse.epp.usagedata.repository/target/`.
 
 To build a single module with its dependencies, use `-pl :bundle-id -am`:
 
