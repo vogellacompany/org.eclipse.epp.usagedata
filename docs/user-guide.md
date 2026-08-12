@@ -1,16 +1,19 @@
 # Eclipse Usage Data Collector -- User Guide
 
-The Usage Data Collector (UDC) records anonymized information about how you use the Eclipse IDE and periodically uploads it to the Eclipse Foundation. This guide covers installation, configuration, and privacy controls for end users.
+The Usage Data Collector (UDC) records anonymized information about how you use the Eclipse IDE and periodically uploads it to a server.
+This guide covers installation, configuration, and privacy controls for end users.
 
 ## Installation
 
-UDC is distributed as the feature `org.eclipse.epp.usagedata.feature`. There is currently no published update site; install it by building the p2 repository from source and pointing **Help > Install New Software...** at the resulting local directory:
+UDC is distributed as the feature `org.eclipse.epp.usagedata.feature`.
+There is currently no published update site; install it by building the p2 repository from source and pointing **Help > Install New Software...** at the resulting local directory:
 
 ```bash
 mvn clean verify
 ```
 
-The update site is then available under `releng/org.eclipse.epp.usagedata.repository/target/repository/`. Once installed and Eclipse restarted, data capture is enabled by default.
+The update site is then available under `org.eclipse.epp.usagedata.repository/target/repository/`.
+Once installed and Eclipse restarted, data capture is enabled by default.
 
 ## Preferences
 
@@ -40,11 +43,13 @@ Controls when and how recorded data is sent to the Eclipse server.
 
 ### Terms of Use
 
-Displays the terms that apply to collected data. You must accept them before the first upload can occur.
+Displays the terms that apply to collected data. 
+You must accept them before the first upload can occur.
 
 ### Preview
 
-A read-only table listing the events currently queued for upload. Useful to review what will leave your machine before it is sent.
+A read-only table listing the events currently queued for upload.
+Useful to review what will leave your machine before it is sent.
 
 ## Upload Dialog
 
@@ -75,7 +80,8 @@ Events are appended to `usagedata.csv` inside the workspace metadata directory:
 <workspace>/.metadata/.plugins/org.eclipse.epp.usagedata.recording/usagedata.csv
 ```
 
-When an upload is scheduled, the active file is rotated to `upload0.csv`, `upload1.csv`, etc. You can delete any of these files while Eclipse is closed to discard data that has not yet been uploaded.
+When an upload is scheduled, the active file is rotated to `upload0.csv`, `upload1.csv`, etc. 
+You can delete any of these files while Eclipse is closed to discard data that has not yet been uploaded.
 
 ## Privacy Controls
 
