@@ -55,6 +55,7 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 	private static final long MAXIMUM_PERIOD_IN_DAYS = 90;
 	
 	private Text uploadPeriodText;
+	private Text uploadUrlText;
 	private Label label;
 	private Text lastUploadText;
 
@@ -195,6 +196,7 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 	public boolean performOk() {		
 		getRecordingPreferences().setValue(UsageDataRecordingSettings.ASK_TO_UPLOAD_KEY, askBeforeUploadingCheckbox.getSelection());		
 		getRecordingPreferences().setValue(UsageDataRecordingSettings.UPLOAD_PERIOD_KEY, Long.valueOf(uploadPeriodText.getText()) * MILLISECONDS_IN_ONE_DAY);
+		getSettings().setUploadUrl(uploadUrlText.getText());
 		
 		return super.performOk();
 	}
@@ -215,6 +217,7 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 	protected void performDefaults() {
 		askBeforeUploadingCheckbox.setSelection(getRecordingPreferences().getDefaultBoolean(UsageDataRecordingSettings.ASK_TO_UPLOAD_KEY));
 		uploadPeriodText.setText(String.valueOf(getRecordingPreferences().getDefaultLong(UsageDataRecordingSettings.UPLOAD_PERIOD_KEY) / MILLISECONDS_IN_ONE_DAY));
+		uploadUrlText.setText(UsageDataRecordingSettings.UPLOAD_URL_DEFAULT);
 
 		updateLastUploadText();
 
@@ -329,23 +332,21 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 	}
 	
 	/*
-	 * The Upload URL is not expected to change during execution, so
-	 * we make not consideration for changes while the preferences
-	 * page is open.
-	 * 
 	 * Note that this method expects to be run in the UI Thread.
 	 */
 	private void createUploadUrlField(Group composite) {
 		label = new Label(composite, SWT.NONE);
 		label.setText(Messages.UsageDataUploadingPreferencesPage_9); 
 		
-		Text uploadUrlText = new Text(composite, SWT.SINGLE | SWT.BORDER);
-		uploadUrlText.setEnabled(false);
+		uploadUrlText = new Text(composite, SWT.SINGLE | SWT.BORDER);
 		GridData gridData = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		gridData.horizontalIndent = FieldDecorationRegistry.getDefault().getMaximumDecorationWidth();
 		gridData.horizontalSpan = 2;
 		uploadUrlText.setLayoutData(gridData);
 		uploadUrlText.setText(getSettings().getUploadUrl());
+		if (System.getProperty(UsageDataRecordingSettings.UPLOAD_URL_KEY) != null) {
+			addOverrideWarning(uploadUrlText);
+		}
 	}
 	
 	/*
@@ -394,7 +395,8 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 		FieldDecoration decoration = FieldDecorationRegistry.getDefault().getFieldDecoration(FieldDecorationRegistry.DEC_WARNING);
 		ControlDecoration warning = new ControlDecoration(control, SWT.BOTTOM | SWT.LEFT);
 		warning.setImage(decoration.getImage());
-		warning.setDescriptionText(Messages.UsageDataUploadingPreferencesPage_8); 
+		warning.setDescriptionText(Messages.UsageDataUploadingPreferencesPage_8);
+		warning.show();
 	}
 
 	private String getLastUploadDateAsString() {

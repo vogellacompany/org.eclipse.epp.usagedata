@@ -49,11 +49,11 @@ public class UsageDataRecordingSettings implements UploadSettings {
 	public static final String FILTER_ECLIPSE_BUNDLES_ONLY_KEY = UsageDataRecordingActivator.PLUGIN_ID + ".filter-eclipse-only"; //$NON-NLS-1$
 	public static final String FILTER_PATTERNS_KEY = UsageDataRecordingActivator.PLUGIN_ID + ".filter-patterns"; //$NON-NLS-1$
 	
-	static final String UPLOAD_URL_KEY = UsageDataRecordingActivator.PLUGIN_ID + ".upload-url"; //$NON-NLS-1$
+	public static final String UPLOAD_URL_KEY = UsageDataRecordingActivator.PLUGIN_ID + ".upload-url"; //$NON-NLS-1$
 	
 	public static final int PERIOD_REASONABLE_MINIMUM = 15 * 60 * 1000; // 15 minutes
 	static final int UPLOAD_PERIOD_DEFAULT = 5 * 24 * 60 * 60 * 1000; // five days
-	static final String UPLOAD_URL_DEFAULT = "http://udc.eclipse.org/upload.php"; //$NON-NLS-1$
+	public static final String UPLOAD_URL_DEFAULT = "http://udc.eclipse.org/upload.php"; //$NON-NLS-1$
 	static final boolean ASK_TO_UPLOAD_DEFAULT = true;
 
 	private PreferencesBasedFilter filter = new PreferencesBasedFilter();
@@ -384,7 +384,15 @@ public class UsageDataRecordingSettings implements UploadSettings {
 		if (System.getProperties().containsKey(UPLOAD_URL_KEY)) {
 			return System.getProperty(UPLOAD_URL_KEY);
 		}
+		if (getPreferencesStore().contains(UPLOAD_URL_KEY)) {
+			return getPreferencesStore().getString(UPLOAD_URL_KEY);
+		}
 		return UPLOAD_URL_DEFAULT;
+	}
+
+	public void setUploadUrl(String url) {
+		getPreferencesStore().setValue(UPLOAD_URL_KEY, url);
+		UsageDataRecordingActivator.getDefault().savePluginPreferences();
 	}
 
 }
