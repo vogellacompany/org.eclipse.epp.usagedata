@@ -16,58 +16,51 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.File;
-import java.util.Dictionary;
-import java.util.Hashtable;
+import java.io.OutputStream;
+import java.net.InetSocketAddress;
+import java.nio.charset.StandardCharsets;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.epp.usagedata.internal.recording.UsageDataRecordingActivator;
 import org.eclipse.epp.usagedata.internal.recording.settings.UploadSettings;
 import org.eclipse.epp.usagedata.internal.recording.uploading.util.MockUploadSettings;
-import org.eclipse.epp.usagedata.internal.recording.uploading.util.UploadGoodServlet;
 import org.eclipse.epp.usagedata.internal.recording.uploading.util.UploaderTestUtils;
-import org.eclipse.equinox.http.jetty.JettyConfigurator;
-import org.eclipse.equinox.http.jetty.JettyConstants;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.osgi.framework.ServiceReference;
-import org.osgi.service.http.HttpService;
-import org.osgi.util.tracker.ServiceTracker;
+
+import com.sun.net.httpserver.HttpServer;
 
 public class BasicUploaderTests {
-	private static final String GOOD_SERVLET_NAME = "/upload_good";
-	private static final String SERVER_NAME = "usagedata.upload.tests";
-	
+	private static final String GOOD_PATH = "/upload_good";
+
 	private static int port;
-	private static ServiceTracker tracker;
+	private static HttpServer server;
 
 	@BeforeClass
 	public static void startServer() throws Exception {
-		Dictionary<String, Object> settings = new Hashtable<String, Object>();	
-		settings.put(JettyConstants.OTHER_INFO, SERVER_NAME);
-		settings.put("http.port", 0);
-		JettyConfigurator.startServer(SERVER_NAME, settings);
-		
-		ServiceReference[] reference = UsageDataRecordingActivator.getDefault().getBundle().getBundleContext().getServiceReferences("org.osgi.service.http.HttpService", "(other.info=usagedata.upload.tests)"); 
-		Object assignedPort = reference[0].getProperty("http.port"); 
-		port = Integer.parseInt((String)assignedPort);
-		
-		tracker = new ServiceTracker(UsageDataRecordingActivator.getDefault().getBundle().getBundleContext(), reference[0], null);
-		tracker.open();
-		HttpService server = (HttpService)tracker.getService();
-		server.registerServlet(GOOD_SERVLET_NAME, new UploadGoodServlet(), null, null);		
+		server = HttpServer.create(new InetSocketAddress("localhost", 0), 0);
+		server.createContext(GOOD_PATH, exchange -> {
+			exchange.getRequestBody().readAllBytes();
+			byte[] body = "log:received!\n".getBytes(StandardCharsets.UTF_8);
+			exchange.getResponseHeaders().add("Content-Type", "text/plain");
+			exchange.sendResponseHeaders(200, body.length);
+			try (OutputStream out = exchange.getResponseBody()) {
+				out.write(body);
+			}
+		});
+		server.start();
+		port = server.getAddress().getPort();
 	}
-	
+
 	@AfterClass
 	public static void stopServer() throws Exception {
-		tracker.close();
-		JettyConfigurator.stopServer(SERVER_NAME);
+		server.stop(0);
 	}
-	
+
 	@Test
 	public void testBigUpload() throws Exception {
 		MockUploadSettings settings = new MockUploadSettings();
-		settings.setUploadUrl("http://localhost:" + port + GOOD_SERVLET_NAME);
+		settings.setUploadUrl("http://localhost:" + port + GOOD_PATH);
 		
 		File file = UploaderTestUtils.createBogusUploadDataFile(90);
 		
@@ -84,7 +77,7 @@ public class BasicUploaderTests {
 	@Test
 	public void testInvalidUrl() throws Exception {
 		MockUploadSettings settings = new MockUploadSettings();
-		settings.setUploadUrl("httpx://localhost:" + port + GOOD_SERVLET_NAME);
+		settings.setUploadUrl("httpx://localhost:" + port + GOOD_PATH);
 		
 		File file = UploaderTestUtils.createBogusUploadDataFile(1);
 

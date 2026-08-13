@@ -8,9 +8,4 @@ Import-Package: org.junit;version="4.13.2",
  org.junit.runner;version="4.13.2",
  org.junit.runners;version="4.13.2"
 Bundle-RequiredExecutionEnvironment: JavaSE-21
-Export-Package: org.eclipse.epp.usagedata.internal.recording.filtering,
- org.eclipse.epp.usagedata.internal.ui,
- org.eclipse.epp.usagedata.internal.ui.preferences,
- org.eclipse.epp.usagedata.internal.ui.preview,
- org.eclipse.epp.usagedata.internal.ui.preview.util
 Automatic-Module-Name: org.eclipse.epp.usagedata.ui.tests

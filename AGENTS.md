@@ -34,7 +34,7 @@ The project uses Maven with the Tycho plugin for building.
 
 - **Eclipse Plugin Style:** Follows standard Eclipse plugin development practices, including `MANIFEST.MF` for dependencies and `plugin.xml` for extensions and extension points.
 - **Extensibility:** The `gathering` plugin provides the `org.eclipse.epp.usagedata.gathering.monitors` extension point, allowing other plugins to contribute their own `UsageMonitor` implementations.
-- **Testing:** Each core plugin has a corresponding test plugin alongside it in the repository root. Tests are typically executed during the `mvn verify` phase.
+- **Testing:** Each core plugin has a corresponding test fragment alongside it in the repository root, run by Tycho Surefire during `mvn verify`. The tests need a running workbench, so use `xvfb-run -a mvn verify` on a headless machine.
 - **License:** The project is licensed under the **Eclipse Public License v1.0 (EPL-1.0)**.
 - **Contributions:** Contributions require an **Eclipse Contributor Agreement (ECA)** and must include a `Signed-off-by` footer in commit messages.
 - **Issue Tracking:** Development is tracked via the Eclipse Foundation's Bugzilla (Product: EPP).
@@ -45,8 +45,8 @@ All projects live directly in the repository root.
 
 - `pom.xml`: Root Maven configuration file.
 - `org.eclipse.epp.usagedata.gathering`, `org.eclipse.epp.usagedata.recording`, `org.eclipse.epp.usagedata.ui`: Source code for the OSGi bundles.
-- `org.eclipse.epp.usagedata.feature`, `org.eclipse.epp.usagedata.tests.feature`: Eclipse features that group the bundles.
-- `org.eclipse.epp.usagedata.*.tests`, `org.eclipse.epp.usagedata.tests`: Unit and integration test bundles.
+- `org.eclipse.epp.usagedata.feature`: Eclipse feature that groups the bundles.
+- `org.eclipse.epp.usagedata.*.tests`: Test fragments, one per bundle.
 - `org.eclipse.epp.usagedata.repository`: Release engineering project that generates the p2 update site.
 - `target-platform/`: Target definition for the Eclipse environment.
 - `docs/`: Architecture notes and the end-user guide.
