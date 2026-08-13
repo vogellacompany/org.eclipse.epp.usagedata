@@ -104,18 +104,18 @@ public class UploadPreviewTests {
 	public void testRowChangesColorWhenFilterChanges() throws Exception {
 		
 		assertNull(preview.viewer.getTable().getItem(0).getImage(0));
-		assertEquals(display.getSystemColor(SWT.COLOR_BLACK), preview.viewer.getTable().getItem(0).getForeground(1));
-		
+		assertEquals(preview.viewer.getTable().getForeground(), preview.viewer.getTable().getItem(0).getForeground(1));
+
 		((MockUsageDataEventFilter)parameters.getFilter()).addPattern("org.eclipse.osgi");
 
 		assertNotNull(preview.viewer.getTable().getItem(0).getImage(0));
-		assertEquals(display.getSystemColor(SWT.COLOR_GRAY), preview.viewer.getTable().getItem(0).getForeground(1));
-		
+		assertEquals(display.getSystemColor(SWT.COLOR_WIDGET_DISABLED_FOREGROUND), preview.viewer.getTable().getItem(0).getForeground(1));
+
 		((MockUsageDataEventFilter)parameters.getFilter()).removeFilterPatterns(new String[] {"org.eclipse.osgi"});
-		
+
 		assertNull(preview.viewer.getTable().getItem(0).getImage(0));
-		assertEquals(display.getSystemColor(SWT.COLOR_BLACK), preview.viewer.getTable().getItem(0).getForeground(1));
-		
+		assertEquals(preview.viewer.getTable().getForeground(), preview.viewer.getTable().getItem(0).getForeground(1));
+
 	}
 
 	private File findFile(String string) throws URISyntaxException, IOException {
