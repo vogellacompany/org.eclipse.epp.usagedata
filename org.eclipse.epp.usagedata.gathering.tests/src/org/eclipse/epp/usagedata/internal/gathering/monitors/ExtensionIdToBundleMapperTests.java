@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.epp.usagedata.internal.gathering.monitors;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ExtensionIdToBundleMapperTests {
 	@Test

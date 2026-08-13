@@ -10,14 +10,14 @@
  *******************************************************************************/
 package org.eclipse.epp.usagedata.internal.recording.settings;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.epp.usagedata.internal.recording.UsageDataRecordingActivator;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * These tests confirm that the settings, based on values stored
@@ -35,7 +35,7 @@ public class UsageDataRecordingSettingsTests {
 	static final long FIVE_DAYS = 5 * ONE_DAY;
 	static final long TWO_DAYS = 2 * ONE_DAY;
 	
-	@Before
+	@BeforeEach
 	public void setup() {
 		System.clearProperty(UsageDataRecordingSettings.UPLOAD_PERIOD_KEY);
 		getPreferenceStore().setToDefault(UsageDataRecordingSettings.ASK_TO_UPLOAD_KEY);

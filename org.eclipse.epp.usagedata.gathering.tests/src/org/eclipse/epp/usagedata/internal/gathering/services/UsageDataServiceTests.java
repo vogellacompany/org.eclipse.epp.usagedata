@@ -1,17 +1,20 @@
 package org.eclipse.epp.usagedata.internal.gathering.services;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.eclipse.epp.usagedata.internal.gathering.events.UsageDataEvent;
 import org.eclipse.epp.usagedata.internal.gathering.events.UsageDataEventListener;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.api.Timeout.ThreadMode;
 
 /**
  * This test class tests the various method concerned with providing
@@ -23,7 +26,7 @@ import org.junit.Test;
 public class UsageDataServiceTests {
 	private UsageDataService service;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		service = new UsageDataService() {
 			@Override
@@ -42,12 +45,13 @@ public class UsageDataServiceTests {
 		service.startMonitoring();
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		service.stopMonitoring();
 	}
 	
-	@Test (timeout=2000)
+	@Test
+	@Timeout(value = 2, unit = TimeUnit.SECONDS, threadMode = ThreadMode.SEPARATE_THREAD)
 	public void testRecordEvent() throws Exception {
 		final List<UsageDataEvent> events = new ArrayList<UsageDataEvent>();
 		UsageDataEventListener listener = new UsageDataEventListener() {
@@ -69,7 +73,8 @@ public class UsageDataServiceTests {
 		assertTrue(Math.abs(time - event.when) < 2000);
 	}
 
-	@Test (timeout=2000)
+	@Test
+	@Timeout(value = 2, unit = TimeUnit.SECONDS, threadMode = ThreadMode.SEPARATE_THREAD)
 	public void testRecordEventWithBundleVersionResolution() throws Exception {
 		final List<UsageDataEvent> events = new ArrayList<UsageDataEvent>();
 		UsageDataEventListener listener = new UsageDataEventListener() {

@@ -10,33 +10,37 @@
  *******************************************************************************/
 package org.eclipse.epp.usagedata.internal.gathering.services;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.concurrent.TimeUnit;
 
 import org.eclipse.core.runtime.adaptor.EclipseStarter;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.epp.usagedata.internal.gathering.UsageDataCaptureActivator;
 import org.eclipse.epp.usagedata.internal.gathering.settings.UsageDataCaptureSettings;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.api.Timeout.ThreadMode;
 import org.osgi.util.tracker.ServiceTracker;
 
 @SuppressWarnings("restriction")
 public class UsageDataServiceLifecycleTests {
 	private static ServiceTracker tracker;
 
-	@BeforeClass
+	@BeforeAll
 	public static void setup() throws Exception {
 		while (!EclipseStarter.isRunning()) Thread.sleep(100);
 		tracker = new ServiceTracker(UsageDataCaptureActivator.getDefault().getContext(), UsageDataService.class.getName(), null);
 		tracker.open();
 	}
 	
-	@AfterClass
+	@AfterAll
 	public static void shutdown() {
 		tracker.close();
 	}
@@ -47,7 +51,7 @@ public class UsageDataServiceLifecycleTests {
 	 * 
 	 * @throws Exception
 	 */
-	@Before
+	@BeforeEach
 	public void before() throws Exception {		
 		getService().startMonitoring();
 		while (getService().eventConsumerJob.getState() != Job.RUNNING) Thread.sleep(50);	
@@ -65,7 +69,8 @@ public class UsageDataServiceLifecycleTests {
 		assertEquals(Job.LONG, getService().eventConsumerJob.getPriority());
 	}
 	
-	@Test (timeout=2000)
+	@Test
+	@Timeout(value = 2, unit = TimeUnit.SECONDS, threadMode = ThreadMode.SEPARATE_THREAD)
 	public void testServiceStops() throws Exception {
 		assertTrue(getService().isMonitoring());
 		getService().stopMonitoring();

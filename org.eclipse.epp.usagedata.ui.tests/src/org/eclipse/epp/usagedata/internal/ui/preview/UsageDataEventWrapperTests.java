@@ -10,16 +10,16 @@
  *******************************************************************************/
 package org.eclipse.epp.usagedata.internal.ui.preview;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.epp.usagedata.internal.gathering.events.UsageDataEvent;
 import org.eclipse.epp.usagedata.internal.recording.filtering.MockUsageDataEventFilter;
 import org.eclipse.epp.usagedata.internal.recording.uploading.UploadParameters;
 import org.eclipse.epp.usagedata.internal.ui.preview.util.MockUploadSettings;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * These tests can be run outside of the workbench.
@@ -33,7 +33,7 @@ public class UsageDataEventWrapperTests {
 	private MockUsageDataEventFilter filter;
 	private MockUploadSettings settings;
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		parameters = new UploadParameters();
 		settings = new MockUploadSettings();
