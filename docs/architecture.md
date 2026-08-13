@@ -9,11 +9,9 @@ org.eclipse.epp.usagedata.gathering    # Monitors user activity
 org.eclipse.epp.usagedata.recording    # Stores and uploads collected data
 org.eclipse.epp.usagedata.ui           # Preference pages and upload UI
 org.eclipse.epp.usagedata.feature      # Groups plugins for installation
-org.eclipse.epp.usagedata.tests.feature
-org.eclipse.epp.usagedata.gathering.tests   # Test bundles for each plugin
+org.eclipse.epp.usagedata.gathering.tests   # Test fragment for each plugin
 org.eclipse.epp.usagedata.recording.tests
 org.eclipse.epp.usagedata.ui.tests
-org.eclipse.epp.usagedata.tests
 org.eclipse.epp.usagedata.repository   # Generates the p2 update site
 target-platform/                       # Eclipse target platform definition
 ```

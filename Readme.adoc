@@ -8,6 +8,13 @@ Use the following command to build the collector:
 mvn clean verify
 ```
 
+This also runs the tests.
+They start a workbench, so on a headless machine (or in CI) run them under a virtual display:
+
+```bash
+xvfb-run -a mvn clean verify
+```
+
 === System properties for development and testing
 
 The recording bundle reads a few system properties that can be set via `-D` VM arguments. They are primarily intended for development, debugging, and integration testing — end users normally configure the collector via the preference pages.
