@@ -10,13 +10,8 @@
  *******************************************************************************/
 package org.eclipse.epp.usagedata.internal.ui.preferences;
 
-import java.io.IOException;
-import java.net.URL;
-
-import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.epp.usagedata.internal.gathering.settings.UsageDataCaptureSettings;
-import org.eclipse.epp.usagedata.internal.ui.Activator;
+import org.eclipse.epp.usagedata.internal.ui.TermsOfUse;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
@@ -50,8 +45,8 @@ public class UsageDataUploadingTermsOfUsePage extends PreferencePage
 		composite.setLayout(new GridLayout());
 		Browser browser = new Browser(composite, SWT.BORDER);
 		GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
-		browser.setLayoutData(layoutData);		
-		browser.setUrl(getTermsOfUseUrl());
+		browser.setLayoutData(layoutData);
+		browser.setText(TermsOfUse.getHtml(parent.getDisplay()));
 		
 		acceptTermsButton = new Button(composite, SWT.CHECK);
 		acceptTermsButton.setText(Messages.UsageDataUploadingTermsOfUsePage_0); 
@@ -70,17 +65,6 @@ public class UsageDataUploadingTermsOfUsePage extends PreferencePage
 		return super.performOk();
 	}
 	
-	private String getTermsOfUseUrl() {
-		URL terms = FileLocator.find(Activator.getDefault().getBundle(), new Path("terms.html"), null); //$NON-NLS-1$
-		try {
-			return FileLocator.toFileURL(terms).toString();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
-	}
-
 	private IPreferenceStore getCapturePreferences() {
 		return org.eclipse.epp.usagedata.internal.gathering.UsageDataCaptureActivator.getDefault().getPreferenceStore();
 	}

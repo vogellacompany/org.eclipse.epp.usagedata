@@ -10,12 +10,7 @@
  *******************************************************************************/
 package org.eclipse.epp.usagedata.internal.ui.wizards;
 
-import java.io.IOException;
-import java.net.URL;
-
-import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.epp.usagedata.internal.ui.Activator;
+import org.eclipse.epp.usagedata.internal.ui.TermsOfUse;
 import org.eclipse.epp.usagedata.internal.ui.uploaders.AskUserUploader;
 import org.eclipse.jface.dialogs.IDialogPage;
 import org.eclipse.jface.wizard.WizardPage;
@@ -47,8 +42,8 @@ public class TermsOfUseWizardPage extends WizardPage {
 		container.setLayout(new GridLayout());
 		Browser browser = new Browser(container, SWT.BORDER);
 		GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
-		browser.setLayoutData(layoutData);		
-		browser.setUrl(getTermsOfUseUrl());
+		browser.setLayoutData(layoutData);
+		browser.setText(TermsOfUse.getHtml(parent.getDisplay()));
 		
 		final Button acceptTermsButton = new Button(container, SWT.CHECK);
 		acceptTermsButton.setText(Messages.TermsOfUseWizardPage_2); 
@@ -67,14 +62,4 @@ public class TermsOfUseWizardPage extends WizardPage {
 		
 	}
 
-	private String getTermsOfUseUrl() {
-		URL terms = FileLocator.find(Activator.getDefault().getBundle(), new Path("terms.html"), null); //$NON-NLS-1$
-		try {
-			return FileLocator.toFileURL(terms).toString();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
-	}
 }
