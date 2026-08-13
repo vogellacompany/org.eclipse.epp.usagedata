@@ -79,8 +79,7 @@ public class UploadPreview  {
 	private UsageDataTableViewerColumn bundleVersionColumn;
 	private UsageDataTableViewerColumn timestampColumn;
 	
-	private Color colorGray;
-	private Color colorBlack;
+	private Color colorFiltered;
 	private Image xImage;
 
 	private Cursor busyCursor;
@@ -134,8 +133,7 @@ public class UploadPreview  {
 	 * deallocated.
 	 */
 	private void allocateResources(Composite parent) {
-		colorGray = parent.getDisplay().getSystemColor(SWT.COLOR_GRAY);
-		colorBlack = parent.getDisplay().getSystemColor(SWT.COLOR_BLACK);
+		colorFiltered = parent.getDisplay().getSystemColor(SWT.COLOR_WIDGET_DISABLED_FOREGROUND);
 		busyCursor = parent.getDisplay().getSystemCursor(SWT.CURSOR_WAIT);
 		
 		xImage = Activator.getDefault().getImageDescriptor("/icons/x.png").createImage(parent.getDisplay()); //$NON-NLS-1$
@@ -674,18 +672,16 @@ public class UploadPreview  {
 		}
 			
 		/**
-		 * This method provides a foreground colour for the cell.
-		 * The cell will be black if the filter includes the
-		 * includes the provided {@link UsageDataEvent}, or gray if the filter
-		 * excludes it.
+		 * This method provides a foreground colour for the cell. Events excluded
+		 * by the filter are greyed out; included events use the table default so
+		 * that they follow the current theme.
 		 */
 		@Override
 		public Color getForeground(Object element) {
 			if (((UsageDataEventWrapper)element).isIncludedByFilter()) {
-				return colorBlack;
-			} else {
-				return colorGray;
+				return null;
 			}
+			return colorFiltered;
 		}
 		
 		@Override
