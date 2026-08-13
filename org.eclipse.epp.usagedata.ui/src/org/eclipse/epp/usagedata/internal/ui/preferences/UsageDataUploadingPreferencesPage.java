@@ -196,7 +196,9 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 	public boolean performOk() {		
 		getRecordingPreferences().setValue(UsageDataRecordingSettings.ASK_TO_UPLOAD_KEY, askBeforeUploadingCheckbox.getSelection());		
 		getRecordingPreferences().setValue(UsageDataRecordingSettings.UPLOAD_PERIOD_KEY, Long.valueOf(uploadPeriodText.getText()) * MILLISECONDS_IN_ONE_DAY);
-		getSettings().setUploadUrl(uploadUrlText.getText());
+		if (System.getProperty(UsageDataRecordingSettings.UPLOAD_URL_KEY) == null) {
+			getSettings().setUploadUrl(uploadUrlText.getText());
+		}
 		
 		return super.performOk();
 	}
@@ -207,6 +209,7 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 	@Override
 	public boolean isValid() {
 		if (!isValidUploadPeriod(uploadPeriodText.getText())) return false;
+		if (!isValidUploadUrl(uploadUrlText.getText())) return false;
 		return true;
 	}
 
@@ -217,7 +220,7 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 	protected void performDefaults() {
 		askBeforeUploadingCheckbox.setSelection(getRecordingPreferences().getDefaultBoolean(UsageDataRecordingSettings.ASK_TO_UPLOAD_KEY));
 		uploadPeriodText.setText(String.valueOf(getRecordingPreferences().getDefaultLong(UsageDataRecordingSettings.UPLOAD_PERIOD_KEY) / MILLISECONDS_IN_ONE_DAY));
-		uploadUrlText.setText(UsageDataRecordingSettings.UPLOAD_URL_DEFAULT);
+		uploadUrlText.setText(getRecordingPreferences().getDefaultString(UsageDataRecordingSettings.UPLOAD_URL_KEY));
 
 		updateLastUploadText();
 
@@ -311,6 +314,12 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 		}
 		return true;
 	}
+	
+	private boolean isValidUploadUrl(String text) {
+		if (text == null || text.trim().isEmpty())
+			return false;
+		return text.startsWith("http://") || text.startsWith("https://");
+	}
 		
 	private Image getErrorImage() {
 		return FieldDecorationRegistry.getDefault().getFieldDecoration(FieldDecorationRegistry.DEC_ERROR).getImage();
@@ -347,6 +356,23 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 		if (System.getProperty(UsageDataRecordingSettings.UPLOAD_URL_KEY) != null) {
 			addOverrideWarning(uploadUrlText);
 		}
+		
+		final ControlDecoration urlErrorDecoration = new ControlDecoration(uploadUrlText, SWT.LEFT | SWT.TOP);
+		urlErrorDecoration.setDescriptionText(Messages.UsageDataUploadingPreferencesPage_10);
+		urlErrorDecoration.setImage(getErrorImage());
+		urlErrorDecoration.hide();
+		
+		uploadUrlText.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				if (isValidUploadUrl(uploadUrlText.getText()))
+					urlErrorDecoration.hide();
+				else {
+					urlErrorDecoration.show();
+				}
+				updateApplyButton();
+				getContainer().updateButtons();
+			}
+		});
 	}
 	
 	/*

@@ -34,6 +34,7 @@ public final class Messages extends NLS {
 	public static String UsageDataUploadingPreferencesPage_7;
 	public static String UsageDataUploadingPreferencesPage_8;
 	public static String UsageDataUploadingPreferencesPage_9;
+	public static String UsageDataUploadingPreferencesPage_10;
 	public static String UsageDataUploadingTermsOfUsePage_0;
 
 	static {
