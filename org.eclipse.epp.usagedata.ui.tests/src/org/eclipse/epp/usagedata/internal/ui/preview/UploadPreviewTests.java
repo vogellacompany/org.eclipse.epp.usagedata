@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.epp.usagedata.internal.ui.preview;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,9 +33,9 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * The {@link UploadPreviewTests} class tests various aspects of the
@@ -50,7 +50,7 @@ public class UploadPreviewTests {
 	private Display display;
 	private Shell shell;
 
-	@Before
+	@BeforeEach
 	public void setup() throws Exception {
 		parameters = new UploadParameters();
 		parameters.setSettings(new MockUploadSettings());
@@ -69,7 +69,7 @@ public class UploadPreviewTests {
 		preview.contentJob.join();
 	}
 	
-	@After
+	@AfterEach
 	public void shutdown() {
 		shell.close();
 		shell.dispose();

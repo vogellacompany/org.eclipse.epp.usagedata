@@ -13,8 +13,8 @@ package org.eclipse.epp.usagedata.internal.recording.uploading;
 import java.io.StringReader;
 
 import org.eclipse.epp.usagedata.internal.gathering.events.UsageDataEvent;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class UsageDataFileReaderTests {
 	@Test

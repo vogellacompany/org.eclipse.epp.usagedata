@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.epp.usagedata.internal.ui.preferences;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.core.runtime.adaptor.EclipseStarter;
 import org.eclipse.epp.usagedata.internal.gathering.UsageDataCaptureActivator;
@@ -19,10 +19,10 @@ import org.eclipse.epp.usagedata.internal.gathering.settings.UsageDataCaptureSet
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 
 public class UsageDataCapturePreferencesPageTests {
@@ -30,12 +30,12 @@ public class UsageDataCapturePreferencesPageTests {
 
 
 	@SuppressWarnings({ "restriction"})
-	@BeforeClass
+	@BeforeAll
 	public static void beforeClass() throws InterruptedException {
 		while (!EclipseStarter.isRunning()) Thread.sleep(100);
 	}
 	
-	@Before
+	@BeforeEach
 	public void before() {
 		getPreferenceStore().setValue(UsageDataCaptureSettings.CAPTURE_ENABLED_KEY, true);
 	
@@ -50,7 +50,7 @@ public class UsageDataCapturePreferencesPageTests {
 	}
 
 	
-	@After
+	@AfterEach
 	public void after() {
 		page.dispose();
 	}

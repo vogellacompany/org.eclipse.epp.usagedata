@@ -10,20 +10,20 @@
  *******************************************************************************/
 package org.eclipse.epp.usagedata.internal.recording.filtering;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.epp.usagedata.internal.gathering.events.UsageDataEvent;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class AbstractUsageDataEventFilterTests {
 	
 	AbstractUsageDataEventFilter filter;
 	
-	@Before
+	@BeforeEach
 	public void setup() {
 		filter = new AbstractUsageDataEventFilter() {
 			public boolean includes(UsageDataEvent event) {

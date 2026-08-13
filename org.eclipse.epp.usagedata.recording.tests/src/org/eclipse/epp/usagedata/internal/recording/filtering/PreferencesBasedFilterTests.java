@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.epp.usagedata.internal.recording.filtering;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,9 +19,9 @@ import org.eclipse.epp.usagedata.internal.gathering.events.UsageDataEvent;
 import org.eclipse.epp.usagedata.internal.recording.UsageDataRecordingActivator;
 import org.eclipse.epp.usagedata.internal.recording.settings.UsageDataRecordingSettings;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * This class tests the {@link PreferencesBasedFilter} class. This test must
@@ -36,14 +36,14 @@ public class PreferencesBasedFilterTests {
 	private UsageDataEvent eclipseEvent2 = createUsageDataEvent("org.eclipse.ui");
 	private UsageDataEvent nonEclipseEvent = createUsageDataEvent("com.something.core");
 	
-	@Before
+	@BeforeEach
 	public void setup() {
 		filter = new PreferencesBasedFilter();
 		getPreferencesStore().setToDefault(UsageDataRecordingSettings.FILTER_ECLIPSE_BUNDLES_ONLY_KEY);
 		getPreferencesStore().setToDefault(UsageDataRecordingSettings.FILTER_PATTERNS_KEY);
 	}
 	
-	@After
+	@AfterEach
 	public void teardown() {
 		filter.dispose();
 	}

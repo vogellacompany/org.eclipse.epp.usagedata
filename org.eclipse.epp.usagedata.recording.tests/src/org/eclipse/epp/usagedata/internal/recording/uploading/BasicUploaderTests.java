@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.epp.usagedata.internal.recording.uploading;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.OutputStream;
@@ -24,9 +24,9 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.epp.usagedata.internal.recording.settings.UploadSettings;
 import org.eclipse.epp.usagedata.internal.recording.uploading.util.MockUploadSettings;
 import org.eclipse.epp.usagedata.internal.recording.uploading.util.UploaderTestUtils;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import com.sun.net.httpserver.HttpServer;
 
@@ -36,7 +36,7 @@ public class BasicUploaderTests {
 	private static int port;
 	private static HttpServer server;
 
-	@BeforeClass
+	@BeforeAll
 	public static void startServer() throws Exception {
 		server = HttpServer.create(new InetSocketAddress("localhost", 0), 0);
 		server.createContext(GOOD_PATH, exchange -> {
@@ -52,7 +52,7 @@ public class BasicUploaderTests {
 		port = server.getAddress().getPort();
 	}
 
-	@AfterClass
+	@AfterAll
 	public static void stopServer() throws Exception {
 		server.stop(0);
 	}
@@ -85,13 +85,9 @@ public class BasicUploaderTests {
 		uploadParameters.setSettings(settings);
 		uploadParameters.setFiles(new File[] {file});
 		
-		try {
-			new BasicUploader(uploadParameters).doUpload(new NullProgressMonitor());
-			
-			fail("IllegalStateException expected.");
-		} catch (IllegalStateException e) {
-			// Expected
-		} 
+		assertThrows(IllegalStateException.class,
+				() -> new BasicUploader(uploadParameters).doUpload(new NullProgressMonitor()));
+
 		assertTrue(file.exists());
 	}
 

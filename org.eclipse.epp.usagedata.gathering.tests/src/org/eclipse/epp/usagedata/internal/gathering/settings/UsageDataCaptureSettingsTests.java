@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.epp.usagedata.internal.gathering.settings;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.epp.usagedata.internal.gathering.UsageDataCaptureActivator;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * These tests confirm that the settings, based on values stored
