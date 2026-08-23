@@ -22,14 +22,15 @@
         </pluginManagement>
 
         <plugins>
-            <!-- For update sites, this setting creates a self-contained p2 repository INCLUDING all dependencies of the update site content-->
-              <plugin>
+            <!-- The feature only requires platform bundles, which every target
+                 Eclipse already has, so the published site carries just this
+                 project's bundles. The archive is the release download. -->
+            <plugin>
                 <groupId>org.eclipse.tycho</groupId>
-                 <artifactId>tycho-p2-repository-plugin</artifactId>
-                 <version>${tycho.version}</version>
+                <artifactId>tycho-p2-repository-plugin</artifactId>
+                <version>${tycho.version}</version>
                 <configuration>
-                    <skipArchive>true</skipArchive>
-                    <includeAllDependencies>true</includeAllDependencies>
+                    <includeAllDependencies>false</includeAllDependencies>
                 </configuration>
             </plugin>
             <plugin>

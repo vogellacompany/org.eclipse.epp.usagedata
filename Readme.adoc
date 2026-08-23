@@ -1,5 +1,28 @@
 == Usage data collector
 
+=== Installation
+
+Install the collector in Eclipse via *Help > Install New Software*, using the update site
+
+```
+https://vogellacompany.github.io/org.eclipse.epp.usagedata/
+```
+
+That URL always offers the newest release.
+The page at the same address lists the version-specific sites if you want to pin one.
+
+=== How to release
+
+Pushing a tag that starts with `v` runs the `Release` workflow.
+It builds the p2 repository, publishes it to the `gh-pages` branch as the update site above, and attaches the repository archive to the GitHub release.
+
+```bash
+git tag v1.4.0
+git push origin v1.4.0
+```
+
+The workflow can also be started manually from the Actions tab, which publishes the update site without creating a release.
+
 === How to build
 
 Use the following command to build the collector:
