@@ -80,6 +80,21 @@ public class UsageDataRecorder implements UsageDataEventListener {
 		events = null;
 	}
 	
+	/**
+	 * Drops the buffered events and deletes what has been recorded to disk.
+	 * Refuses while an upload is running, because the uploader deletes the
+	 * files it was handed once the server has accepted them.
+	 *
+	 * @return whether the data was cleared.
+	 */
+	public synchronized boolean clear() {
+		UploadManager manager = getUploadManager();
+		if (manager != null && manager.isUploadInProgress()) return false;
+		if (events != null) events.clear();
+		if (getSettings() != null) getSettings().deleteUsageData();
+		return true;
+	}
+
 	public synchronized void accept(UsageDataEvent event) {
 		if (event == null) return;
 		if (!canAcceptEvents()) return;

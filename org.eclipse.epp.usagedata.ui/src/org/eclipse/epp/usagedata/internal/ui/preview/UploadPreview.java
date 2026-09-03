@@ -24,12 +24,14 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.epp.usagedata.internal.gathering.events.UsageDataEvent;
+import org.eclipse.epp.usagedata.internal.recording.UsageDataRecordingActivator;
 import org.eclipse.epp.usagedata.internal.recording.filtering.FilterChangeListener;
 import org.eclipse.epp.usagedata.internal.recording.filtering.FilterUtils;
 import org.eclipse.epp.usagedata.internal.recording.filtering.PreferencesBasedFilter;
 import org.eclipse.epp.usagedata.internal.recording.uploading.UploadParameters;
 import org.eclipse.epp.usagedata.internal.recording.uploading.UsageDataFileReader;
 import org.eclipse.epp.usagedata.internal.ui.Activator;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -305,6 +307,7 @@ public class UploadPreview  {
 		buttons.setLayout(new RowLayout());
 		createAddFilterButton(buttons);
 		createRemoveFilterButton(buttons);
+		createClearEventsButton(buttons);
 
 		final FilterChangeListener filterChangeListener = new FilterChangeListener() {
 			public void filterChanged() {
@@ -384,6 +387,32 @@ public class UploadPreview  {
 		}
 	}
 	
+	private void createClearEventsButton(Composite parent) {
+		Button button = new Button(parent, SWT.PUSH);
+		button.setText(Messages.UploadPreview_13);
+		button.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				clearEvents();
+			}
+		});
+	}
+
+	/**
+	 * Deletes everything recorded so far after the user confirms. The table is
+	 * emptied here rather than reloaded, since the files it was read from are
+	 * gone.
+	 */
+	private void clearEvents() {
+		if (!MessageDialog.openConfirm(viewer.getTable().getShell(), Messages.UploadPreview_14, Messages.UploadPreview_15)) return;
+		if (!UsageDataRecordingActivator.getDefault().getRecorder().clear()) {
+			MessageDialog.openInformation(viewer.getTable().getShell(), Messages.UploadPreview_14, Messages.UploadPreview_16);
+			return;
+		}
+		events.clear();
+		viewer.refresh();
+	}
+
 	// TODO Return a more interesting suggestion based on the selection.
 	String getFilterSuggestion() {
 		IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();

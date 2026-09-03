@@ -335,6 +335,19 @@ public class UsageDataRecordingSettings implements UploadSettings {
 	}
 
 	/**
+	 * Deletes everything recorded so far that has not been uploaded: the live
+	 * event file and every staged upload file.
+	 */
+	public void deleteUsageData() {
+		getEventFile().delete();
+		File[] files = getUsageDataUploadFiles();
+		if (files == null) return;
+		for (File file : files) {
+			file.delete();
+		}
+	}
+
+	/**
 	 * This method deletes staged upload files older than
 	 * {@link #UPLOAD_FILE_RETENTION_DAYS}, then deletes the oldest of what is
 	 * left until the rest fit in {@link #UPLOAD_DIRECTORY_MAX_BYTES}, so that

@@ -109,5 +109,9 @@ public class UsageDataRecordingActivator extends AbstractUIPlugin implements ISt
 		return uploadManager;
 	}
 
+	public UsageDataRecorder getRecorder() {
+		return usageDataRecorder;
+	}
+
 
 }
