@@ -10,9 +10,14 @@
  *******************************************************************************/
 package org.eclipse.epp.usagedata.internal.ui.preview;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.io.Writer;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,6 +27,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.epp.usagedata.internal.gathering.events.UsageDataEvent;
@@ -45,6 +51,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.dnd.Clipboard;
@@ -65,13 +72,18 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 
 public class UploadPreview  {
 
@@ -101,6 +113,12 @@ public class UploadPreview  {
 	private Button eclipseOnlyButton;
 
 	private Button bundleEventsButton;
+	private Link summary;
+
+	/** How many of the newest events the table shows; the rest go to the editor. */
+	static final int MAX_EVENTS_SHOWN = 500;
+	private static final String GENERIC_EDITOR_ID = "org.eclipse.ui.genericeditor.GenericEditor"; //$NON-NLS-1$
+	private static final String IDE_BUNDLE_ID = "org.eclipse.ui.ide"; //$NON-NLS-1$
 
 	private Button addFilterButton;
 
@@ -127,6 +145,7 @@ public class UploadPreview  {
 		
 		if (showDescription) createDescriptionText(composite);
 		createEventsTable(composite);
+		createSummary(composite);
 		createBundleEventsButton(composite);
 		createEclipseOnlyButton(composite);
 		createButtons(composite);
@@ -430,6 +449,7 @@ public class UploadPreview  {
 		}
 		events.clear();
 		viewer.refresh();
+		updateSummary(0, 0);
 	}
 
 	// TODO Return a more interesting suggestion based on the selection.
@@ -491,30 +511,35 @@ public class UploadPreview  {
 		contentJob.schedule();
 	}
 
+	/**
+	 * Reads every file, then shows only the newest {@link #MAX_EVENTS_SHOWN}
+	 * events. The table is not virtual, and inserting tens of thousands of
+	 * sorted rows would stall the UI.
+	 */
 	void processFiles(IProgressMonitor monitor) {
 		File[] files = parameters.getFiles();
-		monitor.beginTask("Process Files", files.length);	 //$NON-NLS-1$
+		monitor.beginTask("Process Files", files.length); //$NON-NLS-1$
+		List<UsageDataEventWrapper> all = new ArrayList<UsageDataEventWrapper>();
 		for (File file : files) {
-			if (isDisposed()) break; 
+			if (isDisposed()) break;
 			if (monitor.isCanceled()) break;
-			processFile(file, monitor);
+			processFile(file, all, monitor);
 			monitor.worked(1);
 		}
 		monitor.done();
+		if (isDisposed() || monitor.isCanceled()) return;
+
+		all.sort(Comparator.comparingLong(UsageDataEventWrapper::getWhen).reversed());
+		List<UsageDataEventWrapper> newest = new ArrayList<UsageDataEventWrapper>(all.subList(0, Math.min(MAX_EVENTS_SHOWN, all.size())));
+		addEvents(newest);
+		updateSummary(all.size(), newest.size());
 	}
-	
+
 	/**
-	 * This method extracts the events found in a {@link File}
-	 * and adds them to the list of events displayed by the
-	 * receiver. Events are batched into groups to reduce
-	 * the number of times the viewer will have to update.
-	 * 
-	 * @param file the {@link File} to process.
-	 * @param monitor the monitor.
+	 * This method extracts the events found in a {@link File} and adds them
+	 * to the given list.
 	 */
-	void processFile(File file, IProgressMonitor monitor) {
-		// TODO Add a progress bar to the page?
-		final List<UsageDataEventWrapper> events = new ArrayList<UsageDataEventWrapper>();
+	void processFile(File file, final List<UsageDataEventWrapper> events, IProgressMonitor monitor) {
 		UsageDataFileReader reader = null;
 		try {
 			reader = new UsageDataFileReader(file);
@@ -522,16 +547,11 @@ public class UploadPreview  {
 				public void header(String header) {
 					// Ignore the header.
 				}
-				
+
 				public void event(String line, UsageDataEvent event) {
 					events.add(new UsageDataEventWrapper(parameters, event));
-					if (events.size() > 25) {
-						addEvents(events);
-						events.clear();
-					}
-				}	
+				}
 			});
-			addEvents(events);
 		} catch (Exception e) {
 			Activator.getDefault().log(IStatus.WARNING, e, "An error occurred while trying to read %1$s", file.getAbsolutePath()); //$NON-NLS-1$
 		} finally {
@@ -562,6 +582,67 @@ public class UploadPreview  {
 			clipboard.setContents(new Object[] { writer.toString() }, new org.eclipse.swt.dnd.Transfer[] { TextTransfer.getInstance() });
 		} finally {
 			clipboard.dispose();
+		}
+	}
+
+	private void createSummary(Composite parent) {
+		summary = new Link(parent, SWT.NONE);
+		summary.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		summary.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				openAllInEditor();
+			}
+		});
+	}
+
+	private void updateSummary(final int total, final int shown) {
+		if (isDisposed()) return;
+		getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				if (isDisposed() || summary.isDisposed()) return;
+				String text = shown < total
+						? NLS.bind(Messages.UploadPreview_18, Integer.valueOf(shown), Integer.valueOf(total))
+						: NLS.bind(Messages.UploadPreview_19, Integer.valueOf(total));
+				summary.setText(text);
+				summary.getParent().layout();
+			}
+		});
+	}
+
+	/**
+	 * Writes all recorded files into one and opens it in the generic editor.
+	 * Without the IDE bundle, which the editor input needs, the system editor
+	 * takes over.
+	 */
+	private void openAllInEditor() {
+		File combined = new File(Activator.getDefault().getStateLocation().toFile(), "recorded-usage-data.csv"); //$NON-NLS-1$
+		try (Writer writer = new BufferedWriter(new FileWriter(combined))) {
+			UsageDataRecorderUtils.writeHeader(writer);
+			for (File file : parameters.getFiles()) {
+				if (!file.exists()) continue;
+				try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+					reader.readLine(); // each file starts with the header
+					String line;
+					while ((line = reader.readLine()) != null) {
+						writer.write(line);
+						writer.write('\n');
+					}
+				}
+			}
+		} catch (IOException e) {
+			Activator.getDefault().log(IStatus.ERROR, e, "Cannot write %1$s", combined.getAbsolutePath()); //$NON-NLS-1$
+			return;
+		}
+		if (Platform.getBundle(IDE_BUNDLE_ID) == null) {
+			Program.launch(combined.getAbsolutePath());
+			return;
+		}
+		try {
+			IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+			page.openEditor(new RecordedDataEditorInput(combined), GENERIC_EDITOR_ID);
+		} catch (PartInitException e) {
+			Program.launch(combined.getAbsolutePath());
 		}
 	}
 
