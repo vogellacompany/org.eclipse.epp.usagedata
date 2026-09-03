@@ -15,7 +15,6 @@ import org.eclipse.epp.usagedata.internal.ui.uploaders.AskUserUploader;
 import org.eclipse.jface.dialogs.IDialogPage;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -40,10 +39,7 @@ public class TermsOfUseWizardPage extends WizardPage {
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
 		container.setLayout(new GridLayout());
-		Browser browser = new Browser(container, SWT.BORDER);
-		GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
-		browser.setLayoutData(layoutData);
-		browser.setText(TermsOfUse.getHtml(parent.getDisplay()));
+		TermsOfUse.createControl(container).setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		
 		final Button acceptTermsButton = new Button(container, SWT.CHECK);
 		acceptTermsButton.setText(Messages.TermsOfUseWizardPage_2); 

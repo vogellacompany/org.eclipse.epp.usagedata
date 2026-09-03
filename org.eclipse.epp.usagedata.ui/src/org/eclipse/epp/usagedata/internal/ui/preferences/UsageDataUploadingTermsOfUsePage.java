@@ -15,7 +15,6 @@ import org.eclipse.epp.usagedata.internal.ui.TermsOfUse;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -43,10 +42,7 @@ public class UsageDataUploadingTermsOfUsePage extends PreferencePage
 	protected Control createContents(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout());
-		Browser browser = new Browser(composite, SWT.BORDER);
-		GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
-		browser.setLayoutData(layoutData);
-		browser.setText(TermsOfUse.getHtml(parent.getDisplay()));
+		TermsOfUse.createControl(composite).setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		
 		acceptTermsButton = new Button(composite, SWT.CHECK);
 		acceptTermsButton.setText(Messages.UsageDataUploadingTermsOfUsePage_0); 
