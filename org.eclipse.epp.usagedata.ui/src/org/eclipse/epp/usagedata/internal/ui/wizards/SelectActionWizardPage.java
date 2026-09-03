@@ -32,9 +32,8 @@ import org.eclipse.ui.forms.widgets.FormText;
 
 public class SelectActionWizardPage extends WizardPage {
 
-	// TODO Replace with proper values
-	private static final String UDC_URL = "http://www.eclipse.org/org/usagedata/index.php"; //$NON-NLS-1$
-	private static final String FAQ_URL = "http://www.eclipse.org/org/usagedata/faq.php"; //$NON-NLS-1$
+	private static final String UDC_URL = "https://github.com/vogellacompany/org.eclipse.epp.usagedata"; //$NON-NLS-1$
+	private static final String FAQ_URL = "https://github.com/vogellacompany/org.eclipse.epp.usagedata/blob/main/docs/user-guide.md"; //$NON-NLS-1$
 
 	private static final int WIDTH_HINT = 500;
 	
