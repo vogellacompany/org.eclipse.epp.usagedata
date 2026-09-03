@@ -2,10 +2,10 @@
 <?compositeMetadataRepository version='1.0.0'?>
 <repository name='Usage Data Collector' type='org.eclipse.equinox.internal.p2.metadata.repository.CompositeMetadataRepository' version='1.0.0'>
   <properties size='2'>
-    <property name='p2.timestamp' value='1788431551000'/>
+    <property name='p2.timestamp' value='1788434968000'/>
     <property name='p2.atomic.composite.loading' value='true'/>
   </properties>
   <children size='1'>
-    <child location='releases/1.4.0.202609031031'/>
+    <child location='releases/1.4.0.202609031128'/>
   </children>
 </repository>
