@@ -41,6 +41,37 @@ public class PreferencesBasedFilterTests {
 		filter = new PreferencesBasedFilter();
 		getPreferencesStore().setToDefault(UsageDataRecordingSettings.FILTER_ECLIPSE_BUNDLES_ONLY_KEY);
 		getPreferencesStore().setToDefault(UsageDataRecordingSettings.FILTER_PATTERNS_KEY);
+		getPreferencesStore().setToDefault(UsageDataRecordingSettings.FILTER_BUNDLE_EVENTS_KEY);
+	}
+
+	@Test
+	public void testBundleEventsAreFilteredByDefault() {
+		assertTrue(filter.isBundleEventsFiltered());
+		assertFalse(filter.includes(createBundleEvent("org.eclipse.core")));
+	}
+
+	@Test
+	public void testFilteringBundleEventsKeepsEverythingElse() {
+		assertTrue(filter.includes(eclipseEvent1));
+		assertTrue(filter.includes(nonEclipseEvent));
+	}
+
+	@Test
+	public void testBundleEventsAreIncludedWhenNotFiltered() {
+		filter.setBundleEventsFiltered(false);
+
+		assertTrue(filter.includes(createBundleEvent("org.eclipse.core")));
+	}
+
+	@Test
+	public void testBundleEventFilterBeatsTheEclipseOnlyFilter() {
+		filter.setEclipseOnly(true);
+
+		assertFalse(filter.includes(createBundleEvent("org.eclipse.core")));
+	}
+
+	private UsageDataEvent createBundleEvent(String bundleId) {
+		return new UsageDataEvent("started", "bundle", bundleId, bundleId, "version", System.currentTimeMillis());
 	}
 	
 	@AfterEach

@@ -33,6 +33,9 @@ import org.eclipse.jface.util.PropertyChangeEvent;
  */
 public class PreferencesBasedFilter extends AbstractUsageDataEventFilter {
 
+	/** The kind recorded for every OSGi bundle lifecycle change. */
+	private static final String BUNDLE_KIND = "bundle"; //$NON-NLS-1$
+
 	public PreferencesBasedFilter() {
 		hookListeners();
 	}
@@ -62,15 +65,19 @@ public class PreferencesBasedFilter extends AbstractUsageDataEventFilter {
 	boolean isFilterProperty(String property) {
 		if (UsageDataRecordingSettings.FILTER_ECLIPSE_BUNDLES_ONLY_KEY.equals(property)) return true;
 		if (UsageDataRecordingSettings.FILTER_PATTERNS_KEY.equals(property)) return true;
+		if (UsageDataRecordingSettings.FILTER_BUNDLE_EVENTS_KEY.equals(property)) return true;
 		return false;
 	}
 
 	public boolean includes(UsageDataEvent event) {
+		if (isBundleEventsFiltered() && BUNDLE_KIND.equals(event.kind)) return false;
+		// Not every event comes from a bundle; the log monitor reports none.
+		String bundleId = event.bundleId == null ? "" : event.bundleId; //$NON-NLS-1$
 		if (includeOnlyEclipseDotOrgBundles()) {
-			return event.bundleId.startsWith("org.eclipse."); //$NON-NLS-1$
+			return bundleId.startsWith("org.eclipse."); //$NON-NLS-1$
 		}
 		for (String filter : getFilterPatterns()) {
-			if (matches(filter, event.bundleId)) return false;
+			if (matches(filter, bundleId)) return false;
 		}
 		return true;
 	}
@@ -139,6 +146,15 @@ public class PreferencesBasedFilter extends AbstractUsageDataEventFilter {
 
 	public boolean isEclipseOnly() {
 		return getPreferenceStore().getBoolean(UsageDataRecordingSettings.FILTER_ECLIPSE_BUNDLES_ONLY_KEY);
+	}
+
+	public void setBundleEventsFiltered(boolean value) {
+		getPreferenceStore().setValue(UsageDataRecordingSettings.FILTER_BUNDLE_EVENTS_KEY, value);
+		UsageDataRecordingActivator.getDefault().savePluginPreferences();
+	}
+
+	public boolean isBundleEventsFiltered() {
+		return getPreferenceStore().getBoolean(UsageDataRecordingSettings.FILTER_BUNDLE_EVENTS_KEY);
 	}
 
 

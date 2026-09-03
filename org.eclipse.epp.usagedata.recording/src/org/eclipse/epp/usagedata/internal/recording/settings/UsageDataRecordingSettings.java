@@ -54,6 +54,7 @@ public class UsageDataRecordingSettings implements UploadSettings {
 	public static final String LOG_SERVER_ACTIVITY_KEY = UsageDataRecordingActivator.PLUGIN_ID + ".log-server"; //$NON-NLS-1$
 	public static final String FILTER_ECLIPSE_BUNDLES_ONLY_KEY = UsageDataRecordingActivator.PLUGIN_ID + ".filter-eclipse-only"; //$NON-NLS-1$
 	public static final String FILTER_PATTERNS_KEY = UsageDataRecordingActivator.PLUGIN_ID + ".filter-patterns"; //$NON-NLS-1$
+	public static final String FILTER_BUNDLE_EVENTS_KEY = UsageDataRecordingActivator.PLUGIN_ID + ".filter-bundle-events"; //$NON-NLS-1$
 	
 	public static final String UPLOAD_URL_KEY = UsageDataRecordingActivator.PLUGIN_ID + ".upload-url"; //$NON-NLS-1$
 	
@@ -91,6 +92,14 @@ public class UsageDataRecordingSettings implements UploadSettings {
 	 * than this in total.
 	 */
 	public static final long UPLOAD_DIRECTORY_MAX_BYTES = 10L * 1024L * 1024L;
+
+	/**
+	 * Bundle lifecycle events are filtered out of uploads by default. Starting
+	 * an IDE reports every bundle it activates, which is the great majority of
+	 * what gets recorded and says far less about how anyone works than the
+	 * commands, editors and views it buries.
+	 */
+	public static final boolean FILTER_BUNDLE_EVENTS_DEFAULT = true;
 
 	private int consecutiveFailedAttempts = 0;
 

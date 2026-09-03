@@ -20,6 +20,7 @@ import java.util.List;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.epp.usagedata.internal.gathering.events.UsageDataEvent;
 import org.eclipse.epp.usagedata.internal.gathering.events.UsageDataEventListener;
+import org.eclipse.epp.usagedata.internal.recording.filtering.UsageDataEventFilter;
 import org.eclipse.epp.usagedata.internal.recording.settings.UsageDataRecordingSettings;
 import org.eclipse.epp.usagedata.internal.recording.uploading.BasicUploader;
 import org.eclipse.epp.usagedata.internal.recording.uploading.UploadManager;
@@ -82,13 +83,31 @@ public class UsageDataRecorder implements UsageDataEventListener {
 	public synchronized void accept(UsageDataEvent event) {
 		if (event == null) return;
 		if (!canAcceptEvents()) return;
-		
+
 		if (!running) return;
+		if (!isIncluded(event)) return;
 		events.add(event);
-			
+
 		if (events.size() >= EVENT_COUNT_THRESHOLD) dumpEvents();
-		
+
 		uploadDataIfNecessary();
+	}
+
+	/**
+	 * This method applies the filter before the event is buffered, so that what
+	 * the filter leaves out is never written to disk in the first place. A
+	 * filter that throws is treated as letting the event through: dropping data
+	 * because a filter misbehaved would be the worse of the two failures.
+	 */
+	boolean isIncluded(UsageDataEvent event) {
+		if (getSettings() == null) return true;
+		UsageDataEventFilter filter = getSettings().getFilter();
+		if (filter == null) return true;
+		try {
+			return filter.includes(event);
+		} catch (RuntimeException e) {
+			return true;
+		}
 	}
 	
 	protected void uploadDataIfNecessary() {

@@ -88,6 +88,8 @@ public class UploadPreview  {
 
 	private Button eclipseOnlyButton;
 
+	private Button bundleEventsButton;
+
 	private Button addFilterButton;
 
 	public UploadPreview(UploadParameters parameters) {
@@ -102,6 +104,7 @@ public class UploadPreview  {
 		
 		createDescriptionText(composite);
 		createEventsTable(composite);
+		createBundleEventsButton(composite);
 		createEclipseOnlyButton(composite);
 		createButtons(composite);
 		
@@ -318,6 +321,17 @@ public class UploadPreview  {
 		updateButtons();
 	}
 	
+	private void createBundleEventsButton(Composite buttons) {
+		bundleEventsButton = new Button(buttons, SWT.CHECK);
+		bundleEventsButton.setText(Messages.UploadPreview_12);
+		bundleEventsButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				((PreferencesBasedFilter)parameters.getFilter()).setBundleEventsFiltered(bundleEventsButton.getSelection());
+			}
+		});
+	}
+
 	private void createEclipseOnlyButton(Composite buttons) {
 		eclipseOnlyButton = new Button(buttons, SWT.CHECK);
 		eclipseOnlyButton.setText(Messages.UploadPreview_9); 
@@ -332,6 +346,7 @@ public class UploadPreview  {
 	private void updateButtons() {
 		if (parameters.getFilter() instanceof PreferencesBasedFilter) {
 			PreferencesBasedFilter filter = (PreferencesBasedFilter)parameters.getFilter();
+			bundleEventsButton.setSelection(filter.isBundleEventsFiltered());
 			if (filter.isEclipseOnly()) {
 				eclipseOnlyButton.setSelection(true);
 				addFilterButton.setEnabled(false);
