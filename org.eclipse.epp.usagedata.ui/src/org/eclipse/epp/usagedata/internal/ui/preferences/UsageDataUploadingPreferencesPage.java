@@ -288,6 +288,24 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 		createUploadPeriodField(group);
 		createLastUploadField(group);
 		createUploadUrlField(group);
+		createIdField(group, Messages.UsageDataUploadingPreferencesPage_13, getSettings().getUserId());
+		createIdField(group, Messages.UsageDataUploadingPreferencesPage_14, getSettings().getWorkspaceId());
+	}
+
+	/**
+	 * The ids travel with every upload, so the page shows them where they can
+	 * be read and copied.
+	 */
+	private void createIdField(Group composite, String labelText, String id) {
+		Label idLabel = new Label(composite, SWT.NONE);
+		idLabel.setText(labelText);
+
+		Text idText = new Text(composite, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
+		idText.setText(id);
+		GridData gridData = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		gridData.horizontalIndent = FieldDecorationRegistry.getDefault().getMaximumDecorationWidth();
+		gridData.horizontalSpan = 2;
+		idText.setLayoutData(gridData);
 	}
 		
 	/*
