@@ -2,8 +2,16 @@ name: Release
 
 on:
   push:
+    branches:
+      - main
     tags:
       - 'v*'
+    # a change to the prose or the demo cannot change what p2 would serve
+    paths-ignore:
+      - '**.md'
+      - '**.adoc'
+      - 'docs/**'
+      - 'demo/**'
   workflow_dispatch:
 
 permissions:
@@ -103,7 +111,7 @@ jobs:
           git push origin gh-pages
 
       - name: Attach the repository archive to the release
-        if: github.event_name == 'push'
+        if: startsWith(github.ref, 'refs/tags/')
         env:
           GH_TOKEN: ${{ github.token }}
         run: |

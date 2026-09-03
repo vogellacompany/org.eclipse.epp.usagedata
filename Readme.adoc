@@ -13,8 +13,8 @@ The page at the same address lists the version-specific sites if you want to pin
 
 === How to release
 
-Pushing a tag that starts with `v` runs the `Release` workflow.
-It builds the p2 repository, publishes it to the `gh-pages` branch as the update site above, and attaches the repository archive to the GitHub release.
+Every push to `main` runs the `Release` workflow, which builds the p2 repository and publishes it to the `gh-pages` branch as the update site above.
+Pushing a tag that starts with `v` additionally attaches the repository archive to a GitHub release.
 
 ```bash
 git tag v1.4.0
