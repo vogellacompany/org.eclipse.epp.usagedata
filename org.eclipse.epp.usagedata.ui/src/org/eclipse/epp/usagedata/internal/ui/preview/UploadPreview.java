@@ -33,6 +33,7 @@ import org.eclipse.epp.usagedata.internal.recording.filtering.PreferencesBasedFi
 import org.eclipse.epp.usagedata.internal.recording.uploading.UploadParameters;
 import org.eclipse.epp.usagedata.internal.recording.uploading.UsageDataFileReader;
 import org.eclipse.epp.usagedata.internal.ui.Activator;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
@@ -420,7 +421,9 @@ public class UploadPreview  {
 	 * gone.
 	 */
 	private void clearEvents() {
-		if (!MessageDialog.openConfirm(viewer.getTable().getShell(), Messages.UploadPreview_14, Messages.UploadPreview_15)) return;
+		MessageDialog dialog = new MessageDialog(viewer.getTable().getShell(), Messages.UploadPreview_14, null, Messages.UploadPreview_15,
+				MessageDialog.QUESTION, 1, Messages.UploadPreview_17, IDialogConstants.CANCEL_LABEL);
+		if (dialog.open() != 0) return;
 		if (!UsageDataRecordingActivator.getDefault().getRecorder().clear()) {
 			MessageDialog.openInformation(viewer.getTable().getShell(), Messages.UploadPreview_14, Messages.UploadPreview_16);
 			return;
