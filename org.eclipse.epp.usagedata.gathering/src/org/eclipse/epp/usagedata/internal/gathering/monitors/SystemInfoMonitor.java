@@ -48,20 +48,10 @@ public class SystemInfoMonitor implements UsageMonitor {
 	 * of a personal nature.
 	 */
 	private static final String[] SYSTEM_PROPERTIES = {
-		"java.runtime.name", //$NON-NLS-1$
-		"java.runtime.version", //$NON-NLS-1$
-		"java.specification.name", //$NON-NLS-1$
-		"java.specification.vendor", //$NON-NLS-1$
-		"java.specification.version", //$NON-NLS-1$
-		"java.vendor", //$NON-NLS-1$
 		"java.version", //$NON-NLS-1$
-		"java.vm.info", //$NON-NLS-1$
-		"java.vm.name", //$NON-NLS-1$
-		"java.vm.specification.name", //$NON-NLS-1$
-		"java.vm.specification.vendor", //$NON-NLS-1$
-		"java.vm.specification.version", //$NON-NLS-1$
-		"java.vm.vendor", //$NON-NLS-1$
-		"java.vm.version" //$NON-NLS-1$
+		"java.runtime.version", //$NON-NLS-1$
+		"java.vendor", //$NON-NLS-1$
+		"java.vm.name" //$NON-NLS-1$
 	};
 	
 	public void startMonitoring(UsageDataService usageDataService) {
