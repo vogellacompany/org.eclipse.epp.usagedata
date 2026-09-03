@@ -12,6 +12,7 @@ package org.eclipse.epp.usagedata.internal.ui.preview;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,6 +25,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.epp.usagedata.internal.gathering.events.UsageDataEvent;
+import org.eclipse.epp.usagedata.internal.recording.UsageDataRecorderUtils;
 import org.eclipse.epp.usagedata.internal.recording.UsageDataRecordingActivator;
 import org.eclipse.epp.usagedata.internal.recording.filtering.FilterChangeListener;
 import org.eclipse.epp.usagedata.internal.recording.filtering.FilterUtils;
@@ -44,7 +46,11 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -169,6 +175,12 @@ public class UploadPreview  {
 		GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		layoutData.widthHint = 500;
 		viewer.getTable().setLayoutData(layoutData);
+		viewer.getTable().addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if ((e.stateMask & SWT.MOD1) != 0 && e.keyCode == 'c') copySelectionToClipboard();
+			}
+		});
 		
 		createIncludeColumn();
 		createWhatColumn();		
@@ -524,6 +536,29 @@ public class UploadPreview  {
 				reader.close();
 			} catch (IOException e) {
 			}
+		}
+	}
+
+	/**
+	 * Copies the selected events to the clipboard as the CSV lines that would
+	 * be uploaded.
+	 */
+	private void copySelectionToClipboard() {
+		IStructuredSelection selection = viewer.getStructuredSelection();
+		if (selection.isEmpty()) return;
+		StringWriter writer = new StringWriter();
+		try {
+			for (Object element : selection) {
+				UsageDataRecorderUtils.writeEvent(writer, ((UsageDataEventWrapper) element).getEvent());
+			}
+		} catch (IOException e) {
+			return;
+		}
+		Clipboard clipboard = new Clipboard(getDisplay());
+		try {
+			clipboard.setContents(new Object[] { writer.toString() }, new org.eclipse.swt.dnd.Transfer[] { TextTransfer.getInstance() });
+		} finally {
+			clipboard.dispose();
 		}
 	}
 

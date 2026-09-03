@@ -48,6 +48,10 @@ class UsageDataEventWrapper {
 		return event.what;
 	}
 
+	public UsageDataEvent getEvent() {
+		return event;
+	}
+
 	public synchronized boolean isIncludedByFilter() {
 		if (isIncludedByFilter == null) {
 			isIncludedByFilter = parameters.getFilter().includes(event);
