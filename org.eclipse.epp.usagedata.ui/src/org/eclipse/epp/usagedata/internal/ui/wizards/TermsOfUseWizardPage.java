@@ -27,10 +27,9 @@ public class TermsOfUseWizardPage extends WizardPage {
 	private final AskUserUploader uploader;
 
 	public TermsOfUseWizardPage(AskUserUploader uploader) {
-		super("wizardPage"); //$NON-NLS-1$
+		super(Messages.TermsOfUseWizardPage_1);
 		this.uploader = uploader;
-		setTitle(Messages.TermsOfUseWizardPage_1); 
-		//setDescription("This wizard uploads captured usage data. Clearly a better description is required.");
+		setDescription(Messages.TermsOfUseWizardPage_3);
 	}
 
 	/**

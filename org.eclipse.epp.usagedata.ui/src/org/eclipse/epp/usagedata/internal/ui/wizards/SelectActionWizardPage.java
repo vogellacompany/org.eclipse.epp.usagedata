@@ -44,9 +44,8 @@ public class SelectActionWizardPage extends WizardPage {
 	private Button uploadNowRadio;
 
 	public SelectActionWizardPage(AskUserUploader uploader) {
-		super("wizardPage"); //$NON-NLS-1$
+		super(Messages.SelectActionWizardPage_3);
 		this.uploader = uploader;
-		setTitle(Messages.SelectActionWizardPage_3); 
 		setDescription(Messages.SelectActionWizardPage_4); 
 	}
 

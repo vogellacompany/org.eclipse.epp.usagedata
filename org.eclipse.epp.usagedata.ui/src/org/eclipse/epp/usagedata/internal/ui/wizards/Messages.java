@@ -36,8 +36,8 @@ public final class Messages extends NLS {
 	public static String SelectActionWizardPage_9;
 	public static String TermsOfUseWizardPage_1;
 	public static String TermsOfUseWizardPage_2;
+	public static String TermsOfUseWizardPage_3;
 	public static String UploadPreviewPage_1;
-	public static String UploadPreviewPage_2;
 
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

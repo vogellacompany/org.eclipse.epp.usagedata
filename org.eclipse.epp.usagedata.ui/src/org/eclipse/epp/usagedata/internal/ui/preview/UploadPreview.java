@@ -94,8 +94,19 @@ public class UploadPreview  {
 
 	private Button addFilterButton;
 
+	private final boolean showDescription;
+
 	public UploadPreview(UploadParameters parameters) {
+		this(parameters, true);
+	}
+
+	/**
+	 * A container that already explains the table, such as a wizard page
+	 * description, passes false to leave the header out.
+	 */
+	public UploadPreview(UploadParameters parameters, boolean showDescription) {
 		this.parameters = parameters;
+		this.showDescription = showDescription;
 	}
 
 	public Control createControl(final Composite parent) {
@@ -104,7 +115,7 @@ public class UploadPreview  {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout());
 		
-		createDescriptionText(composite);
+		if (showDescription) createDescriptionText(composite);
 		createEventsTable(composite);
 		createBundleEventsButton(composite);
 		createEclipseOnlyButton(composite);

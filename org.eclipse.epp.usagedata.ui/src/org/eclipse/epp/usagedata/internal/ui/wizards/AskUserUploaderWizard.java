@@ -12,6 +12,7 @@ package org.eclipse.epp.usagedata.internal.ui.wizards;
 
 import org.eclipse.epp.usagedata.internal.ui.uploaders.AskUserUploader;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IWorkbench;
 
@@ -37,6 +38,16 @@ public class AskUserUploaderWizard extends Wizard {
 		addPage(previewPage);
 	}
 	
+	/**
+	 * The pages carry their title in the shell rather than in the title area,
+	 * so each page is named after its title.
+	 */
+	@Override
+	public String getWindowTitle() {
+		IWizardPage current = getContainer() == null ? null : getContainer().getCurrentPage();
+		return current == null ? Messages.SelectActionWizardPage_3 : current.getName();
+	}
+
 	@Override
 	public boolean canFinish() {
 		if (!uploader.hasUploadAction()) return true;

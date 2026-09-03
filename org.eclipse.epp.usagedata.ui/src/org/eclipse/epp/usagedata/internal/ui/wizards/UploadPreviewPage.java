@@ -24,17 +24,16 @@ public class UploadPreviewPage extends WizardPage {
 	private final AskUserUploader uploader;
 
 	public UploadPreviewPage(AskUserUploader uploader) {
-		super("wizardPage"); //$NON-NLS-1$
+		super(Messages.UploadPreviewPage_1);
 		this.uploader = uploader;
-		setTitle(Messages.UploadPreviewPage_1); 
-		setDescription(Messages.UploadPreviewPage_2); 
+		setDescription(org.eclipse.epp.usagedata.internal.ui.preview.Messages.UploadPreview_2);
 	}
 
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
 		container.setLayout(new GridLayout());
 		
-		UploadPreview preview = new UploadPreview(uploader.getUploadParameters());
+		UploadPreview preview = new UploadPreview(uploader.getUploadParameters(), false);
 		Control control = preview.createControl(container);
 		control.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		setControl(container);
