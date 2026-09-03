@@ -6,6 +6,20 @@ It exists to make the collector demonstrable: start it, press **Upload Now**, wa
 Nothing is written to disk and nothing outlives the process.
 It is a demo, not a collector.
 
+## What it looks like
+
+The dashboard after eight workstations reported, with the totals, the Java versions in use and the workstations active per day:
+
+![Dashboard overview](screenshots/overview.png)
+
+Below that, the commands that were executed and where the time went, by editor and view:
+
+![Commands and editors](screenshots/activity.png)
+
+Each reporting workstation gets an entry with its workspaces, the settings it reported and its system info:
+
+![Reporting workstations](screenshots/workstations.png)
+
 ## Running it
 
 From the repository root, with Java 21 or later:
