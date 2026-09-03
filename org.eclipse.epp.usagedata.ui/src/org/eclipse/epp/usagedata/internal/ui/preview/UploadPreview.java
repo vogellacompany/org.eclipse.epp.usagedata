@@ -32,6 +32,9 @@ import org.eclipse.epp.usagedata.internal.recording.uploading.UploadParameters;
 import org.eclipse.epp.usagedata.internal.recording.uploading.UsageDataFileReader;
 import org.eclipse.epp.usagedata.internal.ui.Activator;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.resource.LocalResourceManager;
+import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -142,24 +145,14 @@ public class UploadPreview  {
 		return composite;
 	}
 
-	/*
-	 * This method allocates the resources used by the receiver.
-	 * It installs a dispose listener on parent so that when
-	 * the parent is disposed, the allocated resources will be
-	 * deallocated.
-	 */
+	/** Allocates the resources of the receiver; they are released with the parent. */
 	private void allocateResources(Composite parent) {
 		colorFiltered = parent.getDisplay().getSystemColor(SWT.COLOR_WIDGET_DISABLED_FOREGROUND);
 		busyCursor = parent.getDisplay().getSystemCursor(SWT.CURSOR_WAIT);
 		
-		xImage = Activator.getDefault().getImageDescriptor("/icons/x.png").createImage(parent.getDisplay()); //$NON-NLS-1$
-		
-		parent.addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				xImage.dispose();
-			}			
-		});
-	}	
+		LocalResourceManager resources = new LocalResourceManager(JFaceResources.getResources(), parent);
+		xImage = resources.create(ResourceLocator.imageDescriptorFromBundle(Activator.PLUGIN_ID, "/icons/x.png").orElseThrow()); //$NON-NLS-1$
+	}
 
 	private void createDescriptionText(Composite parent) {
 		Label text = new Label(parent, SWT.WRAP);

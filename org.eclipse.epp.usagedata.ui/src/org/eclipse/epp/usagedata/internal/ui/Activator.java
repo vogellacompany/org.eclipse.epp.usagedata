@@ -11,7 +11,6 @@
 package org.eclipse.epp.usagedata.internal.ui;
 
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -43,15 +42,6 @@ public class Activator extends AbstractUIPlugin {
 	 */
 	public static Activator getDefault() {
 		return plugin;
-	}
-	
-	public ImageDescriptor getImageDescriptor(String path) {
-		ImageDescriptor descriptor = getImageRegistry().getDescriptor(path);
-		if (descriptor == null) {
-			descriptor = AbstractUIPlugin.imageDescriptorFromPlugin(getBundle().getSymbolicName(), path);
-			getImageRegistry().put(path, descriptor);
-		}
-		return descriptor;
 	}
 	
 	public void log(int status, Exception exception, String message, Object ... arguments) {
