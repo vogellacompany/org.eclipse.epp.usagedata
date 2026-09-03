@@ -177,7 +177,7 @@ public class UploadPreview  {
 		busyCursor = parent.getDisplay().getSystemCursor(SWT.CURSOR_WAIT);
 		
 		LocalResourceManager resources = new LocalResourceManager(JFaceResources.getResources(), parent);
-		xImage = resources.create(ResourceLocator.imageDescriptorFromBundle(Activator.PLUGIN_ID, "/icons/x.png").orElseThrow()); //$NON-NLS-1$
+		xImage = resources.create(ResourceLocator.imageDescriptorFromBundle(Activator.PLUGIN_ID, "/icons/x.svg").orElseThrow()); //$NON-NLS-1$
 	}
 
 	private void createDescriptionText(Composite parent) {
