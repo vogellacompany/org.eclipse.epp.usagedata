@@ -101,6 +101,17 @@ public class UploadManager {
 		return UPLOAD_STARTED_OK;
 	}
 
+	/**
+	 * This method answers whether an upload is currently running. The uploader
+	 * deletes the files it was given once the server has accepted them, so
+	 * anything that removes staged files has to leave them alone while it does.
+	 */
+	public boolean isUploadInProgress() {
+		synchronized (lock) {
+			return uploader != null;
+		}
+	}
+
 	private void recordUploadOutcome(UploadResult result) {
 		if (result != null && result.isSuccess()) {
 			getSettings().recordSuccessfulUpload();

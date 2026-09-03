@@ -124,9 +124,22 @@ public class UsageDataRecorder implements UsageDataEventListener {
 		if (file.length() < FILE_SIZE_THRESHOLD) return;
 		
 		File destination = getSettings().computeDestinationFile();
-		
+
 		// TODO What if the rename fails?
 		file.renameTo(destination);
+
+		pruneUploadFilesIfIdle();
+	}
+
+	/**
+	 * This method bounds the staged upload files, but only while no upload is
+	 * running: the uploader deletes the files it was given once they have been
+	 * accepted, so pruning underneath it would pull files out from under it.
+	 */
+	private void pruneUploadFilesIfIdle() {
+		UploadManager manager = getUploadManager();
+		if (manager != null && manager.isUploadInProgress()) return;
+		getSettings().pruneOldUploadFiles();
 	}
 
 	private UploadManager getUploadManager() {

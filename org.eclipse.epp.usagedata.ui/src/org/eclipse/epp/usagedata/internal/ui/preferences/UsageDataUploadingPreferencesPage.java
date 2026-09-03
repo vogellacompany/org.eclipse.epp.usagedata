@@ -106,8 +106,12 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 	};
 
 	public UsageDataUploadingPreferencesPage() {
-		setDescription(Messages.UsageDataUploadingPreferencesPage_0); 
+		updateDescription(getSettings().getUploadUrl());
 		setPreferenceStore(UsageDataRecordingActivator.getDefault().getPreferenceStore());
+	}
+
+	private void updateDescription(String uploadUrl) {
+		setDescription(MessageFormat.format(Messages.UsageDataUploadingPreferencesPage_0, new Object[] {uploadUrl}));
 	}
 
 	
@@ -390,8 +394,10 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 		
 		uploadUrlText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				if (isValidUploadUrl(uploadUrlText.getText()))
+				if (isValidUploadUrl(uploadUrlText.getText())) {
 					urlErrorDecoration.hide();
+					updateDescription(uploadUrlText.getText());
+				}
 				else {
 					urlErrorDecoration.show();
 				}

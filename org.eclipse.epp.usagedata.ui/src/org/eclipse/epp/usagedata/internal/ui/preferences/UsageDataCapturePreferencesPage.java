@@ -10,8 +10,17 @@
  *******************************************************************************/
 package org.eclipse.epp.usagedata.internal.ui.preferences;
 
+import java.lang.reflect.InvocationTargetException;
+import java.text.MessageFormat;
+
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.epp.usagedata.internal.gathering.UsageDataCaptureActivator;
 import org.eclipse.epp.usagedata.internal.gathering.settings.UsageDataCaptureSettings;
+import org.eclipse.epp.usagedata.internal.recording.UsageDataRecordingActivator;
+import org.eclipse.epp.usagedata.internal.recording.uploading.UploadEndpointCheck;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -84,9 +93,42 @@ public class UsageDataCapturePreferencesPage extends PreferencePage
 
 	@Override
 	public boolean performOk() {
-		getCapturePreferences().setValue(UsageDataCaptureSettings.CAPTURE_ENABLED_KEY, captureEnabledCheckbox.getSelection());
-	
+		boolean wasEnabled = getCapturePreferences().getBoolean(UsageDataCaptureSettings.CAPTURE_ENABLED_KEY);
+		boolean enabled = captureEnabledCheckbox.getSelection();
+		getCapturePreferences().setValue(UsageDataCaptureSettings.CAPTURE_ENABLED_KEY, enabled);
+
+		if (enabled && !wasEnabled) warnIfUploadLocationUnreachable();
+
 		return super.performOk();
+	}
+
+	/**
+	 * This method checks the upload location when capture is switched on and
+	 * warns if it does not answer, so that the collector does not quietly start
+	 * gathering data that has nowhere to go.
+	 */
+	private void warnIfUploadLocationUnreachable() {
+		final String url = UsageDataRecordingActivator.getDefault().getSettings().getUploadUrl();
+		final boolean[] reachable = new boolean[1];
+		try {
+			new ProgressMonitorDialog(getShell()).run(true, false, new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor) {
+					monitor.beginTask(Messages.UsageDataCapturePreferencesPage_2, IProgressMonitor.UNKNOWN);
+					reachable[0] = UploadEndpointCheck.isReachable(url);
+					monitor.done();
+				}
+			});
+		} catch (InvocationTargetException e) {
+			return;
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			return;
+		}
+
+		if (reachable[0]) return;
+
+		MessageDialog.openWarning(getShell(), Messages.UsageDataCapturePreferencesPage_3,
+				MessageFormat.format(Messages.UsageDataCapturePreferencesPage_4, new Object[] {url}));
 	}
 
 	@Override

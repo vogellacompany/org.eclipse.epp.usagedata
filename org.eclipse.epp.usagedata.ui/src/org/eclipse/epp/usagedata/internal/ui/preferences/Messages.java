@@ -24,6 +24,9 @@ public final class Messages extends NLS {
 
 	public static String UsageDataCapturePreferencesPage_0;
 	public static String UsageDataCapturePreferencesPage_1;
+	public static String UsageDataCapturePreferencesPage_2;
+	public static String UsageDataCapturePreferencesPage_3;
+	public static String UsageDataCapturePreferencesPage_4;
 	public static String UsageDataUploadingPreferencesPage_0;
 	public static String UsageDataUploadingPreferencesPage_1;
 	public static String UsageDataUploadingPreferencesPage_2;

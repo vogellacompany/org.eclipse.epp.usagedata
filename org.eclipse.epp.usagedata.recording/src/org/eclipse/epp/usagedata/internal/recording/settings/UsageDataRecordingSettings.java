@@ -17,6 +17,9 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -65,7 +68,7 @@ public class UsageDataRecordingSettings implements UploadSettings {
 	
 	public static final int PERIOD_REASONABLE_MINIMUM = 15 * 60 * 1000; // 15 minutes
 	static final int UPLOAD_PERIOD_DEFAULT = 5 * 24 * 60 * 60 * 1000; // five days
-	public static final String UPLOAD_URL_DEFAULT = "http://udc.eclipse.org/upload.php"; //$NON-NLS-1$
+	public static final String UPLOAD_URL_DEFAULT = "https://www.example.com/upload.php"; //$NON-NLS-1$
 	static final boolean ASK_TO_UPLOAD_DEFAULT = true;
 	public static final int UPLOAD_MODE_DEFAULT = UPLOAD_MODE_ASK;
 
@@ -82,6 +85,12 @@ public class UsageDataRecordingSettings implements UploadSettings {
 	 * Staged upload files older than this are deleted without being sent.
 	 */
 	public static final int UPLOAD_FILE_RETENTION_DAYS = 90;
+
+	/**
+	 * Staged upload files are deleted, oldest first, once they take up more
+	 * than this in total.
+	 */
+	public static final long UPLOAD_DIRECTORY_MAX_BYTES = 10L * 1024L * 1024L;
 
 	private int consecutiveFailedAttempts = 0;
 
@@ -316,13 +325,35 @@ public class UsageDataRecordingSettings implements UploadSettings {
 
 	/**
 	 * This method deletes staged upload files older than
-	 * {@link #UPLOAD_FILE_RETENTION_DAYS} so that data collected during long
-	 * offline periods does not accumulate indefinitely.
+	 * {@link #UPLOAD_FILE_RETENTION_DAYS}, then deletes the oldest of what is
+	 * left until the rest fit in {@link #UPLOAD_DIRECTORY_MAX_BYTES}, so that
+	 * data collected during long offline periods does not accumulate
+	 * indefinitely.
 	 */
 	public void pruneOldUploadFiles() {
+		File[] files = getUsageDataUploadFiles();
+		if (files == null) return;
+
 		long cutoff = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(UPLOAD_FILE_RETENTION_DAYS);
-		for (File file : getUsageDataUploadFiles()) {
-			if (file.lastModified() < cutoff) file.delete();
+		List<File> remaining = new ArrayList<File>();
+		long total = 0;
+		for (File file : files) {
+			if (file.lastModified() < cutoff) {
+				file.delete();
+				continue;
+			}
+			remaining.add(file);
+			total += file.length();
+		}
+
+		if (total <= UPLOAD_DIRECTORY_MAX_BYTES) return;
+
+		// The oldest data is the least interesting, so it goes first.
+		remaining.sort(Comparator.comparingLong(File::lastModified));
+		for (File file : remaining) {
+			if (total <= UPLOAD_DIRECTORY_MAX_BYTES) return;
+			long length = file.length();
+			if (file.delete()) total -= length;
 		}
 	}
 
@@ -396,7 +427,7 @@ public class UsageDataRecordingSettings implements UploadSettings {
 		return UsageDataRecordingActivator.getDefault().getPreferenceStore();
 	}
 	
-	private File getWorkingDirectory() {
+	protected File getWorkingDirectory() {
 		return UsageDataRecordingActivator.getDefault().getStateLocation().toFile();
 	}
 	
