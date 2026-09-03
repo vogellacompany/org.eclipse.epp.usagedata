@@ -19,7 +19,9 @@ import java.io.Reader;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -507,6 +509,29 @@ public class UsageDataRecordingSettings implements UploadSettings {
 
 	private boolean hasExplicitValue(IPreferenceStore store, String key) {
 		return store.contains(key) && !store.isDefault(key);
+	}
+
+	/**
+	 * This method answers the settings that travel with an upload. It reports
+	 * how uploading is configured, never anything about the user or what they
+	 * were doing.
+	 */
+	public Map<String, String> getReportedPreferences() {
+		Map<String, String> reported = new LinkedHashMap<String, String>();
+		reported.put("upload-mode", uploadModeName(getUploadMode())); //$NON-NLS-1$
+		reported.put("upload-period-days", String.valueOf(getPeriodBetweenUploads() / (24 * 60 * 60 * 1000))); //$NON-NLS-1$
+		reported.put("filter-eclipse-only", String.valueOf(getPreferencesStore().getBoolean(FILTER_ECLIPSE_BUNDLES_ONLY_KEY))); //$NON-NLS-1$
+		reported.put("filter-bundle-events", String.valueOf(getPreferencesStore().getBoolean(FILTER_BUNDLE_EVENTS_KEY))); //$NON-NLS-1$
+		reported.put("retention-days", String.valueOf(UPLOAD_FILE_RETENTION_DAYS)); //$NON-NLS-1$
+		return reported;
+	}
+
+	private String uploadModeName(int mode) {
+		switch (mode) {
+			case UPLOAD_MODE_AUTOMATIC: return "automatic"; //$NON-NLS-1$
+			case UPLOAD_MODE_MANUAL: return "manual"; //$NON-NLS-1$
+			default: return "ask"; //$NON-NLS-1$
+		}
 	}
 
 	public void setUploadMode(int mode) {

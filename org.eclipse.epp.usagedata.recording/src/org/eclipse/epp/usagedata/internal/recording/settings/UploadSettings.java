@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.epp.usagedata.internal.recording.settings;
 
+import java.util.Collections;
+import java.util.Map;
+
 import org.eclipse.epp.usagedata.internal.recording.filtering.NullFilter;
 import org.eclipse.epp.usagedata.internal.recording.filtering.UsageDataEventFilter;
 
@@ -48,5 +51,16 @@ public interface UploadSettings {
 	public abstract String getWorkspaceId();
 
 	public abstract String getUserAgent();
+
+	/**
+	 * This method answers the settings that should travel with an upload, so
+	 * that a server can tell how the client that sent it was configured. Keys
+	 * become {@code X-UDC-<key>} headers. The default is to send nothing.
+	 *
+	 * @return the settings to report, never <code>null</code>.
+	 */
+	public default Map<String, String> getReportedPreferences() {
+		return Collections.emptyMap();
+	}
 
 }

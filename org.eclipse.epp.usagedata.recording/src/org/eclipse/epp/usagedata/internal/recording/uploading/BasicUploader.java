@@ -34,6 +34,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -81,6 +82,12 @@ public class BasicUploader extends AbstractUploader {
 	private static final String HTTP_TIME = "TIME"; //$NON-NLS-1$
 
 	private static final String USER_AGENT = "User-Agent"; //$NON-NLS-1$
+
+	/**
+	 * The prefix for the headers that report how the client is configured, one
+	 * header per entry of {@link UploadSettings#getReportedPreferences()}.
+	 */
+	private static final String PREFERENCE_HEADER_PREFIX = "X-UDC-"; //$NON-NLS-1$
 
 	private boolean uploadInProgress = false;
 
@@ -202,6 +209,10 @@ public class BasicUploader extends AbstractUploader {
 			.header(USER_AGENT, getSettings().getUserAgent())
 			.timeout(Duration.ofMillis(getSocketTimeout()))
 			.POST(BodyPublishers.ofByteArray(multipartBody));
+
+		for (Map.Entry<String, String> preference : getSettings().getReportedPreferences().entrySet()) {
+			requestBuilder.header(PREFERENCE_HEADER_PREFIX + preference.getKey(), preference.getValue());
+		}
 
 		boolean loggingServerActivity = getSettings().isLoggingServerActivity();
 		if (loggingServerActivity) {
