@@ -29,5 +29,19 @@ jobs:
       - name: Install Xvfb
         run: sudo apt-get update && sudo apt-get install -y xvfb
 
+      # A throwaway key, so that the signing step of the release is exercised on
+      # every build without the release key ever leaving the release workflow.
+      - name: Prepare a throwaway signing key
+        run: |
+          export GNUPGHOME=$(mktemp -d)
+          gpg --batch --pinentry-mode loopback --passphrase ci-only \
+            --quick-generate-key "usagedata CI <ci@vogella.com>" ed25519 sign 1d
+          gpg --batch --pinentry-mode loopback --passphrase ci-only \
+            --armor --export-secret-keys > "$RUNNER_TEMP/signing-key.asc"
+
       - name: Build with Maven
-        run: xvfb-run -a mvn -B verify
+        env:
+          MAVEN_GPG_PASSPHRASE: ci-only
+        run: |
+          xvfb-run -a mvn -B verify -Dgpg.skip=false \
+            -Dtycho.pgp.signer.bc.secretKeys=$RUNNER_TEMP/signing-key.asc

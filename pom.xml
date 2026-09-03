@@ -8,6 +8,10 @@
 	<version>1.3.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
+    <properties>
+        <!-- PGP signing of the update site is off by default, the CI enables it with -Dgpg.skip=false -->
+        <gpg.skip>true</gpg.skip>
+    </properties>
 
     <build>
 
@@ -16,6 +20,11 @@
                 <plugin>
                     <groupId>org.eclipse.tycho</groupId>
                     <artifactId>tycho-p2-director-plugin</artifactId>
+                    <version>${tycho.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.eclipse.tycho</groupId>
+                    <artifactId>tycho-gpg-plugin</artifactId>
                     <version>${tycho.version}</version>
                 </plugin>
             </plugins>
