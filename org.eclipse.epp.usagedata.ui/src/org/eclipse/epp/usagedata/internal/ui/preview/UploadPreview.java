@@ -328,12 +328,8 @@ public class UploadPreview  {
 				return dateFormat.format(new Date(event.getWhen()));
 			}
 		});
-		timestampColumn.setSorter(new Comparator<UsageDataEventWrapper>() {
-			public int compare(UsageDataEventWrapper event1, UsageDataEventWrapper event2) {
-				if (event1.getWhen() == event2.getWhen()) return 0;
-				return event1.getWhen() > event2.getWhen() ? 1 : -1;
-			}	
-		});
+		// Newest first, which is what the sort indicator on the column shows.
+		timestampColumn.setSorter(Comparator.comparingLong(UsageDataEventWrapper::getWhen).reversed());
 	}
 
 	private void createButtons(Composite parent) {
