@@ -69,6 +69,7 @@ public class UsageDataRecorder implements UsageDataEventListener {
 		if (running) return;
 		events = new ArrayList<UsageDataEvent>(EVENT_COUNT_THRESHOLD);
 		running = true;
+		if (getSettings() != null) getSettings().pruneOldUploadFiles();
 	}
 
 	public synchronized void stop() {
@@ -93,6 +94,7 @@ public class UsageDataRecorder implements UsageDataEventListener {
 	protected void uploadDataIfNecessary() {
 		if (getSettings() == null) return;
 		if (!getSettings().isTimeToUpload()) return;
+		if (getSettings().getUploadMode() == UsageDataRecordingSettings.UPLOAD_MODE_MANUAL) return;
 		
 		UploadManager manager = getUploadManager();
 		if (manager == null) return;

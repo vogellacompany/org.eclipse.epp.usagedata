@@ -38,10 +38,13 @@ public class UsageDataRecordingSettingsTests {
 	@BeforeEach
 	public void setup() {
 		System.clearProperty(UsageDataRecordingSettings.UPLOAD_PERIOD_KEY);
+		System.clearProperty(UsageDataRecordingSettings.ASK_TO_UPLOAD_KEY);
 		getPreferenceStore().setToDefault(UsageDataRecordingSettings.ASK_TO_UPLOAD_KEY);
+		getPreferenceStore().setToDefault(UsageDataRecordingSettings.UPLOAD_MODE_KEY);
 		getPreferenceStore().setToDefault(UsageDataRecordingSettings.FILTER_ECLIPSE_BUNDLES_ONLY_KEY);
 		getPreferenceStore().setToDefault(UsageDataRecordingSettings.FILTER_PATTERNS_KEY);
 		getPreferenceStore().setToDefault(UsageDataRecordingSettings.LAST_UPLOAD_KEY);
+		getPreferenceStore().setToDefault(UsageDataRecordingSettings.LAST_ATTEMPT_KEY);
 		getPreferenceStore().setToDefault(UsageDataRecordingSettings.LOG_SERVER_ACTIVITY_KEY);
 		getPreferenceStore().setToDefault(UsageDataRecordingSettings.UPLOAD_PERIOD_KEY);
 	}
@@ -97,6 +100,87 @@ public class UsageDataRecordingSettingsTests {
 		getPreferenceStore().setValue(UsageDataRecordingSettings.UPLOAD_PERIOD_KEY, TWO_DAYS);
 		
 		assertTrue(getRecordingSettings().isTimeToUpload());
+	}
+	
+	@Test
+	public void testFailedAttemptDelaysNextUpload() throws Exception {
+		long currentTime = System.currentTimeMillis();
+		getPreferenceStore().setValue(UsageDataRecordingSettings.LAST_UPLOAD_KEY, currentTime-FIVE_DAYS);
+		getPreferenceStore().setValue(UsageDataRecordingSettings.UPLOAD_PERIOD_KEY, TWO_DAYS);
+		
+		assertTrue(getRecordingSettings().isTimeToUpload());
+		
+		getRecordingSettings().recordFailedUploadAttempt();
+		
+		assertFalse(getRecordingSettings().isTimeToUpload());
+	}
+	
+	@Test
+	public void testRetryDelayDoublesWithConsecutiveFailures() throws Exception {
+		UsageDataRecordingSettings settings = getRecordingSettings();
+		settings.recordSuccessfulUpload();
+		
+		long expected = UsageDataRecordingSettings.PERIOD_REASONABLE_MINIMUM;
+		for (int attempt = 0; attempt < 5; attempt++) {
+			assertEquals(expected, settings.getRetryDelay());
+			settings.recordFailedUploadAttempt();
+			expected *= 2;
+		}
+	}
+	
+	@Test
+	public void testRetryDelayIsCapped() throws Exception {
+		UsageDataRecordingSettings settings = getRecordingSettings();
+		settings.recordSuccessfulUpload();
+		for (int attempt = 0; attempt < 20; attempt++) {
+			settings.recordFailedUploadAttempt();
+		}
+		assertEquals(24 * 60 * 60 * 1000L, settings.getRetryDelay());
+	}
+	
+	@Test
+	public void testSuccessfulUploadResetsBackoff() throws Exception {
+		UsageDataRecordingSettings settings = getRecordingSettings();
+		settings.recordFailedUploadAttempt();
+		settings.recordFailedUploadAttempt();
+		
+		settings.recordSuccessfulUpload();
+		
+		assertEquals(UsageDataRecordingSettings.PERIOD_REASONABLE_MINIMUM, settings.getRetryDelay());
+		assertFalse(settings.isTimeToUpload());
+	}
+	
+	@Test
+	public void testGetUploadModeDefaultsToAsk() throws Exception {
+		assertEquals(UsageDataRecordingSettings.UPLOAD_MODE_ASK, getRecordingSettings().getUploadMode());
+	}
+	
+	@Test
+	public void testGetUploadModeFromPreference() throws Exception {
+		getPreferenceStore().setValue(UsageDataRecordingSettings.UPLOAD_MODE_KEY, UsageDataRecordingSettings.UPLOAD_MODE_AUTOMATIC);
+		
+		assertEquals(UsageDataRecordingSettings.UPLOAD_MODE_AUTOMATIC, getRecordingSettings().getUploadMode());
+	}
+	
+	@Test
+	public void testGetUploadModeMigratesFromAskPreference() throws Exception {
+		getPreferenceStore().setValue(UsageDataRecordingSettings.ASK_TO_UPLOAD_KEY, false);
+		
+		assertEquals(UsageDataRecordingSettings.UPLOAD_MODE_AUTOMATIC, getRecordingSettings().getUploadMode());
+	}
+	
+	@Test
+	public void testGetUploadModeFromSystemProperty() throws Exception {
+		System.setProperty(UsageDataRecordingSettings.ASK_TO_UPLOAD_KEY, "false"); //$NON-NLS-1$
+		
+		assertEquals(UsageDataRecordingSettings.UPLOAD_MODE_AUTOMATIC, getRecordingSettings().getUploadMode());
+	}
+	
+	@Test
+	public void testSetAskBeforeUploadingStoresUploadMode() throws Exception {
+		getRecordingSettings().setAskBeforeUploading(false);
+		
+		assertEquals(UsageDataRecordingSettings.UPLOAD_MODE_AUTOMATIC, getRecordingSettings().getUploadMode());
 	}
 	
 	private UsageDataRecordingSettings getRecordingSettings() {

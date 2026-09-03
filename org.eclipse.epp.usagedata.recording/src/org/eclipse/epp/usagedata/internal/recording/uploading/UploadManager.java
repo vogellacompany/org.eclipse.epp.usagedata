@@ -46,6 +46,11 @@ public class UploadManager {
 	 * with the information.
 	 * </p>
 	 * <p>
+	 * The last upload time is only recorded when an upload actually succeeds,
+	 * so that failed attempts (e.g. because the user was offline) are retried
+	 * once the retry delay configured in the settings has passed.
+	 * </p>
+	 * <p>
 	 * This method returns a status code. The value is
 	 * {@link #UPLOAD_IN_PROGRESS} if an upload is already in progress when the
 	 * request is made, {@link #NO_FILES_TO_UPLOAD} if no files are available
@@ -71,8 +76,6 @@ public class UploadManager {
 			if (uploader == null) return NO_UPLOADER;
 		}
 		
-		getSettings().setLastUploadTime();
-		
 		UploadParameters uploadParameters = new UploadParameters();
 		uploadParameters.setSettings(getSettings());
 		uploadParameters.setFiles(usageDataUploadFiles);
@@ -82,11 +85,13 @@ public class UploadManager {
 		
 		/*
 		 * Add a listener to the new uploader so that it will notify
-		 * us when it is complete. Then, we'll notify our own listeners.
+		 * us when it is complete. Then, we'll record the outcome and
+		 * notify our own listeners.
 		 */
 		uploader.addUploadListener(new UploadListener() {
 			public void uploadComplete(UploadResult result) {
 				uploader = null;
+				recordUploadOutcome(result);
 				fireUploadComplete(result);
 			}
 		});
@@ -94,6 +99,18 @@ public class UploadManager {
 		uploader.startUpload();
 		
 		return UPLOAD_STARTED_OK;
+	}
+
+	private void recordUploadOutcome(UploadResult result) {
+		if (result != null && result.isSuccess()) {
+			getSettings().recordSuccessfulUpload();
+			return;
+		}
+		if (result != null && result.getReturnCode() == UploadResult.CANCELLED) {
+			getSettings().recordDeclinedUpload();
+			return;
+		}
+		getSettings().recordFailedUploadAttempt();
 	}
 
 	private File[] findUsageDataUploadFiles() {

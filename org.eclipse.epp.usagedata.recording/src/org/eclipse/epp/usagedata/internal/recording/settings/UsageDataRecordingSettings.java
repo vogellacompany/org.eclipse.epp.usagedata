@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.epp.usagedata.internal.gathering.settings.UsageDataCaptureSettings;
@@ -44,17 +45,45 @@ public class UsageDataRecordingSettings implements UploadSettings {
 
 	public static final String UPLOAD_PERIOD_KEY = UsageDataRecordingActivator.PLUGIN_ID + ".period"; //$NON-NLS-1$
 	public static final String LAST_UPLOAD_KEY = UsageDataRecordingActivator.PLUGIN_ID + ".last-upload"; //$NON-NLS-1$
+	public static final String LAST_ATTEMPT_KEY = UsageDataRecordingActivator.PLUGIN_ID + ".last-attempt"; //$NON-NLS-1$
 	public static final String ASK_TO_UPLOAD_KEY = UsageDataRecordingActivator.PLUGIN_ID + ".ask"; //$NON-NLS-1$
+	public static final String UPLOAD_MODE_KEY = UsageDataRecordingActivator.PLUGIN_ID + ".upload-mode"; //$NON-NLS-1$
 	public static final String LOG_SERVER_ACTIVITY_KEY = UsageDataRecordingActivator.PLUGIN_ID + ".log-server"; //$NON-NLS-1$
 	public static final String FILTER_ECLIPSE_BUNDLES_ONLY_KEY = UsageDataRecordingActivator.PLUGIN_ID + ".filter-eclipse-only"; //$NON-NLS-1$
 	public static final String FILTER_PATTERNS_KEY = UsageDataRecordingActivator.PLUGIN_ID + ".filter-patterns"; //$NON-NLS-1$
 	
 	public static final String UPLOAD_URL_KEY = UsageDataRecordingActivator.PLUGIN_ID + ".upload-url"; //$NON-NLS-1$
 	
+	/**
+	 * Upload modes: ask the user before uploading, upload silently in the
+	 * background, or never upload automatically (the user must trigger the
+	 * upload explicitly, e.g. via the "Upload Now" button).
+	 */
+	public static final int UPLOAD_MODE_ASK = 0;
+	public static final int UPLOAD_MODE_AUTOMATIC = 1;
+	public static final int UPLOAD_MODE_MANUAL = 2;
+	
 	public static final int PERIOD_REASONABLE_MINIMUM = 15 * 60 * 1000; // 15 minutes
 	static final int UPLOAD_PERIOD_DEFAULT = 5 * 24 * 60 * 60 * 1000; // five days
 	public static final String UPLOAD_URL_DEFAULT = "http://udc.eclipse.org/upload.php"; //$NON-NLS-1$
 	static final boolean ASK_TO_UPLOAD_DEFAULT = true;
+	public static final int UPLOAD_MODE_DEFAULT = UPLOAD_MODE_ASK;
+
+	/**
+	 * Minimum time between upload attempts. Failed attempts are retried with
+	 * an exponentially growing delay between {@link #RETRY_DELAY_BASE} and
+	 * {@link #RETRY_DELAY_MAX}.
+	 */
+	static final long RETRY_DELAY_BASE = PERIOD_REASONABLE_MINIMUM;
+	static final long RETRY_DELAY_MAX = 24 * 60L * 60L * 1000L; // 24 hours
+	private static final int RETRY_DELAY_SHIFT_LIMIT = 7;
+
+	/**
+	 * Staged upload files older than this are deleted without being sent.
+	 */
+	public static final int UPLOAD_FILE_RETENTION_DAYS = 90;
+
+	private int consecutiveFailedAttempts = 0;
 
 	private PreferencesBasedFilter filter = new PreferencesBasedFilter();
 
@@ -113,10 +142,12 @@ public class UsageDataRecordingSettings implements UploadSettings {
 
 	/**
 	 * This method answers <code>true</code> if enough time has passed since
-	 * the last upload to warrant starting a new one. If an upload has not yet
-	 * occurred, it answers <code>true</code> if the required amount of time
-	 * has passed since the first time this method was called. It answers
-	 * <code>false</code> otherwise.
+	 * the last upload to warrant starting a new one, and if enough time has
+	 * passed since the last upload attempt. The latter keeps failed attempts
+	 * from being retried more often than {@link #getRetryDelay()} suggests.
+	 * If an upload has not yet occurred, it answers <code>true</code> if the
+	 * required amount of time has passed since the first time this method was
+	 * called. It answers <code>false</code> otherwise.
 	 * 
 	 * @return <code>true</code> if it is time to upload; <code>false</code>
 	 *         otherwise.
@@ -124,7 +155,76 @@ public class UsageDataRecordingSettings implements UploadSettings {
 	public boolean isTimeToUpload() {
 		if (PlatformUI.getWorkbench().isClosing())
 			return false;
-		return System.currentTimeMillis() - getLastUploadTime() > getPeriodBetweenUploads();
+		long now = System.currentTimeMillis();
+		if (now - getLastAttemptTime() < getRetryDelay())
+			return false;
+		return now - getLastUploadTime() > getPeriodBetweenUploads();
+	}
+
+	/**
+	 * This method answers the time of the last upload attempt, regardless of
+	 * whether that attempt succeeded. Time is expressed in milliseconds. It
+	 * answers <code>0</code> if no attempt has been recorded.
+	 * 
+	 * @return the time of the last upload attempt.
+	 */
+	public long getLastAttemptTime() {
+		if (getPreferencesStore().contains(LAST_ATTEMPT_KEY)) {
+			return getPreferencesStore().getLong(LAST_ATTEMPT_KEY);
+		}
+		return 0L;
+	}
+
+	private void stampAttemptTime() {
+		getPreferencesStore().setValue(LAST_ATTEMPT_KEY, System.currentTimeMillis());
+	}
+
+	/**
+	 * This method answers how long to wait before trying another upload after
+	 * a failed attempt. The delay doubles with each consecutive failure,
+	 * starting at {@link #RETRY_DELAY_BASE} and capped at
+	 * {@link #RETRY_DELAY_MAX}.
+	 * 
+	 * @return the delay in milliseconds.
+	 */
+	public long getRetryDelay() {
+		int shift = Math.min(consecutiveFailedAttempts, RETRY_DELAY_SHIFT_LIMIT);
+		long delay = RETRY_DELAY_BASE << shift;
+		if (delay > RETRY_DELAY_MAX) delay = RETRY_DELAY_MAX;
+		return delay;
+	}
+
+	/**
+	 * Records that an upload succeeded: the last upload time is set, the
+	 * retry backoff is reset, and the current time is stamped as the latest
+	 * attempt.
+	 */
+	public void recordSuccessfulUpload() {
+		consecutiveFailedAttempts = 0;
+		stampAttemptTime();
+		setLastUploadTime();
+	}
+
+	/**
+	 * Records that an upload attempt failed (e.g. because the user was
+	 * offline). The staged files are kept and retried once the retry delay
+	 * has passed.
+	 */
+	public void recordFailedUploadAttempt() {
+		if (consecutiveFailedAttempts < RETRY_DELAY_SHIFT_LIMIT + 1)
+			consecutiveFailedAttempts++;
+		stampAttemptTime();
+	}
+
+	/**
+	 * Records that the user was asked to upload and declined. Like the
+	 * behaviour prior to upload tracking, this postpones the next automatic
+	 * upload by a full period so the user is not asked again right away.
+	 */
+	public void recordDeclinedUpload() {
+		consecutiveFailedAttempts = 0;
+		stampAttemptTime();
+		setLastUploadTime();
 	}
 
 	/** 
@@ -212,6 +312,18 @@ public class UsageDataRecordingSettings implements UploadSettings {
 			}
 
 		});
+	}
+
+	/**
+	 * This method deletes staged upload files older than
+	 * {@link #UPLOAD_FILE_RETENTION_DAYS} so that data collected during long
+	 * offline periods does not accumulate indefinitely.
+	 */
+	public void pruneOldUploadFiles() {
+		long cutoff = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(UPLOAD_FILE_RETENTION_DAYS);
+		for (File file : getUsageDataUploadFiles()) {
+			if (file.lastModified() < cutoff) file.delete();
+		}
 	}
 
 	/**
@@ -323,13 +435,43 @@ public class UsageDataRecordingSettings implements UploadSettings {
 	}
 
 	public boolean shouldAskBeforeUploading() {
+		return getUploadMode() == UPLOAD_MODE_ASK;
+	}
+
+	/**
+	 * This method answers how the user wants uploads to be triggered:
+	 * {@link #UPLOAD_MODE_ASK} (prompt before every upload),
+	 * {@link #UPLOAD_MODE_AUTOMATIC} (upload silently in the background), or
+	 * {@link #UPLOAD_MODE_MANUAL} (never upload automatically). The
+	 * "{@value #ASK_TO_UPLOAD_KEY}" system property, if set, still overrides
+	 * everything; installs that only carry the older "{@value #ASK_TO_UPLOAD_KEY}"
+	 * preference are migrated to the matching mode.
+	 * 
+	 * @return one of {@link #UPLOAD_MODE_ASK}, {@link #UPLOAD_MODE_AUTOMATIC},
+	 *         or {@link #UPLOAD_MODE_MANUAL}.
+	 */
+	public int getUploadMode() {
 		if (System.getProperties().containsKey(ASK_TO_UPLOAD_KEY)) {
-			return "true".equals(System.getProperty(ASK_TO_UPLOAD_KEY)); //$NON-NLS-1$
-		} else if (getPreferencesStore().contains(ASK_TO_UPLOAD_KEY)) {
-			return getPreferencesStore().getBoolean(ASK_TO_UPLOAD_KEY);
-		} else {
-			return ASK_TO_UPLOAD_DEFAULT;
+			return "true".equals(System.getProperty(ASK_TO_UPLOAD_KEY)) ? UPLOAD_MODE_ASK : UPLOAD_MODE_AUTOMATIC; //$NON-NLS-1$
 		}
+		IPreferenceStore store = getPreferencesStore();
+		if (hasExplicitValue(store, UPLOAD_MODE_KEY)) {
+			int mode = store.getInt(UPLOAD_MODE_KEY);
+			if (mode >= UPLOAD_MODE_ASK && mode <= UPLOAD_MODE_MANUAL) return mode;
+		}
+		if (hasExplicitValue(store, ASK_TO_UPLOAD_KEY)) {
+			return store.getBoolean(ASK_TO_UPLOAD_KEY) ? UPLOAD_MODE_ASK : UPLOAD_MODE_AUTOMATIC;
+		}
+		return UPLOAD_MODE_DEFAULT;
+	}
+
+	private boolean hasExplicitValue(IPreferenceStore store, String key) {
+		return store.contains(key) && !store.isDefault(key);
+	}
+
+	public void setUploadMode(int mode) {
+		getPreferencesStore().setValue(UPLOAD_MODE_KEY, mode);
+		UsageDataRecordingActivator.getDefault().savePluginPreferences();
 	}
 
 	/* (non-Javadoc)
@@ -363,8 +505,7 @@ public class UsageDataRecordingSettings implements UploadSettings {
 	}
 
 	public void setAskBeforeUploading(boolean value) {
-		getPreferencesStore().setValue(ASK_TO_UPLOAD_KEY, value);
-		UsageDataRecordingActivator.getDefault().savePluginPreferences();
+		setUploadMode(value ? UPLOAD_MODE_ASK : UPLOAD_MODE_AUTOMATIC);
 	}
 
 	public void setEnabled(boolean value) {

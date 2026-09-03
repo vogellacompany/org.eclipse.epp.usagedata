@@ -47,7 +47,7 @@ public class AskUserUploader extends AbstractUploader {
 	}
 
 	protected boolean needToOpenWizard() {
-		if (getSettings().shouldAskBeforeUploading()) return true;
+		if (getSettings().getUploadMode() == UsageDataRecordingSettings.UPLOAD_MODE_ASK) return true;
 		if (!getSettings().hasUserAcceptedTermsOfUse()) return true;		
 		return false;
 	}
@@ -108,7 +108,7 @@ public class AskUserUploader extends AbstractUploader {
 	public synchronized void execute() {
 		dialog = null;
 		
-		getSettings().setAskBeforeUploading(action != UPLOAD_ALWAYS);
+		if (action == UPLOAD_ALWAYS) getSettings().setUploadMode(UsageDataRecordingSettings.UPLOAD_MODE_AUTOMATIC);
 		getSettings().setEnabled(action != NEVER_UPLOAD);
 		getSettings().setUserAcceptedTermsOfUse(userAcceptedTermsOfUse);
 		

@@ -59,7 +59,9 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 	private Label label;
 	private Text lastUploadText;
 
-	private Button askBeforeUploadingCheckbox;
+	private Button askRadio;
+	private Button automaticRadio;
+	private Button manualRadio;
 
 	private Button uploadNowButton;
 	
@@ -74,10 +76,10 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 
 	IPropertyChangeListener recordingPropertyChangeListener = new IPropertyChangeListener() {
 		public void propertyChange(PropertyChangeEvent event) {			
-			if (UsageDataRecordingSettings.ASK_TO_UPLOAD_KEY.equals(event.getProperty())) {
+			if (UsageDataRecordingSettings.UPLOAD_MODE_KEY.equals(event.getProperty())) {
 				getControl().getDisplay().syncExec(new Runnable() {
 					public void run() {
-						updateAskToUploadCheckbox();
+						updateUploadModeRadios();
 					}
 				});
 				return;
@@ -147,7 +149,7 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 	 * Note that this method expects to be run in the UI Thread.
 	 */
 	private void initialize() {
-		updateAskToUploadCheckbox();		
+		updateUploadModeRadios();		
 		updateUploadPeriodText();		
 		updateLastUploadText();
 		updateButtons();
@@ -172,8 +174,17 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 	/*
 	 * Note that this method expects to be run in the UI Thread.
 	 */
-	private void updateAskToUploadCheckbox() {
-		askBeforeUploadingCheckbox.setSelection(getRecordingPreferences().getBoolean(UsageDataRecordingSettings.ASK_TO_UPLOAD_KEY));
+	private void updateUploadModeRadios() {
+		int mode = getSettings().getUploadMode();
+		askRadio.setSelection(mode == UsageDataRecordingSettings.UPLOAD_MODE_ASK);
+		automaticRadio.setSelection(mode == UsageDataRecordingSettings.UPLOAD_MODE_AUTOMATIC);
+		manualRadio.setSelection(mode == UsageDataRecordingSettings.UPLOAD_MODE_MANUAL);
+	}
+	
+	private int getSelectedUploadMode() {
+		if (automaticRadio.getSelection()) return UsageDataRecordingSettings.UPLOAD_MODE_AUTOMATIC;
+		if (manualRadio.getSelection()) return UsageDataRecordingSettings.UPLOAD_MODE_MANUAL;
+		return UsageDataRecordingSettings.UPLOAD_MODE_ASK;
 	}
 	
 	/*
@@ -194,7 +205,7 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 	 */
 	@Override
 	public boolean performOk() {		
-		getRecordingPreferences().setValue(UsageDataRecordingSettings.ASK_TO_UPLOAD_KEY, askBeforeUploadingCheckbox.getSelection());		
+		getSettings().setUploadMode(getSelectedUploadMode());
 		getRecordingPreferences().setValue(UsageDataRecordingSettings.UPLOAD_PERIOD_KEY, Long.valueOf(uploadPeriodText.getText()) * MILLISECONDS_IN_ONE_DAY);
 		if (System.getProperty(UsageDataRecordingSettings.UPLOAD_URL_KEY) == null) {
 			getSettings().setUploadUrl(uploadUrlText.getText());
@@ -218,7 +229,9 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 	 */
 	@Override
 	protected void performDefaults() {
-		askBeforeUploadingCheckbox.setSelection(getRecordingPreferences().getDefaultBoolean(UsageDataRecordingSettings.ASK_TO_UPLOAD_KEY));
+		askRadio.setSelection(getRecordingPreferences().getDefaultInt(UsageDataRecordingSettings.UPLOAD_MODE_KEY) == UsageDataRecordingSettings.UPLOAD_MODE_ASK);
+		automaticRadio.setSelection(getRecordingPreferences().getDefaultInt(UsageDataRecordingSettings.UPLOAD_MODE_KEY) == UsageDataRecordingSettings.UPLOAD_MODE_AUTOMATIC);
+		manualRadio.setSelection(getRecordingPreferences().getDefaultInt(UsageDataRecordingSettings.UPLOAD_MODE_KEY) == UsageDataRecordingSettings.UPLOAD_MODE_MANUAL);
 		uploadPeriodText.setText(String.valueOf(getRecordingPreferences().getDefaultLong(UsageDataRecordingSettings.UPLOAD_PERIOD_KEY) / MILLISECONDS_IN_ONE_DAY));
 		uploadUrlText.setText(getRecordingPreferences().getDefaultString(UsageDataRecordingSettings.UPLOAD_URL_KEY));
 
@@ -236,8 +249,21 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 		
 		composite.setLayout(new GridLayout());
 				
-		askBeforeUploadingCheckbox = new Button(composite, SWT.CHECK | SWT.LEFT);
-		askBeforeUploadingCheckbox.setText(Messages.UsageDataUploadingPreferencesPage_1);  
+		createUploadModeRadios(composite);
+	}
+
+	/*
+	 * Note that this method expects to be run in the UI Thread.
+	 */
+	private void createUploadModeRadios(Composite composite) {
+		askRadio = new Button(composite, SWT.RADIO | SWT.LEFT);
+		askRadio.setText(Messages.UsageDataUploadingPreferencesPage_1); 
+		
+		automaticRadio = new Button(composite, SWT.RADIO | SWT.LEFT);
+		automaticRadio.setText(Messages.UsageDataUploadingPreferencesPage_11); 
+		
+		manualRadio = new Button(composite, SWT.RADIO | SWT.LEFT);
+		manualRadio.setText(Messages.UsageDataUploadingPreferencesPage_12); 
 	}
 
 
