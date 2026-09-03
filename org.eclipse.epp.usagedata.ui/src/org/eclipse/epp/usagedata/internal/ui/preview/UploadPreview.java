@@ -111,6 +111,7 @@ public class UploadPreview  {
 	private Button eclipseOnlyButton;
 
 	private Button bundleEventsButton;
+	private Button windowEventsButton;
 	private Link summary;
 
 	/** How many of the newest events the table shows; the rest go to the editor. */
@@ -145,6 +146,7 @@ public class UploadPreview  {
 		createEventsTable(composite);
 		createSummary(composite);
 		createBundleEventsButton(composite);
+		createWindowEventsButton(composite);
 		createEclipseOnlyButton(composite);
 		createButtons(composite);
 		
@@ -368,6 +370,17 @@ public class UploadPreview  {
 		});
 	}
 
+	private void createWindowEventsButton(Composite buttons) {
+		windowEventsButton = new Button(buttons, SWT.CHECK);
+		windowEventsButton.setText(Messages.UploadPreview_20);
+		windowEventsButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				((PreferencesBasedFilter)parameters.getFilter()).setWindowEventsFiltered(windowEventsButton.getSelection());
+			}
+		});
+	}
+
 	private void createEclipseOnlyButton(Composite buttons) {
 		eclipseOnlyButton = new Button(buttons, SWT.CHECK);
 		eclipseOnlyButton.setText(Messages.UploadPreview_9); 
@@ -383,6 +396,7 @@ public class UploadPreview  {
 		if (parameters.getFilter() instanceof PreferencesBasedFilter) {
 			PreferencesBasedFilter filter = (PreferencesBasedFilter)parameters.getFilter();
 			bundleEventsButton.setSelection(filter.isBundleEventsFiltered());
+			windowEventsButton.setSelection(filter.isWindowEventsFiltered());
 			if (filter.isEclipseOnly()) {
 				eclipseOnlyButton.setSelection(true);
 				addFilterButton.setEnabled(false);

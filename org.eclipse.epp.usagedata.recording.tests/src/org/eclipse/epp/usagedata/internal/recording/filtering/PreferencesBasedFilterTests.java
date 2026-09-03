@@ -42,6 +42,7 @@ public class PreferencesBasedFilterTests {
 		getPreferencesStore().setToDefault(UsageDataRecordingSettings.FILTER_ECLIPSE_BUNDLES_ONLY_KEY);
 		getPreferencesStore().setToDefault(UsageDataRecordingSettings.FILTER_PATTERNS_KEY);
 		getPreferencesStore().setToDefault(UsageDataRecordingSettings.FILTER_BUNDLE_EVENTS_KEY);
+		getPreferencesStore().setToDefault(UsageDataRecordingSettings.FILTER_WINDOW_EVENTS_KEY);
 	}
 
 	@Test
@@ -68,6 +69,29 @@ public class PreferencesBasedFilterTests {
 		filter.setEclipseOnly(true);
 
 		assertFalse(filter.includes(createBundleEvent("org.eclipse.core")));
+	}
+
+	@Test
+	public void testWindowFocusEventsAreFilteredByDefault() {
+		assertTrue(filter.isWindowEventsFiltered());
+		assertFalse(filter.includes(createWindowEvent("activated")));
+		assertFalse(filter.includes(createWindowEvent("deactivated")));
+	}
+
+	@Test
+	public void testWindowOpenedAndClosedStayIn() {
+		assertTrue(filter.includes(createWindowEvent("opened")));
+		assertTrue(filter.includes(createWindowEvent("closed")));
+	}
+
+	@Test
+	public void testWindowFocusEventsAreIncludedWhenNotFiltered() {
+		filter.setWindowEventsFiltered(false);
+		assertTrue(filter.includes(createWindowEvent("activated")));
+	}
+
+	private UsageDataEvent createWindowEvent(String what) {
+		return new UsageDataEvent(what, "workbench", "", "org.eclipse.ui.workbench", "version", System.currentTimeMillis());
 	}
 
 	private UsageDataEvent createBundleEvent(String bundleId) {

@@ -57,6 +57,7 @@ public class UsageDataRecordingSettings implements UploadSettings {
 	public static final String FILTER_ECLIPSE_BUNDLES_ONLY_KEY = UsageDataRecordingActivator.PLUGIN_ID + ".filter-eclipse-only"; //$NON-NLS-1$
 	public static final String FILTER_PATTERNS_KEY = UsageDataRecordingActivator.PLUGIN_ID + ".filter-patterns"; //$NON-NLS-1$
 	public static final String FILTER_BUNDLE_EVENTS_KEY = UsageDataRecordingActivator.PLUGIN_ID + ".filter-bundle-events"; //$NON-NLS-1$
+	public static final String FILTER_WINDOW_EVENTS_KEY = UsageDataRecordingActivator.PLUGIN_ID + ".filter-window-events"; //$NON-NLS-1$
 	
 	public static final String UPLOAD_URL_KEY = UsageDataRecordingActivator.PLUGIN_ID + ".upload-url"; //$NON-NLS-1$
 	
@@ -102,6 +103,13 @@ public class UsageDataRecordingSettings implements UploadSettings {
 	 * commands, editors and views it buries.
 	 */
 	public static final boolean FILTER_BUNDLE_EVENTS_DEFAULT = true;
+
+	/**
+	 * Window focus events are filtered out by default. The workbench window
+	 * reports every time it gains or loses focus, which says when the IDE was
+	 * in front but nothing about what was done in it.
+	 */
+	public static final boolean FILTER_WINDOW_EVENTS_DEFAULT = true;
 
 	private int consecutiveFailedAttempts = 0;
 
@@ -535,6 +543,7 @@ public class UsageDataRecordingSettings implements UploadSettings {
 		reported.put("upload-period-days", String.valueOf(getPeriodBetweenUploads() / (24 * 60 * 60 * 1000))); //$NON-NLS-1$
 		reported.put("filter-eclipse-only", String.valueOf(getPreferencesStore().getBoolean(FILTER_ECLIPSE_BUNDLES_ONLY_KEY))); //$NON-NLS-1$
 		reported.put("filter-bundle-events", String.valueOf(getPreferencesStore().getBoolean(FILTER_BUNDLE_EVENTS_KEY))); //$NON-NLS-1$
+		reported.put("filter-window-events", String.valueOf(getPreferencesStore().getBoolean(FILTER_WINDOW_EVENTS_KEY))); //$NON-NLS-1$
 		reported.put("retention-days", String.valueOf(UPLOAD_FILE_RETENTION_DAYS)); //$NON-NLS-1$
 		return reported;
 	}

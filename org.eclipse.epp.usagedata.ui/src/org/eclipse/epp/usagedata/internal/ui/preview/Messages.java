@@ -46,6 +46,7 @@ public final class Messages extends NLS {
 	public static String UploadPreview_17;
 	public static String UploadPreview_18;
 	public static String UploadPreview_19;
+	public static String UploadPreview_20;
 
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

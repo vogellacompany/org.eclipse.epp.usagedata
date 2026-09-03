@@ -24,6 +24,7 @@ public class UsageDataRecordingPreferenceInitializer extends AbstractPreferenceI
 		preferenceStore.setDefault(UsageDataRecordingSettings.UPLOAD_MODE_KEY, UsageDataRecordingSettings.UPLOAD_MODE_DEFAULT);
 		preferenceStore.setDefault(UsageDataRecordingSettings.FILTER_ECLIPSE_BUNDLES_ONLY_KEY, false);
 		preferenceStore.setDefault(UsageDataRecordingSettings.FILTER_BUNDLE_EVENTS_KEY, UsageDataRecordingSettings.FILTER_BUNDLE_EVENTS_DEFAULT);
+		preferenceStore.setDefault(UsageDataRecordingSettings.FILTER_WINDOW_EVENTS_KEY, UsageDataRecordingSettings.FILTER_WINDOW_EVENTS_DEFAULT);
 	}
 
 }
