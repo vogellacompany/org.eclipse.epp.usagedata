@@ -81,9 +81,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
 
 public class UploadPreview  {
 
@@ -611,9 +609,8 @@ public class UploadPreview  {
 	}
 
 	/**
-	 * Writes all recorded files into one and opens it in the generic editor.
-	 * Without the IDE bundle, which the editor input needs, the system editor
-	 * takes over.
+	 * Writes all recorded files into one and opens it in the generic editor,
+	 * or in the system editor where the IDE bundle is missing.
 	 */
 	private void openAllInEditor() {
 		File combined = new File(Activator.getDefault().getStateLocation().toFile(), "recorded-usage-data.csv"); //$NON-NLS-1$
@@ -639,8 +636,7 @@ public class UploadPreview  {
 			return;
 		}
 		try {
-			IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-			page.openEditor(new RecordedDataEditorInput(combined), GENERIC_EDITOR_ID);
+			RecordedDataEditor.open(combined, GENERIC_EDITOR_ID);
 		} catch (PartInitException e) {
 			Program.launch(combined.getAbsolutePath());
 		}
