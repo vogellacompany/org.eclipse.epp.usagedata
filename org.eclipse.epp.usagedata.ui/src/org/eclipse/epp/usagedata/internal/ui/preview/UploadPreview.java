@@ -57,9 +57,9 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.ui.forms.widgets.FormText;
 
 public class UploadPreview  {
 
@@ -149,9 +149,8 @@ public class UploadPreview  {
 	}	
 
 	private void createDescriptionText(Composite parent) {
-		FormText text = new FormText(parent, SWT.NONE);
-		text.setImage("x", xImage); //$NON-NLS-1$
-		text.setText(Messages.UploadPreview_2, true, false); 
+		Label text = new Label(parent, SWT.WRAP);
+		text.setText(Messages.UploadPreview_2);
 		GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, false);
 		layoutData.widthHint = 500;
 		text.setLayoutData(layoutData);
