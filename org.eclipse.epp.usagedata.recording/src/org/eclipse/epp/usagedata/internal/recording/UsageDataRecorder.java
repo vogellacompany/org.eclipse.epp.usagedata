@@ -81,6 +81,15 @@ public class UsageDataRecorder implements UsageDataEventListener {
 	}
 	
 	/**
+	 * Writes the buffered events to the event file, so that a reader of the
+	 * file sees everything recorded so far.
+	 */
+	public synchronized void flush() {
+		if (!running) return;
+		dumpEvents();
+	}
+
+	/**
 	 * Drops the buffered events and deletes what has been recorded to disk.
 	 * Refuses while an upload is running, because the uploader deletes the
 	 * files it was handed once the server has accepted them.
