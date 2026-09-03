@@ -1,0 +1,658 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Usage Data Live</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%230f0e16'/%3E%3Crect x='2' y='9' width='2' height='5' fill='%23ffb020'/%3E%3Crect x='6' y='5' width='2' height='9' fill='%23ffb020'/%3E%3Crect x='10' y='2' width='2' height='12' fill='%23ffb020'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* A console readout, deliberately single-theme: this is an instrument panel,
+   and it should look the same on a projector as on a laptop. */
+:root {
+  color-scheme: dark;
+  --ground:        #0f0e16;
+  --surface:       #171621;
+  --surface-sunk:  #0a0910;
+  --line:          #2c2940;
+  --line-soft:     #201e2e;
+  --ink:           #f3f1fb;
+  --ink-2:         #a8a4c0;
+  --ink-3:         #6c6889;
+  --accent:        #ffb020;
+  --accent-dim:    #4a3208;
+  --series-1:      #3987e5;
+  --series-2:      #d95926;
+  --series-3:      #199e70;
+  --series-4:      #c98500;
+  --series-5:      #d55181;
+  --series-6:      #008300;
+  --series-7:      #9085e9;
+  --series-8:      #e66767;
+  --live:          #199e70;
+  --idle:          #6c6889;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: "IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 15px;
+  line-height: 1.55;
+}
+.mono { font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+
+body::before {
+  content: ""; position: fixed; inset: 0 0 auto 0; height: 3px;
+  background: linear-gradient(90deg, var(--accent) 0 34%, var(--line) 34% 100%);
+  z-index: 5;
+}
+.wrap { max-width: 1180px; margin: 0 auto; padding: 46px 22px 72px; }
+
+/* ---------------------------------------------------------------- masthead */
+.masthead {
+  display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between;
+  gap: 18px; padding-bottom: 22px; border-bottom: 1px solid var(--line);
+}
+.masthead h1 {
+  margin: 0; font-family: "Archivo", ui-sans-serif, system-ui, sans-serif;
+  font-size: clamp(30px, 5vw, 54px); font-weight: 800;
+  letter-spacing: -0.032em; line-height: 1.02; text-wrap: balance;
+}
+.eyebrow {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 11px; font-weight: 500; text-transform: uppercase;
+  letter-spacing: 0.16em; color: var(--accent); margin: 0 0 10px;
+}
+.status {
+  display: flex; align-items: center; gap: 9px; font-size: 12.5px; color: var(--ink-2);
+  border: 1px solid var(--line); padding: 7px 13px; background: var(--surface-sunk);
+}
+.dot { width: 9px; height: 9px; border-radius: 50%; background: var(--idle); flex: none; }
+.dot.on { background: var(--live); box-shadow: 0 0 0 4px color-mix(in srgb, var(--live) 22%, transparent); }
+@media (prefers-reduced-motion: no-preference) {
+  .dot.on { animation: pulse 2.4s ease-in-out infinite; }
+}
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .55; } }
+
+/* ------------------------------------------------------------------- tiles */
+.tiles {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 1px; background: var(--line); border: 1px solid var(--line);
+  margin: 26px 0 34px;
+}
+.tile { background: var(--surface); padding: 20px 20px 18px; position: relative; }
+.tile::after {
+  content: ""; position: absolute; left: 0; top: 0; width: 3px; height: 26px;
+  background: var(--accent);
+}
+.tile .label {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.14em;
+  color: var(--ink-3); margin-bottom: 12px;
+}
+.tile .value {
+  font-family: "Archivo", ui-sans-serif, system-ui, sans-serif;
+  font-size: 40px; font-weight: 700; line-height: 1; letter-spacing: -0.035em;
+  font-variant-numeric: tabular-nums;
+}
+.tile .note { font-size: 12.5px; color: var(--ink-3); margin-top: 9px; }
+
+/* ------------------------------------------------------------------ panels */
+section { margin-bottom: 40px; }
+h2 {
+  font-size: 11.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.16em;
+  color: var(--ink); margin: 0 0 6px;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  display: flex; align-items: center; gap: 10px;
+}
+h2::before {
+  content: ""; width: 14px; height: 1px; background: var(--accent); flex: none;
+}
+.sub { margin: 0 0 16px; font-size: 13.5px; color: var(--ink-3); max-width: 68ch; }
+.panel { background: var(--surface); border: 1px solid var(--line); padding: 22px; }
+.cols { display: grid; gap: 18px; }
+@media (min-width: 880px) { .cols.two { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 880px) { .cols.wide { grid-template-columns: 1.45fr 1fr; } }
+
+/* --------------------------------------------------------------------- pie */
+.pie-panel { display: flex; flex-wrap: wrap; align-items: center; gap: 28px 40px; }
+.pie-panel svg { flex: none; }
+.pielegend { display: grid; gap: 10px; min-width: 220px; }
+.pielegend div { display: flex; align-items: baseline; gap: 10px; font-size: 13.5px; }
+.pielegend .swatch {
+  width: 11px; height: 11px; border-radius: 2px; flex: none; transform: translateY(1px);
+}
+.pielegend .who { font-family: "IBM Plex Mono", ui-monospace, monospace; }
+.pielegend .n {
+  margin-left: auto; font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-variant-numeric: tabular-nums; color: var(--ink-2); font-size: 12.5px;
+}
+
+/* ------------------------------------------------------------------- ranks */
+.rank { display: grid; gap: 13px; }
+.rank .item { display: grid; gap: 4px; }
+.rank .row { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: baseline; }
+.rank .name {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 12.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  direction: rtl; text-align: left;
+}
+.rank .n {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-variant-numeric: tabular-nums; font-size: 12.5px; color: var(--ink-2);
+}
+.rank .track { height: 6px; background: var(--surface-sunk); border-radius: 3px; overflow: hidden; }
+.rank .fill { height: 100%; border-radius: 3px; background: var(--series-1); }
+
+/* ----------------------------------------------------------------- clients */
+.clients { display: grid; gap: 18px; }
+@media (min-width: 900px) { .clients { grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); } }
+.client { background: var(--surface); border: 1px solid var(--line); }
+.client header {
+  display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between;
+  gap: 8px 16px; padding: 16px 20px; border-bottom: 1px solid var(--line);
+  background: var(--surface-sunk);
+}
+.client .who {
+  font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 13px; font-weight: 600;
+}
+.client .meta {
+  font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 11.5px; color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+.client .body { padding: 18px 20px; display: grid; gap: 16px; }
+.client h3 {
+  margin: 0 0 8px; font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 10.5px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.13em;
+  color: var(--accent);
+}
+
+/* -------------------------------------------------------------- facts list */
+dl.facts { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 7px 18px; }
+dl.facts dt {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-3);
+  white-space: nowrap; align-self: baseline;
+}
+dl.facts dd {
+  margin: 0; font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 12.5px;
+  word-break: break-all;
+}
+
+/* ------------------------------------------------------------------- table */
+.scroll { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 12.5px; }
+th {
+  text-align: left; font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--ink-3); font-weight: 500; padding: 0 14px 8px 0;
+  border-bottom: 1px solid var(--line); white-space: nowrap;
+}
+td {
+  padding: 6px 14px 6px 0; border-bottom: 1px solid var(--line-soft);
+  font-family: "IBM Plex Mono", ui-monospace, monospace; white-space: nowrap;
+}
+td.desc { white-space: normal; word-break: break-all; color: var(--ink-2); }
+.pill {
+  display: inline-block; padding: 1px 7px; border-radius: 999px;
+  font-size: 10.5px; letter-spacing: 0.04em;
+  background: var(--surface-sunk); color: var(--ink-2);
+}
+
+/* -------------------------------------------------------------- empty state */
+.empty { padding: 40px 20px; text-align: center; color: var(--ink-3); }
+.empty code {
+  display: inline-block; margin-top: 10px; padding: 7px 12px;
+  background: var(--surface-sunk); border: 1px solid var(--line);
+  font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 12.5px; color: var(--ink);
+}
+[hidden] { display: none !important; }
+
+footer {
+  margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--line);
+  font-size: 12.5px; color: var(--ink-3); display: flex; flex-wrap: wrap;
+  justify-content: space-between; gap: 10px;
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <div>
+      <p class="eyebrow">Usage Data Collector &middot; demo backend</p>
+      <h1>Usage Data</h1>
+    </div>
+    <div class="status">
+      <span class="dot" id="dot"></span>
+      <span id="statusText" class="mono">waiting for the first upload</span>
+    </div>
+  </header>
+
+  <div class="tiles">
+    <div class="tile">
+      <div class="label">Events received</div>
+      <div class="value" id="tEvents">0</div>
+      <div class="note" id="tEventsNote">nothing yet</div>
+    </div>
+    <div class="tile">
+      <div class="label">Uploads</div>
+      <div class="value" id="tUploads">0</div>
+      <div class="note" id="tUploadsNote">staged files accepted</div>
+    </div>
+    <div class="tile">
+      <div class="label">Workstations</div>
+      <div class="value" id="tUsers">0</div>
+      <div class="note" id="tUsersNote">reporting workspaces</div>
+    </div>
+    <div class="tile">
+      <div class="label">Bytes on the wire</div>
+      <div class="value" id="tBytes">0</div>
+      <div class="note" id="tBytesNote">multipart payload</div>
+    </div>
+  </div>
+
+  <div class="empty panel" id="empty">
+    <p>No upload has arrived yet. Point the IDE at this server and press <strong>Upload Now</strong>.</p>
+    <code id="endpointHint">http://localhost:8643/upload.php</code>
+  </div>
+
+  <div id="content" hidden>
+
+    <section>
+      <div class="cols two">
+        <div>
+          <h2>Java versions in use</h2>
+          <p class="sub">Feature release, counted in workstations. A workstation counts once, using
+            the newest version it reported.</p>
+          <div class="panel pie-panel">
+            <div id="javaPie"></div>
+            <div class="pielegend" id="javaLegend"></div>
+          </div>
+        </div>
+        <div>
+          <h2>Workstations per day</h2>
+          <p class="sub">How many workstations were active each day. One that worked all day counts
+            once.</p>
+          <div class="panel"><div class="scroll"><div id="usersPerDay"></div></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>When it happened</h2>
+      <p class="sub">Commands, editors, views and window focus, counted per minute. A tick under the
+        axis marks a minute that carried other kinds only.</p>
+      <div class="panel">
+        <div class="scroll"><div id="timeline"></div></div>
+      </div>
+    </section>
+
+    <section class="cols wide">
+      <div>
+        <h2>Commands actually executed</h2>
+        <p class="sub">Commands that went through the command framework, which is what a menu item,
+          a toolbar button or a keybinding uses.</p>
+        <div class="panel"><div class="rank" id="commands"></div></div>
+      </div>
+      <div>
+        <h2>Where the time went</h2>
+        <p class="sub">Editor and view types.</p>
+        <div class="panel"><div class="rank" id="parts"></div></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Reporting workstations</h2>
+      <p class="sub">One entry per workstation, with its workspaces folded in. Settings and system
+        info belong to the workstation that sent them.</p>
+      <div class="clients" id="clients"></div>
+    </section>
+
+    <section>
+      <h2>Last events in</h2>
+      <p class="sub">Newest first. This is the raw CSV, one row per line, exactly as it was recorded.</p>
+      <div class="panel scroll">
+        <table>
+          <thead><tr><th>Time</th><th>What</th><th>Kind</th><th>Bundle</th><th>Description</th></tr></thead>
+          <tbody id="recent"></tbody>
+        </table>
+      </div>
+    </section>
+
+  </div>
+
+  <footer>
+    <span>Nothing is written to disk. Stopping the server forgets all of it.</span>
+    <span class="mono" id="refreshed"></span>
+  </footer>
+
+</div>
+
+<script>
+"use strict";
+
+var SERIES = ["--series-1", "--series-2", "--series-3", "--series-4",
+              "--series-5", "--series-6", "--series-7", "--series-8"];
+
+function css(name) {
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+}
+function num(n) { return n.toLocaleString("en-US"); }
+function bytes(n) {
+  if (n < 1024) return n + " B";
+  if (n < 1024 * 1024) return (n / 1024).toFixed(1) + " KB";
+  return (n / (1024 * 1024)).toFixed(2) + " MB";
+}
+function clock(ms) {
+  if (!ms) return "";
+  var d = new Date(ms);
+  return String(d.getHours()).padStart(2, "0") + ":" +
+         String(d.getMinutes()).padStart(2, "0") + ":" +
+         String(d.getSeconds()).padStart(2, "0");
+}
+function esc(s) {
+  return String(s == null ? "" : s)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+function shortId(id) {
+  return id && id.length > 12 ? id.slice(0, 8) + "..." + id.slice(-4) : (id || "unknown");
+}
+
+document.getElementById("endpointHint").textContent = location.origin + "/upload.php";
+
+/*
+ * A donut of the reported values. The hole carries the total, so the chart
+ * answers "how many workstations" as well as "in what proportion".
+ */
+function renderPie(chartId, legendId, counts, unit) {
+  var chart = document.getElementById(chartId);
+  var legend = document.getElementById(legendId);
+  var keys = Object.keys(counts);
+
+  if (!keys.length) {
+    chart.innerHTML = "";
+    legend.innerHTML = '<p class="sub">No system-info block has arrived yet.</p>';
+    return;
+  }
+
+  var total = keys.reduce(function (sum, k) { return sum + counts[k]; }, 0);
+  var size = 200, r = 88, inner = 54, cx = size / 2, cy = size / 2;
+  var svg = ['<svg viewBox="0 0 ' + size + " " + size + '" width="' + size + '" height="' + size +
+             '" role="img" aria-label="' + esc(unit) + ' by reported value">'];
+  var angle = -Math.PI / 2;
+
+  keys.forEach(function (k, i) {
+    var color = css(SERIES[i % SERIES.length]);
+    var share = counts[k] / total;
+    var label = esc(k) + ": " + num(counts[k]) + " of " + num(total) + " " + esc(unit);
+
+    if (share >= 0.9999) {
+      // A single value would make a degenerate arc, so draw a ring instead.
+      svg.push('<circle cx="' + cx + '" cy="' + cy + '" r="' + ((r + inner) / 2) +
+               '" fill="none" stroke="' + color + '" stroke-width="' + (r - inner) +
+               '"><title>' + label + "</title></circle>");
+      return;
+    }
+
+    var end = angle + share * Math.PI * 2;
+    var large = share > 0.5 ? 1 : 0;
+    var path = "M" + (cx + r * Math.cos(angle)) + " " + (cy + r * Math.sin(angle)) +
+      "A" + r + " " + r + " 0 " + large + " 1 " + (cx + r * Math.cos(end)) + " " + (cy + r * Math.sin(end)) +
+      "L" + (cx + inner * Math.cos(end)) + " " + (cy + inner * Math.sin(end)) +
+      "A" + inner + " " + inner + " 0 " + large + " 0 " + (cx + inner * Math.cos(angle)) + " " +
+      (cy + inner * Math.sin(angle)) + "Z";
+    svg.push('<path d="' + path + '" fill="' + color + '" stroke="' + css("--surface") +
+             '" stroke-width="2"><title>' + label + "</title></path>");
+    angle = end;
+  });
+
+  svg.push('<text x="' + cx + '" y="' + (cy - 2) + '" text-anchor="middle" ' +
+           'font-family="Archivo, sans-serif" font-size="30" font-weight="700" fill="' +
+           css("--ink") + '">' + num(total) + "</text>");
+  svg.push('<text x="' + cx + '" y="' + (cy + 18) + '" text-anchor="middle" ' +
+           'font-family="IBM Plex Mono, monospace" font-size="10" letter-spacing="1.4" fill="' +
+           css("--ink-3") + '">' + esc(unit.toUpperCase()) + "</text>");
+  svg.push("</svg>");
+  chart.innerHTML = svg.join("");
+
+  legend.innerHTML = keys.map(function (k, i) {
+    var pct = Math.round((counts[k] / total) * 100);
+    return '<div><span class="swatch" style="background:' + css(SERIES[i % SERIES.length]) + '"></span>' +
+      '<span class="who">' + esc(k) + '</span>' +
+      '<span class="n">' + num(counts[k]) + " &middot; " + pct + "%</span></div>";
+  }).join("");
+}
+
+/* Whole workstations, so the axis is stepped in whole numbers. */
+function renderUsersPerDay(days) {
+  var host = document.getElementById("usersPerDay");
+  if (!days || !days.length) {
+    host.innerHTML = '<p class="sub">Nothing has been recorded yet.</p>';
+    return;
+  }
+
+  var w = Math.max(days.length * 58, 300), h = 190, padTop = 18, padBottom = 42, padLeft = 30;
+  var base = h - padBottom;
+  var max = days.reduce(function (m, d) { return Math.max(m, d.users); }, 1);
+  var step = (w - padLeft - 12) / days.length;
+  var bw = Math.min(46, Math.max(8, step - 14));
+  var svg = ['<svg viewBox="0 0 ' + w + " " + h + '" width="' + w + '" height="' + h +
+             '" role="img" aria-label="Workstations active per day">'];
+
+  var ticks = max <= 4 ? max : 4;
+  for (var t = 0; t <= ticks; t++) {
+    var value = Math.round((max / ticks) * t);
+    var y = base - (base - padTop) * (value / max);
+    svg.push('<line x1="' + padLeft + '" y1="' + y + '" x2="' + (w - 6) + '" y2="' + y +
+             '" stroke="' + css("--line-soft") + '" stroke-width="1"/>');
+    svg.push('<text x="' + (padLeft - 8) + '" y="' + (y + 4) + '" text-anchor="end" font-size="10" ' +
+             'font-family="IBM Plex Mono, monospace" fill="' + css("--ink-3") + '">' + value + "</text>");
+  }
+
+  days.forEach(function (d, i) {
+    var x = padLeft + i * step + (step - bw) / 2;
+    var bh = Math.max(2, (base - padTop) * (d.users / max));
+    svg.push('<rect x="' + x + '" y="' + (base - bh) + '" width="' + bw + '" height="' + bh +
+             '" rx="3" fill="' + css("--series-1") + '"><title>' + esc(d.day) + ": " + d.users +
+             (d.users === 1 ? " workstation" : " workstations") + "</title></rect>");
+    svg.push('<text x="' + (x + bw / 2) + '" y="' + (base - bh - 7) + '" text-anchor="middle" ' +
+             'font-size="11" font-family="IBM Plex Mono, monospace" font-weight="500" fill="' +
+             css("--ink") + '">' + d.users + "</text>");
+    svg.push('<text x="' + (x + bw / 2) + '" y="' + (base + 18) + '" text-anchor="middle" ' +
+             'font-size="10" font-family="IBM Plex Mono, monospace" fill="' + css("--ink-3") + '">' +
+             esc(d.day.slice(5)) + "</text>");
+  });
+
+  svg.push('<line x1="' + padLeft + '" y1="' + base + '" x2="' + (w - 6) + '" y2="' + base +
+           '" stroke="' + css("--line") + '" stroke-width="1"/>');
+  svg.push("</svg>");
+  host.innerHTML = svg.join("");
+}
+
+function renderTimeline(points) {
+  var host = document.getElementById("timeline");
+  if (!points.length) { host.innerHTML = '<p class="sub">No timestamps yet.</p>'; return; }
+
+  var w = Math.max(points.length * 15, 340), h = 168, pad = 30, base = h - pad;
+  var max = points.reduce(function (m, p) { return Math.max(m, p.interaction); }, 1);
+  var step = (w - pad * 2) / points.length;
+  var bw = Math.max(4, step - 4);
+  var svg = ['<svg viewBox="0 0 ' + w + " " + h + '" width="' + w + '" height="' + h +
+             '" role="img" aria-label="Interaction events per minute">'];
+
+  [0, 0.5, 1].forEach(function (f) {
+    var y = pad + (base - pad) * (1 - f);
+    svg.push('<line x1="' + pad + '" y1="' + y + '" x2="' + (w - pad) + '" y2="' + y +
+             '" stroke="' + css("--line-soft") + '" stroke-width="1"/>');
+    svg.push('<text x="4" y="' + (y + 4) + '" font-size="10" font-family="IBM Plex Mono, monospace" fill="' +
+             css("--ink-3") + '">' + Math.round(max * f) + "</text>");
+  });
+
+  points.forEach(function (p, i) {
+    var x = pad + i * step;
+    if (p.interaction === 0) {
+      svg.push('<rect x="' + x + '" y="' + (base + 3) + '" width="' + bw + '" height="3" fill="' +
+               css("--ink-3") + '" opacity="0.5"><title>' + clock(p.minute) + " startup only, " +
+               p.total + " events</title></rect>");
+      return;
+    }
+    var ih = Math.max(2, (base - pad) * (p.interaction / max));
+    svg.push('<rect x="' + x + '" y="' + (base - ih) + '" width="' + bw + '" height="' + ih +
+             '" rx="2" fill="' + css("--accent") + '"><title>' + clock(p.minute) + " " +
+             p.interaction + " interaction, " + p.total + " total</title></rect>");
+  });
+
+  svg.push('<line x1="' + pad + '" y1="' + base + '" x2="' + (w - pad) + '" y2="' + base +
+           '" stroke="' + css("--line") + '" stroke-width="1"/>');
+
+  svg.push('<text x="' + pad + '" y="' + (h - 6) + '" font-size="10" font-family="IBM Plex Mono, monospace" fill="' +
+           css("--ink-3") + '">' + clock(points[0].minute) + "</text>");
+  svg.push('<text x="' + (w - pad) + '" y="' + (h - 6) + '" text-anchor="end" font-size="10" ' +
+           'font-family="IBM Plex Mono, monospace" fill="' + css("--ink-3") + '">' +
+           clock(points[points.length - 1].minute) + "</text>");
+  svg.push("</svg>");
+  host.innerHTML = svg.join("");
+}
+
+function renderRank(hostId, entries, emptyText) {
+  var host = document.getElementById(hostId);
+  var keys = Object.keys(entries);
+  if (!keys.length) { host.innerHTML = '<p class="sub">' + esc(emptyText) + "</p>"; return; }
+  var max = keys.reduce(function (m, k) { return Math.max(m, entries[k]); }, 1);
+  host.innerHTML = keys.map(function (k) {
+    var pct = (entries[k] / max) * 100;
+    return '<div class="item"><div class="row"><span class="name" title="' + esc(k) + '">' + esc(k) +
+           '</span><span class="n">' + num(entries[k]) + "</span></div>" +
+           '<div class="track"><div class="fill" style="width:' + pct + '%"></div></div></div>';
+  }).join("");
+}
+
+function renderFacts(hostId, pairs, emptyText) {
+  var host = document.getElementById(hostId);
+  var keys = Object.keys(pairs);
+  if (!keys.length) { host.innerHTML = '<p class="sub" style="grid-column:1/-1">' + esc(emptyText) + "</p>"; return; }
+  host.innerHTML = keys.map(function (k) {
+    return "<dt>" + esc(k) + "</dt><dd>" + esc(pairs[k]) + "</dd>";
+  }).join("");
+}
+
+function facts(pairs, emptyText) {
+  var keys = Object.keys(pairs);
+  if (!keys.length) return '<p class="sub">' + esc(emptyText) + "</p>";
+  return '<dl class="facts">' + keys.map(function (k) {
+    return "<dt>" + esc(k) + "</dt><dd>" + esc(pairs[k]) + "</dd>";
+  }).join("") + "</dl>";
+}
+
+function workspaceFacts(workspaces) {
+  var out = {};
+  (workspaces || []).forEach(function (w) {
+    out[shortId(w.workspaceId)] = num(w.events) + " events, " + num(w.sessions) + " sessions";
+  });
+  return out;
+}
+
+function renderClients(clients) {
+  var host = document.getElementById("clients");
+  if (!clients || !clients.length) {
+    host.innerHTML = '<p class="sub">No client has uploaded yet.</p>';
+    return;
+  }
+  host.innerHTML = clients.map(function (c) {
+    return '<div class="client">' +
+      "<header><span class=\"who\">" + esc(shortId(c.userId)) + "</span>" +
+      '<span class="meta">' + num(c.events) + " events &middot; " + num(c.uploads) +
+      " uploads &middot; " + num(c.sessions) + " sessions &middot; last " + clock(c.lastSeen) + "</span></header>" +
+      '<div class="body">' +
+      "<div><h3>Workspaces</h3>" + facts(workspaceFacts(c.workspaces), "") + "</div>" +
+      "<div><h3>Identity</h3>" + facts({
+        "workstation": shortId(c.userId),
+        "user agent": c.userAgent
+      }, "") + "</div>" +
+      "<div><h3>Settings reported</h3>" + facts(c.preferences,
+        "This client sends no settings. They arrive as X-UDC-* headers when it does.") + "</div>" +
+      "<div><h3>System info</h3>" + facts(c.systemInfo,
+        "No system-info block from this client yet.") + "</div>" +
+      "</div></div>";
+  }).join("");
+}
+
+function render(d) {
+  var total = d.eventCount;
+  document.getElementById("tEvents").textContent = num(total);
+  document.getElementById("tUploads").textContent = num(d.uploadCount);
+  document.getElementById("tUsers").textContent = num(d.users);
+  document.getElementById("tBytes").textContent = bytes(d.bytesReceived);
+
+  var kinds = Object.keys(d.byKind).length;
+  document.getElementById("tEventsNote").textContent =
+    total ? kinds + " kinds of event" : "nothing yet";
+  document.getElementById("tUsersNote").textContent =
+    d.workspaces === 1 ? "1 workspace" : num(d.workspaces) + " workspaces";
+  document.getElementById("tUploadsNote").textContent =
+    d.uploadCount ? "last at " + clock(d.uploads[d.uploads.length - 1].receivedAt) : "staged files accepted";
+  document.getElementById("tBytesNote").textContent =
+    total ? Math.round(d.bytesReceived / total) + " bytes per event" : "multipart payload";
+
+  var dot = document.getElementById("dot");
+  var statusText = document.getElementById("statusText");
+  if (d.uploadCount) {
+    dot.classList.add("on");
+    statusText.textContent = "receiving on " + location.host;
+  } else {
+    dot.classList.remove("on");
+    statusText.textContent = "waiting for the first upload";
+  }
+
+  document.getElementById("empty").hidden = d.uploadCount > 0;
+  document.getElementById("content").hidden = d.uploadCount === 0;
+  if (!d.uploadCount) return;
+
+  var last = d.uploads[d.uploads.length - 1];
+
+  renderPie("javaPie", "javaLegend", d.javaVersions, "workstations");
+  renderUsersPerDay(d.usersPerDay);
+  renderTimeline(d.timeline);
+  renderRank("commands", d.commands, "No command has been executed yet. Use a menu item or a keybinding in the IDE.");
+
+  var parts = {};
+  Object.keys(d.editors).forEach(function (k) { parts[k] = d.editors[k]; });
+  Object.keys(d.views).forEach(function (k) { parts[k] = d.views[k]; });
+  renderRank("parts", parts, "No editor or view activity yet.");
+
+  renderClients(d.clients);
+
+  document.getElementById("recent").innerHTML = d.recent.map(function (e) {
+    return "<tr><td>" + clock(e.time) + "</td>" +
+      '<td><span class="pill">' + esc(e.what) + "</span></td>" +
+      "<td>" + esc(e.kind) + "</td>" +
+      "<td>" + esc(e.bundleId || "") + "</td>" +
+      '<td class="desc">' + esc(e.description || "") + "</td></tr>";
+  }).join("");
+}
+
+function poll() {
+  fetch("/api/data", { cache: "no-store" })
+    .then(function (r) { return r.json(); })
+    .then(function (d) {
+      render(d);
+      document.getElementById("refreshed").textContent = "refreshed " + clock(Date.now());
+    })
+    .catch(function () {
+      document.getElementById("statusText").textContent = "server not reachable";
+      document.getElementById("dot").classList.remove("on");
+    });
+}
+
+poll();
+setInterval(poll, 2000);
+</script>
+</body>
+</html>
