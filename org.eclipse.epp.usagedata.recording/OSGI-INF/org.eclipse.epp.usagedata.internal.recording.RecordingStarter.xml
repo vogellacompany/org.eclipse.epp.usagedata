@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" immediate="true" name="org.eclipse.epp.usagedata.internal.recording.RecordingStarter">
+   <reference interface="org.eclipse.epp.usagedata.internal.gathering.services.UsageDataService" name="usageDataService"/>
+   <implementation class="org.eclipse.epp.usagedata.internal.recording.RecordingStarter"/>
+</scr:component>

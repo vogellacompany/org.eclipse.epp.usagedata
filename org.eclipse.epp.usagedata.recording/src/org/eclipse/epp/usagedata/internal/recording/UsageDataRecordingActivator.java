@@ -14,7 +14,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.epp.usagedata.internal.gathering.services.UsageDataService;
 import org.eclipse.epp.usagedata.internal.recording.settings.UsageDataRecordingSettings;
 import org.eclipse.epp.usagedata.internal.recording.uploading.UploadManager;
-import org.eclipse.ui.IStartup;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 import org.osgi.util.tracker.ServiceTracker;
@@ -22,7 +21,7 @@ import org.osgi.util.tracker.ServiceTracker;
 /**
  * The activator class controls the plug-in life cycle
  */
-public class UsageDataRecordingActivator extends AbstractUIPlugin implements IStartup {
+public class UsageDataRecordingActivator extends AbstractUIPlugin {
 
 	// The plug-in ID
 	public static final String PLUGIN_ID = "org.eclipse.epp.usagedata.recording"; //$NON-NLS-1$
@@ -101,10 +100,6 @@ public class UsageDataRecordingActivator extends AbstractUIPlugin implements ISt
 		getLog().log(new Status(status, PLUGIN_ID, message, e));
 	}
 	
-	public void earlyStartup() {
-		// Don't actually need to do anything, but still need the method.		
-	}
-
 	public UploadManager getUploadManager() {
 		return uploadManager;
 	}

@@ -14,9 +14,4 @@
             class="org.eclipse.epp.usagedata.internal.recording.settings.UsageDataRecordingPreferenceInitializer">
       </initializer>
    </extension>
-   <extension
-         point="org.eclipse.ui.startup">
-      <startup
-            class="org.eclipse.epp.usagedata.internal.recording.Startup"></startup>
-   </extension>
 </plugin>
