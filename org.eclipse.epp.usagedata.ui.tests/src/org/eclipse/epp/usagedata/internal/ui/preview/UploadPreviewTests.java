@@ -102,16 +102,18 @@ public class UploadPreviewTests {
 	
 	@Test
 	public void testRowChangesColorWhenFilterChanges() throws Exception {
-		
+		// The table is sorted newest first, so filter on whatever the first row shows.
+		String bundleId = ((UsageDataEventWrapper) preview.viewer.getElementAt(0)).getBundleId();
+
 		assertNull(preview.viewer.getTable().getItem(0).getImage(0));
 		assertEquals(preview.viewer.getTable().getForeground(), preview.viewer.getTable().getItem(0).getForeground(1));
 
-		((MockUsageDataEventFilter)parameters.getFilter()).addPattern("org.eclipse.osgi");
+		((MockUsageDataEventFilter)parameters.getFilter()).addPattern(bundleId);
 
 		assertNotNull(preview.viewer.getTable().getItem(0).getImage(0));
 		assertEquals(display.getSystemColor(SWT.COLOR_WIDGET_DISABLED_FOREGROUND), preview.viewer.getTable().getItem(0).getForeground(1));
 
-		((MockUsageDataEventFilter)parameters.getFilter()).removeFilterPatterns(new String[] {"org.eclipse.osgi"});
+		((MockUsageDataEventFilter)parameters.getFilter()).removeFilterPatterns(new String[] {bundleId});
 
 		assertNull(preview.viewer.getTable().getItem(0).getImage(0));
 		assertEquals(preview.viewer.getTable().getForeground(), preview.viewer.getTable().getItem(0).getForeground(1));
