@@ -10,16 +10,13 @@
  *******************************************************************************/
 package org.eclipse.epp.usagedata.internal.gathering;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.epp.usagedata.internal.gathering.services.UsageDataService;
 import org.eclipse.epp.usagedata.internal.gathering.settings.UsageDataCaptureSettings;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.ui.IStartup;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eclipse.ui.progress.UIJob;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.util.tracker.ServiceTracker;
@@ -27,7 +24,7 @@ import org.osgi.util.tracker.ServiceTracker;
 /**
  * The activator class controls the plug-in life cycle
  */
-public class UsageDataCaptureActivator extends AbstractUIPlugin implements IStartup {
+public class UsageDataCaptureActivator extends AbstractUIPlugin {
 
 	// The plug-in ID
 	public static final String PLUGIN_ID = "org.eclipse.epp.usagedata.gathering"; //$NON-NLS-1$
@@ -42,7 +39,9 @@ public class UsageDataCaptureActivator extends AbstractUIPlugin implements IStar
 	private UsageDataCaptureSettings settings;
 
 	private BundleContext context;
-	
+
+	private UsageDataService service;
+
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
@@ -50,7 +49,7 @@ public class UsageDataCaptureActivator extends AbstractUIPlugin implements IStar
 		
 		settings = new UsageDataCaptureSettings();
 		
-		final UsageDataService service = new UsageDataService();
+		service = new UsageDataService();
 				
 		getPreferenceStore().addPropertyChangeListener(new IPropertyChangeListener() {
 
@@ -79,29 +78,6 @@ public class UsageDataCaptureActivator extends AbstractUIPlugin implements IStar
 		
 		usageDataServiceTracker = new ServiceTracker(context, UsageDataService.class.getName(), null);
 		usageDataServiceTracker.open();
-		
-		/*
-		 * Create a job that starts the UsageDataService in the UI Thread. This
-		 * should happen well after this method has exited and the bundle is
-		 * done activating and is in the "started" state. This was initially
-		 * done to overcome a problem in which some of the monitors spun off
-		 * jobs that resulted in multiple threads inadvertently trying to
-		 * activate this bundle concurrently. The conditions that caused this
-		 * problem have been rectified.
-		 * 
-		 * In spite of the fact that the problem no longer exists, we're keeping
-		 * the UIJob as this is a potentially expensive operation.
-		 */
-		UIJob job = new UIJob("Usage Data Service Starter") { //$NON-NLS-1$
-			public IStatus runInUIThread(IProgressMonitor monitor) {
-				if (settings.isEnabled()) {
-					service.startMonitoring();
-				}
-				return Status.OK_STATUS;
-			}
-			
-		};
-		job.schedule(1000);
 	}
 
 	public void stop(BundleContext context) throws Exception {		
@@ -129,8 +105,12 @@ public class UsageDataCaptureActivator extends AbstractUIPlugin implements IStar
 		return plugin;
 	}
 
-	public void earlyStartup() {
-		// Do nothing.
+	/**
+	 * Starts monitoring if capture is enabled. {@link MonitoringStarter} calls
+	 * this in the UI thread once the workbench has started.
+	 */
+	public void startMonitoring() {
+		if (settings.isEnabled()) service.startMonitoring();
 	}
 	
 	/**
