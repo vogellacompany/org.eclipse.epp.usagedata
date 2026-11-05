@@ -12,8 +12,6 @@ package org.eclipse.epp.usagedata.internal.ui.wizards;
 
 import java.net.URL;
 
-import org.eclipse.core.runtime.Status;
-import org.eclipse.epp.usagedata.internal.ui.Activator;
 import org.eclipse.epp.usagedata.internal.ui.uploaders.AskUserUploader;
 import org.eclipse.jface.dialogs.IDialogPage;
 import org.eclipse.jface.wizard.WizardPage;
@@ -29,6 +27,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormText;
+import org.eclipse.core.runtime.Platform;
 
 public class SelectActionWizardPage extends WizardPage {
 
@@ -183,7 +182,7 @@ public class SelectActionWizardPage extends WizardPage {
 		try {
 			PlatformUI.getWorkbench().getBrowserSupport().getExternalBrowser().openURL(new URL(url));
 		} catch (Exception e) {
-			Activator.getDefault().getLog().log(new Status(Status.ERROR, Activator.PLUGIN_ID, "Error opening browser", e)); //$NON-NLS-1$
+			Platform.getLog(SelectActionWizardPage.class).error("Error opening browser", e); //$NON-NLS-1$
 		}
 	}
 }

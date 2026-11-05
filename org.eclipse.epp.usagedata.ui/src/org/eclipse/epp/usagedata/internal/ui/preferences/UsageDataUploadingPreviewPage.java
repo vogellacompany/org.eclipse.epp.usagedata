@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.epp.usagedata.internal.recording.UsageDataRecordingActivator;
+import org.eclipse.epp.usagedata.internal.recording.UsageDataRecording;
 import org.eclipse.epp.usagedata.internal.recording.settings.UsageDataRecordingSettings;
 import org.eclipse.epp.usagedata.internal.recording.uploading.UploadParameters;
 import org.eclipse.epp.usagedata.internal.ui.preview.UploadPreview;
@@ -57,13 +57,13 @@ public class UsageDataUploadingPreviewPage extends PreferencePage
 	 * page shows what has been recorded rather than only what is staged.
 	 */
 	private File[] getRecordedFiles(UsageDataRecordingSettings settings) {
-		UsageDataRecordingActivator.getDefault().getRecorder().flush();
+		UsageDataRecording.getRecorder().flush();
 		List<File> files = new ArrayList<File>(Arrays.asList(settings.getUsageDataUploadFiles()));
 		if (settings.getEventFile().exists()) files.add(settings.getEventFile());
 		return files.toArray(new File[files.size()]);
 	}
 
 	protected UsageDataRecordingSettings getSettings() {
-		return UsageDataRecordingActivator.getDefault().getSettings();
+		return UsageDataRecording.getSettings();
 	}
 }

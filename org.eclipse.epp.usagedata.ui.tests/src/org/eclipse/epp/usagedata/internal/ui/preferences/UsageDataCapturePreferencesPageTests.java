@@ -14,7 +14,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.core.runtime.adaptor.EclipseStarter;
-import org.eclipse.epp.usagedata.internal.gathering.UsageDataCaptureActivator;
 import org.eclipse.epp.usagedata.internal.gathering.settings.UsageDataCaptureSettings;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Display;
@@ -83,6 +82,6 @@ public class UsageDataCapturePreferencesPageTests {
 	}
 	
 	private IPreferenceStore getPreferenceStore() {
-		return UsageDataCaptureActivator.getDefault().getPreferenceStore();
+		return UsageDataCaptureSettings.getPreferenceStore();
 	}
 }

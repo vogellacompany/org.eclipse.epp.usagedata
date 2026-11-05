@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.epp.usagedata.internal.gathering.settings.UsageDataCaptureSettings;
-import org.eclipse.epp.usagedata.internal.recording.UsageDataRecordingActivator;
+import org.eclipse.epp.usagedata.internal.recording.UsageDataRecording;
 import org.eclipse.epp.usagedata.internal.recording.filtering.PreferencesBasedFilter;
 import org.eclipse.epp.usagedata.internal.recording.filtering.UsageDataEventFilter;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -48,18 +48,18 @@ public class UsageDataRecordingSettings implements UploadSettings {
 
 	private static final String UPLOAD_FILE_PREFIX = "upload"; //$NON-NLS-1$
 
-	public static final String UPLOAD_PERIOD_KEY = UsageDataRecordingActivator.PLUGIN_ID + ".period"; //$NON-NLS-1$
-	public static final String LAST_UPLOAD_KEY = UsageDataRecordingActivator.PLUGIN_ID + ".last-upload"; //$NON-NLS-1$
-	public static final String LAST_ATTEMPT_KEY = UsageDataRecordingActivator.PLUGIN_ID + ".last-attempt"; //$NON-NLS-1$
-	public static final String ASK_TO_UPLOAD_KEY = UsageDataRecordingActivator.PLUGIN_ID + ".ask"; //$NON-NLS-1$
-	public static final String UPLOAD_MODE_KEY = UsageDataRecordingActivator.PLUGIN_ID + ".upload-mode"; //$NON-NLS-1$
-	public static final String LOG_SERVER_ACTIVITY_KEY = UsageDataRecordingActivator.PLUGIN_ID + ".log-server"; //$NON-NLS-1$
-	public static final String FILTER_ECLIPSE_BUNDLES_ONLY_KEY = UsageDataRecordingActivator.PLUGIN_ID + ".filter-eclipse-only"; //$NON-NLS-1$
-	public static final String FILTER_PATTERNS_KEY = UsageDataRecordingActivator.PLUGIN_ID + ".filter-patterns"; //$NON-NLS-1$
-	public static final String FILTER_BUNDLE_EVENTS_KEY = UsageDataRecordingActivator.PLUGIN_ID + ".filter-bundle-events"; //$NON-NLS-1$
-	public static final String FILTER_WINDOW_EVENTS_KEY = UsageDataRecordingActivator.PLUGIN_ID + ".filter-window-events"; //$NON-NLS-1$
+	public static final String UPLOAD_PERIOD_KEY = UsageDataRecording.PLUGIN_ID + ".period"; //$NON-NLS-1$
+	public static final String LAST_UPLOAD_KEY = UsageDataRecording.PLUGIN_ID + ".last-upload"; //$NON-NLS-1$
+	public static final String LAST_ATTEMPT_KEY = UsageDataRecording.PLUGIN_ID + ".last-attempt"; //$NON-NLS-1$
+	public static final String ASK_TO_UPLOAD_KEY = UsageDataRecording.PLUGIN_ID + ".ask"; //$NON-NLS-1$
+	public static final String UPLOAD_MODE_KEY = UsageDataRecording.PLUGIN_ID + ".upload-mode"; //$NON-NLS-1$
+	public static final String LOG_SERVER_ACTIVITY_KEY = UsageDataRecording.PLUGIN_ID + ".log-server"; //$NON-NLS-1$
+	public static final String FILTER_ECLIPSE_BUNDLES_ONLY_KEY = UsageDataRecording.PLUGIN_ID + ".filter-eclipse-only"; //$NON-NLS-1$
+	public static final String FILTER_PATTERNS_KEY = UsageDataRecording.PLUGIN_ID + ".filter-patterns"; //$NON-NLS-1$
+	public static final String FILTER_BUNDLE_EVENTS_KEY = UsageDataRecording.PLUGIN_ID + ".filter-bundle-events"; //$NON-NLS-1$
+	public static final String FILTER_WINDOW_EVENTS_KEY = UsageDataRecording.PLUGIN_ID + ".filter-window-events"; //$NON-NLS-1$
 	
-	public static final String UPLOAD_URL_KEY = UsageDataRecordingActivator.PLUGIN_ID + ".upload-url"; //$NON-NLS-1$
+	public static final String UPLOAD_URL_KEY = UsageDataRecording.PLUGIN_ID + ".upload-url"; //$NON-NLS-1$
 	
 	/**
 	 * Upload modes: ask the user before uploading, upload silently in the
@@ -134,7 +134,7 @@ public class UsageDataRecordingSettings implements UploadSettings {
 			} catch (NumberFormatException e) {
 				// If we can't get it from this source, we'll pick it up some
 				// other way. Long the problem and move on.
-				UsageDataRecordingActivator.getDefault().log(IStatus.WARNING,
+				UsageDataRecording.log(IStatus.WARNING,
 						e, "The UsageDataUploader cannot parse the %1$s system property (\"%2$s\"", UPLOAD_PERIOD_KEY, value); //$NON-NLS-1$
 			}
 		} else if (getPreferencesStore().contains(UPLOAD_PERIOD_KEY)) {
@@ -163,7 +163,7 @@ public class UsageDataRecordingSettings implements UploadSettings {
 		}
 		long period = System.currentTimeMillis();
 		getPreferencesStore().setValue(LAST_UPLOAD_KEY, period);
-		UsageDataRecordingActivator.getDefault().savePluginPreferences();
+		UsageDataRecording.savePreferences();
 
 		return period;
 	}
@@ -295,7 +295,7 @@ public class UsageDataRecordingSettings implements UploadSettings {
 	 * @return an identifier for the workstation.
 	 */
 	public String getUserId() {
-		return getExistingOrGenerateId(new File(System.getProperty("user.home")), "." + UsageDataRecordingActivator.PLUGIN_ID //$NON-NLS-1$ //$NON-NLS-2$
+		return getExistingOrGenerateId(new File(System.getProperty("user.home")), "." + UsageDataRecording.PLUGIN_ID //$NON-NLS-1$ //$NON-NLS-2$
 				+ ".userId"); //$NON-NLS-1$
 	}
 
@@ -309,7 +309,7 @@ public class UsageDataRecordingSettings implements UploadSettings {
 	 */
 	public String getWorkspaceId() {
 		return getExistingOrGenerateId(getWorkingDirectory(), "." //$NON-NLS-1$
-				+ UsageDataRecordingActivator.PLUGIN_ID + ".workspaceId"); //$NON-NLS-1$
+				+ UsageDataRecording.PLUGIN_ID + ".workspaceId"); //$NON-NLS-1$
 	}
 
 
@@ -395,7 +395,7 @@ public class UsageDataRecordingSettings implements UploadSettings {
 	 */
 	public void setLastUploadTime() {
 		getPreferencesStore().setValue(LAST_UPLOAD_KEY, System.currentTimeMillis());
-		UsageDataRecordingActivator.getDefault().savePluginPreferences();
+		UsageDataRecording.savePreferences();
 	}
 	
 	/**
@@ -452,15 +452,15 @@ public class UsageDataRecordingSettings implements UploadSettings {
 	}
 
 	private void handleCannotReadFileException(File file, IOException e) {
-		UsageDataRecordingActivator.getDefault().log(IStatus.WARNING,	e, "Cannot read the existing id from %1$s; using the default.", file.toString()); //$NON-NLS-1$
+		UsageDataRecording.log(IStatus.WARNING,	e, "Cannot read the existing id from %1$s; using the default.", file.toString()); //$NON-NLS-1$
 	}
 
 	private IPreferenceStore getPreferencesStore() {
-		return UsageDataRecordingActivator.getDefault().getPreferenceStore();
+		return UsageDataRecording.getPreferenceStore();
 	}
 	
 	protected File getWorkingDirectory() {
-		return UsageDataRecordingActivator.getDefault().getStateLocation().toFile();
+		return UsageDataRecording.getStateLocation();
 	}
 	
 	/**
@@ -558,7 +558,7 @@ public class UsageDataRecordingSettings implements UploadSettings {
 
 	public void setUploadMode(int mode) {
 		getPreferencesStore().setValue(UPLOAD_MODE_KEY, mode);
-		UsageDataRecordingActivator.getDefault().savePluginPreferences();
+		UsageDataRecording.savePreferences();
 	}
 
 	/* (non-Javadoc)
@@ -577,11 +577,11 @@ public class UsageDataRecordingSettings implements UploadSettings {
 
 	public void setUserAcceptedTermsOfUse(boolean value) {
 		getCaptureSettings().setUserAcceptedTermsOfUse(value);
-		UsageDataRecordingActivator.getDefault().savePluginPreferences();
+		UsageDataRecording.savePreferences();
 	}
 	
 	private UsageDataCaptureSettings getCaptureSettings() {
-		return org.eclipse.epp.usagedata.internal.gathering.UsageDataCaptureActivator.getDefault().getSettings();
+		return new UsageDataCaptureSettings();
 	}
 
 	/* (non-Javadoc)
@@ -597,7 +597,7 @@ public class UsageDataRecordingSettings implements UploadSettings {
 
 	public void setEnabled(boolean value) {
 		getCaptureSettings().setEnabled(value);
-		UsageDataRecordingActivator.getDefault().savePluginPreferences();
+		UsageDataRecording.savePreferences();
 	}
 
 	public void dispose() {
@@ -605,7 +605,7 @@ public class UsageDataRecordingSettings implements UploadSettings {
 	}
 
 	public String getUserAgent() {
-		return "Eclipse UDC/" + UsageDataRecordingActivator.getDefault().getBundle().getHeaders().get("Bundle-Version"); //$NON-NLS-1$ //$NON-NLS-2$
+		return "Eclipse UDC/" + UsageDataRecording.getVersion(); //$NON-NLS-1$
 	}
 
 	public String getUploadUrl() {
@@ -620,7 +620,7 @@ public class UsageDataRecordingSettings implements UploadSettings {
 
 	public void setUploadUrl(String url) {
 		getPreferencesStore().setValue(UPLOAD_URL_KEY, url);
-		UsageDataRecordingActivator.getDefault().savePluginPreferences();
+		UsageDataRecording.savePreferences();
 	}
 
 }

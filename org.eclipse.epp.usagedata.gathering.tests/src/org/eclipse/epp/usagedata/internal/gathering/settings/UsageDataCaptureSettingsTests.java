@@ -12,7 +12,6 @@ package org.eclipse.epp.usagedata.internal.gathering.settings;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.eclipse.epp.usagedata.internal.gathering.UsageDataCaptureActivator;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.junit.jupiter.api.Test;
 
@@ -55,14 +54,10 @@ public class UsageDataCaptureSettingsTests {
 	
 
 	private UsageDataCaptureSettings getCaptureSettings() {
-		return getCaptureActivator().getSettings();
+		return new UsageDataCaptureSettings();
 	}
 	
 	private IPreferenceStore getPreferenceStore() {
-		return getCaptureActivator().getPreferenceStore();
-	}
-
-	private UsageDataCaptureActivator getCaptureActivator() {
-		return UsageDataCaptureActivator.getDefault();
+		return UsageDataCaptureSettings.getPreferenceStore();
 	}
 }

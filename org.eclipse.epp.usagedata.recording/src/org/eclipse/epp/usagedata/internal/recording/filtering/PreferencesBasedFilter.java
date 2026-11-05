@@ -11,7 +11,7 @@
 package org.eclipse.epp.usagedata.internal.recording.filtering;
 
 import org.eclipse.epp.usagedata.internal.gathering.events.UsageDataEvent;
-import org.eclipse.epp.usagedata.internal.recording.UsageDataRecordingActivator;
+import org.eclipse.epp.usagedata.internal.recording.UsageDataRecording;
 import org.eclipse.epp.usagedata.internal.recording.settings.UsageDataRecordingSettings;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -25,8 +25,8 @@ import org.eclipse.jface.util.PropertyChangeEvent;
  * accordingly. Instances must be released using the {@link #dispose()} method
  * to clean up the listener.
  * <p>
- * A single instance of this class is maintained by the activator for the
- * bundle via the settings object. The activator manages the lifecycle.
+ * A single instance of this class is maintained for the
+ * bundle via the settings object. RecordingStarter disposes of it.
  * 
  * @see UsageDataRecordingSettings
  * @author Wayne Beaton
@@ -99,7 +99,7 @@ public class PreferencesBasedFilter extends AbstractUsageDataEventFilter {
 	}
 
 	IPreferenceStore getPreferenceStore() {
-		return UsageDataRecordingActivator.getDefault().getPreferenceStore();
+		return UsageDataRecording.getPreferenceStore();
 	}
 
 	public void addPattern(String value) {
@@ -110,7 +110,7 @@ public class PreferencesBasedFilter extends AbstractUsageDataEventFilter {
 			patternString += "\n" + value; //$NON-NLS-1$
 		}
 		getPreferenceStore().setValue(UsageDataRecordingSettings.FILTER_PATTERNS_KEY, patternString);
-		UsageDataRecordingActivator.getDefault().savePluginPreferences();
+		UsageDataRecording.savePreferences();
 	}
 	
 	public boolean includesPattern(String pattern) {
@@ -133,7 +133,7 @@ public class PreferencesBasedFilter extends AbstractUsageDataEventFilter {
 			}
 		}
 		getPreferenceStore().setValue(UsageDataRecordingSettings.FILTER_PATTERNS_KEY, builder.toString());
-		UsageDataRecordingActivator.getDefault().savePluginPreferences();
+		UsageDataRecording.savePreferences();
 	}
 
 	private boolean shouldRemovePattern(String pattern, Object[] toRemove) {
@@ -145,7 +145,7 @@ public class PreferencesBasedFilter extends AbstractUsageDataEventFilter {
 
 	public void setEclipseOnly(boolean value) {
 		getPreferenceStore().setValue(UsageDataRecordingSettings.FILTER_ECLIPSE_BUNDLES_ONLY_KEY, value);
-		UsageDataRecordingActivator.getDefault().savePluginPreferences();
+		UsageDataRecording.savePreferences();
 		// Don't need to do this, happens indirectly when value is set above.
 		// fireFilterChangedEvent();
 	}
@@ -156,7 +156,7 @@ public class PreferencesBasedFilter extends AbstractUsageDataEventFilter {
 
 	public void setBundleEventsFiltered(boolean value) {
 		getPreferenceStore().setValue(UsageDataRecordingSettings.FILTER_BUNDLE_EVENTS_KEY, value);
-		UsageDataRecordingActivator.getDefault().savePluginPreferences();
+		UsageDataRecording.savePreferences();
 	}
 
 	public boolean isBundleEventsFiltered() {

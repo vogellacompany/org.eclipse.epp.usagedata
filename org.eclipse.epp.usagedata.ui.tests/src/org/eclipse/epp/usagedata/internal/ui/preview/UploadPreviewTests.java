@@ -26,7 +26,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.adaptor.EclipseStarter;
 import org.eclipse.epp.usagedata.internal.recording.filtering.MockUsageDataEventFilter;
 import org.eclipse.epp.usagedata.internal.recording.uploading.UploadParameters;
-import org.eclipse.epp.usagedata.internal.ui.Activator;
 import org.eclipse.epp.usagedata.internal.ui.preview.util.MockUploadSettings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
@@ -36,6 +35,7 @@ import org.eclipse.ui.PlatformUI;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * The {@link UploadPreviewTests} class tests various aspects of the
@@ -121,7 +121,7 @@ public class UploadPreviewTests {
 	}
 
 	private File findFile(String string) throws URISyntaxException, IOException {
-		URL url = FileLocator.find(Activator.getDefault().getBundle(), new Path("upload0.csv"), null);
+		URL url = FileLocator.find(FrameworkUtil.getBundle(UploadPreviewTests.class), new Path("upload0.csv"), null);
 		return new File(FileLocator.toFileURL(url).toURI());
 	}
 }

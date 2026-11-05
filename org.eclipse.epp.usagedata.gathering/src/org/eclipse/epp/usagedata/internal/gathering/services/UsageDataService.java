@@ -23,14 +23,14 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.adaptor.EclipseStarter;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.epp.usagedata.internal.gathering.UsageDataCaptureActivator;
+import org.eclipse.epp.usagedata.internal.gathering.settings.UsageDataCaptureSettings;
 import org.eclipse.epp.usagedata.internal.gathering.events.UsageDataEvent;
 import org.eclipse.epp.usagedata.internal.gathering.events.UsageDataEventListener;
 import org.eclipse.epp.usagedata.internal.gathering.monitors.UsageMonitor;
+import org.osgi.service.component.annotations.Component;
 
 /**
- * The {@link UsageDataService} class is registered as an OSGi service by the
- * bundle activator on startup. It is responsible for installing monitors
+ * The {@link UsageDataService} class is a Declarative Services component. It is responsible for installing monitors
  * registered via the {@value #MONITORS_EXTENSION_POINT} extension point. These
  * monitors all feed information back into the instance which is responsible for
  * dispatching those events to event listeners registered via the
@@ -52,8 +52,9 @@ import org.eclipse.epp.usagedata.internal.gathering.monitors.UsageMonitor;
  * @author Wayne Beaton
  */
 @SuppressWarnings("restriction")
+@Component(service = UsageDataService.class)
 public class UsageDataService {
-	private static final String MONITORS_EXTENSION_POINT = UsageDataCaptureActivator.PLUGIN_ID + ".monitors"; //$NON-NLS-1$
+	private static final String MONITORS_EXTENSION_POINT = UsageDataCaptureSettings.PLUGIN_ID + ".monitors"; //$NON-NLS-1$
 
 	private boolean monitoring = false;
 
@@ -311,7 +312,7 @@ public class UsageDataService {
 			listener.accept(event);
 		} catch (Throwable e) {
 			// TODO Add some logic to remove repeat offenders.
-			UsageDataCaptureActivator.getDefault().logException("The listener (" + listener.getClass() + ") threw an exception", e); //$NON-NLS-1$ //$NON-NLS-2$
+			Platform.getLog(UsageDataService.class).error("The listener (" + listener.getClass() + ") threw an exception", e); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	

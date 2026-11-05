@@ -43,7 +43,7 @@ import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.epp.usagedata.internal.gathering.events.UsageDataEvent;
-import org.eclipse.epp.usagedata.internal.recording.UsageDataRecordingActivator;
+import org.eclipse.epp.usagedata.internal.recording.UsageDataRecording;
 import org.eclipse.epp.usagedata.internal.recording.settings.UploadSettings;
 
 /**
@@ -142,21 +142,21 @@ public class BasicUploader extends AbstractUploader {
 			long duration = System.currentTimeMillis() - start;
 
 			if (result.isSuccess()) {
-				UsageDataRecordingActivator.getDefault().log(IStatus.INFO, "Usage data uploaded to %1$s in %2$s milliseconds.", getUploadUrl(), duration); //$NON-NLS-1$
+				UsageDataRecording.log(IStatus.INFO, "Usage data uploaded to %1$s in %2$s milliseconds.", getUploadUrl(), duration); //$NON-NLS-1$
 			} else {
-				UsageDataRecordingActivator.getDefault().log(IStatus.INFO, "Usage data upload to %1$s failed with error code %2$s.", getUploadUrl(), result.getReturnCode()); //$NON-NLS-1$
+				UsageDataRecording.log(IStatus.INFO, "Usage data upload to %1$s failed with error code %2$s.", getUploadUrl(), result.getReturnCode()); //$NON-NLS-1$
 			}
 
 		} catch (IllegalStateException e) {
-			UsageDataRecordingActivator.getDefault().log(IStatus.WARNING, e, "The URL provided for usage data upload, %1$s, is invalid.", getUploadUrl()); //$NON-NLS-1$
+			UsageDataRecording.log(IStatus.WARNING, e, "The URL provided for usage data upload, %1$s, is invalid.", getUploadUrl()); //$NON-NLS-1$
 		} catch (UnknownHostException e) {
-			UsageDataRecordingActivator.getDefault().log(IStatus.WARNING, e, "The usage data upload server at %1$s could not be found.", getUploadUrl()); //$NON-NLS-1$
+			UsageDataRecording.log(IStatus.WARNING, e, "The usage data upload server at %1$s could not be found.", getUploadUrl()); //$NON-NLS-1$
 		} catch (ConnectException e) {
-			UsageDataRecordingActivator.getDefault().log(IStatus.WARNING, e, "Could not connect to the usage data upload server at %1$s.", getUploadUrl()); //$NON-NLS-1$
+			UsageDataRecording.log(IStatus.WARNING, e, "Could not connect to the usage data upload server at %1$s.", getUploadUrl()); //$NON-NLS-1$
 		} catch (InterruptedIOException e) {
-			UsageDataRecordingActivator.getDefault().log(IStatus.WARNING, e, "A socket timeout occurred while trying to upload usage data.");			 //$NON-NLS-1$
+			UsageDataRecording.log(IStatus.WARNING, e, "A socket timeout occurred while trying to upload usage data.");			 //$NON-NLS-1$
 		} catch (Exception e) {
-			UsageDataRecordingActivator.getDefault().log(IStatus.WARNING, e, "An exception occurred while trying to upload usage data."); //$NON-NLS-1$
+			UsageDataRecording.log(IStatus.WARNING, e, "An exception occurred while trying to upload usage data."); //$NON-NLS-1$
 		}
 
 		return result;
@@ -311,7 +311,7 @@ public class BasicUploader extends AbstractUploader {
 			 BufferedReader reader = new BufferedReader(new InputStreamReader(body, StandardCharsets.UTF_8))) {
 			handleServerResponse(reader);
 		} catch (IOException e) {
-			UsageDataRecordingActivator.getDefault().log(IStatus.WARNING, e, "Exception raised while parsing the server response"); //$NON-NLS-1$
+			UsageDataRecording.log(IStatus.WARNING, e, "Exception raised while parsing the server response"); //$NON-NLS-1$
 		}
 	}
 
@@ -326,7 +326,7 @@ public class BasicUploader extends AbstractUploader {
 			String line = response.readLine();
 			if (line == null) return;
 			if (getSettings().isLoggingServerActivity()) {
-				UsageDataRecordingActivator.getDefault().log(IStatus.INFO, line);
+				UsageDataRecording.log(IStatus.INFO, line);
 			}
 			int colon = line.indexOf(':'); // first occurrence
 			if (colon != -1) {

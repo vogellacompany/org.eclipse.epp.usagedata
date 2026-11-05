@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" immediate="true" name="org.eclipse.epp.usagedata.internal.recording.RecordingStarter">
-   <reference interface="org.eclipse.epp.usagedata.internal.gathering.services.UsageDataService" name="usageDataService"/>
+   <reference bind="setService" interface="org.eclipse.epp.usagedata.internal.gathering.services.UsageDataService" name="Service"/>
+   <reference interface="org.eclipse.e4.ui.workbench.IWorkbench" name="workbench"/>
    <implementation class="org.eclipse.epp.usagedata.internal.recording.RecordingStarter"/>
 </scr:component>

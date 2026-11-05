@@ -10,19 +10,26 @@
  *******************************************************************************/
 package org.eclipse.epp.usagedata.internal.gathering.settings;
 
-import org.eclipse.epp.usagedata.internal.gathering.UsageDataCaptureActivator;
+import java.io.IOException;
+
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.ui.preferences.ScopedPreferenceStore;
 
 public class UsageDataCaptureSettings {
 
-	public static final String CAPTURE_ENABLED_KEY = UsageDataCaptureActivator.PLUGIN_ID + ".enabled"; //$NON-NLS-1$
-	public static final String USER_ACCEPTED_TERMS_OF_USE_KEY = UsageDataCaptureActivator.PLUGIN_ID + ".terms_accepted"; //$NON-NLS-1$
+	public static final String PLUGIN_ID = "org.eclipse.epp.usagedata.gathering"; //$NON-NLS-1$
+
+	private static final ScopedPreferenceStore PREFERENCES = new ScopedPreferenceStore(InstanceScope.INSTANCE, PLUGIN_ID);
+
+	public static final String CAPTURE_ENABLED_KEY = PLUGIN_ID + ".enabled"; //$NON-NLS-1$
+	public static final String USER_ACCEPTED_TERMS_OF_USE_KEY = PLUGIN_ID + ".terms_accepted"; //$NON-NLS-1$
 
 	public boolean isEnabled() {
 		if (System.getProperties().containsKey(CAPTURE_ENABLED_KEY)) {
 			return "true".equals(System.getProperty(CAPTURE_ENABLED_KEY)); //$NON-NLS-1$
-		} else if (getPreferencesStore().contains(CAPTURE_ENABLED_KEY)) {
-			return getPreferencesStore().getBoolean(CAPTURE_ENABLED_KEY);
+		} else if (getPreferenceStore().contains(CAPTURE_ENABLED_KEY)) {
+			return getPreferenceStore().getBoolean(CAPTURE_ENABLED_KEY);
 		} else {
 			return true;
 		}
@@ -32,24 +39,29 @@ public class UsageDataCaptureSettings {
 		// The preferences store actually does this for us. However, for
 		// completeness, we're checking the value to potentially avoid 
 		// messing with the service.
-		if (getPreferencesStore().getBoolean(CAPTURE_ENABLED_KEY) == value) return;
+		if (getPreferenceStore().getBoolean(CAPTURE_ENABLED_KEY) == value) return;
 		
-		getPreferencesStore().setValue(CAPTURE_ENABLED_KEY, value);
+		getPreferenceStore().setValue(CAPTURE_ENABLED_KEY, value);
 		
-		// The activator should be listening to changes in the preferences store
+		// MonitoringStarter listens to changes in the preferences store
 		// and will change the state of the service as a result of us setting
 		// the value here.
 	}
 	
-	private IPreferenceStore getPreferencesStore() {
-		return UsageDataCaptureActivator.getDefault().getPreferenceStore();
+	public static IPreferenceStore getPreferenceStore() {
+		return PREFERENCES;
+	}
+
+	/** Writes the preferences to disk. */
+	public static void savePreferences() throws IOException {
+		PREFERENCES.save();
 	}
 
 	public boolean hasUserAcceptedTermsOfUse() {
-		return getPreferencesStore().getBoolean(USER_ACCEPTED_TERMS_OF_USE_KEY);
+		return getPreferenceStore().getBoolean(USER_ACCEPTED_TERMS_OF_USE_KEY);
 	}
 
 	public void setUserAcceptedTermsOfUse(boolean value) {
-		getPreferencesStore().setValue(USER_ACCEPTED_TERMS_OF_USE_KEY, value);
+		getPreferenceStore().setValue(USER_ACCEPTED_TERMS_OF_USE_KEY, value);
 	}
 }

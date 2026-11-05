@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.epp.usagedata.internal.gathering.events.UsageDataEvent;
-import org.eclipse.epp.usagedata.internal.recording.UsageDataRecordingActivator;
+import org.eclipse.epp.usagedata.internal.recording.UsageDataRecording;
 import org.eclipse.epp.usagedata.internal.recording.settings.UsageDataRecordingSettings;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.junit.jupiter.api.AfterEach;
@@ -230,7 +230,7 @@ public class PreferencesBasedFilterTests {
 	}
 	
 	private IPreferenceStore getPreferencesStore() {
-		return UsageDataRecordingActivator.getDefault().getPreferenceStore();
+		return UsageDataRecording.getPreferenceStore();
 	}
 	
 	private UsageDataEvent createUsageDataEvent(String bundleId) {

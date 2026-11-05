@@ -19,7 +19,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.eclipse.core.runtime.adaptor.EclipseStarter;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.epp.usagedata.internal.gathering.UsageDataCaptureActivator;
 import org.eclipse.epp.usagedata.internal.gathering.settings.UsageDataCaptureSettings;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -28,6 +27,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.Timeout.ThreadMode;
 import org.osgi.util.tracker.ServiceTracker;
+import org.osgi.framework.FrameworkUtil;
 
 @SuppressWarnings("restriction")
 public class UsageDataServiceLifecycleTests {
@@ -36,7 +36,7 @@ public class UsageDataServiceLifecycleTests {
 	@BeforeAll
 	public static void setup() throws Exception {
 		while (!EclipseStarter.isRunning()) Thread.sleep(100);
-		tracker = new ServiceTracker(UsageDataCaptureActivator.getDefault().getContext(), UsageDataService.class.getName(), null);
+		tracker = new ServiceTracker(FrameworkUtil.getBundle(UsageDataService.class).getBundleContext(), UsageDataService.class.getName(), null);
 		tracker.open();
 	}
 	
@@ -87,7 +87,7 @@ public class UsageDataServiceLifecycleTests {
 	
 	public void preferenceChangeStopsMonitoring() throws Exception {
 		assertTrue(getService().isMonitoring());
-		UsageDataCaptureActivator.getDefault().getPreferenceStore().setValue(UsageDataCaptureSettings.CAPTURE_ENABLED_KEY, false);
+		UsageDataCaptureSettings.getPreferenceStore().setValue(UsageDataCaptureSettings.CAPTURE_ENABLED_KEY, false);
 		
 		assertFalse(getService().isMonitoring());
 		while (eventConsumerJobIsRunning()) Thread.sleep(50);	

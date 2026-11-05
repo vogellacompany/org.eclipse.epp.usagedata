@@ -62,6 +62,6 @@ public class UsageDataUploadingTermsOfUsePage extends PreferencePage
 	}
 	
 	private IPreferenceStore getCapturePreferences() {
-		return org.eclipse.epp.usagedata.internal.gathering.UsageDataCaptureActivator.getDefault().getPreferenceStore();
+		return UsageDataCaptureSettings.getPreferenceStore();
 	}
 }

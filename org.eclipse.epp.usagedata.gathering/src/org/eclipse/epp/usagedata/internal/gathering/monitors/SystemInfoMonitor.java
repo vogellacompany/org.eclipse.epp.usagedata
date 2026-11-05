@@ -11,7 +11,6 @@
 package org.eclipse.epp.usagedata.internal.gathering.monitors;
 
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.epp.usagedata.internal.gathering.UsageDataCaptureActivator;
 import org.eclipse.epp.usagedata.internal.gathering.services.UsageDataService;
 
 /**
@@ -66,7 +65,7 @@ public class SystemInfoMonitor implements UsageMonitor {
 			usageDataService.recordEvent(INFO_WS, SYSINFO, Platform.getWS(), null);
 			usageDataService.recordEvent(INFO_LOCALE, SYSINFO, Platform.getNL(), null);
 		} catch (Exception e) {
-			UsageDataCaptureActivator.getDefault().logException("Exception occurred while obtaining platform properties.", e); //$NON-NLS-1$
+			Platform.getLog(SystemInfoMonitor.class).error("Exception occurred while obtaining platform properties.", e); //$NON-NLS-1$
 		}
 		
 		usageDataService.recordEvent(INFO_PROCESSORS, SYSINFO, String.valueOf(Runtime.getRuntime().availableProcessors()), null);

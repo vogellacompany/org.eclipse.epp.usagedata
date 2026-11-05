@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.epp.usagedata.internal.recording.UsageDataRecordingActivator;
+import org.eclipse.epp.usagedata.internal.recording.UsageDataRecording;
 import org.eclipse.epp.usagedata.internal.recording.settings.UsageDataRecordingSettings;
 import org.eclipse.ui.PlatformUI;
 
@@ -129,7 +129,7 @@ public class UploadManager {
 	}
 	
 	private UsageDataRecordingSettings getSettings() {
-		return UsageDataRecordingActivator.getDefault().getSettings();
+		return UsageDataRecording.getSettings();
 	}
 	
 	/**
@@ -155,7 +155,7 @@ public class UploadManager {
 	 */
 	private Uploader getUploader() {
 		IConfigurationElement[] elements = Platform.getExtensionRegistry()
-				.getConfigurationElementsFor(UsageDataRecordingActivator.PLUGIN_ID + ".uploader"); //$NON-NLS-1$
+				.getConfigurationElementsFor(UsageDataRecording.PLUGIN_ID + ".uploader"); //$NON-NLS-1$
 		for (IConfigurationElement element : elements) {
 			if ("uploader".equals(element.getName())) { //$NON-NLS-1$
 				try {
@@ -164,7 +164,7 @@ public class UploadManager {
 						return (Uploader) uploader;
 					}
 				} catch (CoreException e) {
-					UsageDataRecordingActivator.getDefault().getLog().log(e.getStatus());
+					UsageDataRecording.log(e.getStatus());
 				}
 			}
 		}

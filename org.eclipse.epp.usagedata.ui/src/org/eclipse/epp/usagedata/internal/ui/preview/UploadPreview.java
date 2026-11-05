@@ -32,13 +32,12 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.epp.usagedata.internal.gathering.events.UsageDataEvent;
 import org.eclipse.epp.usagedata.internal.recording.UsageDataRecorderUtils;
-import org.eclipse.epp.usagedata.internal.recording.UsageDataRecordingActivator;
+import org.eclipse.epp.usagedata.internal.recording.UsageDataRecording;
 import org.eclipse.epp.usagedata.internal.recording.filtering.FilterChangeListener;
 import org.eclipse.epp.usagedata.internal.recording.filtering.FilterUtils;
 import org.eclipse.epp.usagedata.internal.recording.filtering.PreferencesBasedFilter;
 import org.eclipse.epp.usagedata.internal.recording.uploading.UploadParameters;
 import org.eclipse.epp.usagedata.internal.recording.uploading.UsageDataFileReader;
-import org.eclipse.epp.usagedata.internal.ui.Activator;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.JFaceResources;
@@ -82,6 +81,7 @@ import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.PartInitException;
+import org.osgi.framework.FrameworkUtil;
 
 public class UploadPreview  {
 
@@ -177,7 +177,7 @@ public class UploadPreview  {
 		busyCursor = parent.getDisplay().getSystemCursor(SWT.CURSOR_WAIT);
 		
 		LocalResourceManager resources = new LocalResourceManager(JFaceResources.getResources(), parent);
-		xImage = resources.create(ResourceLocator.imageDescriptorFromBundle(Activator.PLUGIN_ID, "/icons/x.svg").orElseThrow()); //$NON-NLS-1$
+		xImage = resources.create(ResourceLocator.imageDescriptorFromBundle(UploadPreview.class, "/icons/x.svg").orElseThrow()); //$NON-NLS-1$
 	}
 
 	private void createDescriptionText(Composite parent) {
@@ -451,7 +451,7 @@ public class UploadPreview  {
 		MessageDialog dialog = new MessageDialog(viewer.getTable().getShell(), Messages.UploadPreview_14, null, Messages.UploadPreview_15,
 				MessageDialog.QUESTION, 1, Messages.UploadPreview_17, IDialogConstants.CANCEL_LABEL);
 		if (dialog.open() != 0) return;
-		if (!UsageDataRecordingActivator.getDefault().getRecorder().clear()) {
+		if (!UsageDataRecording.getRecorder().clear()) {
 			MessageDialog.openInformation(viewer.getTable().getShell(), Messages.UploadPreview_14, Messages.UploadPreview_16);
 			return;
 		}
@@ -561,7 +561,7 @@ public class UploadPreview  {
 				}
 			});
 		} catch (Exception e) {
-			Activator.getDefault().log(IStatus.WARNING, e, "An error occurred while trying to read %1$s", file.getAbsolutePath()); //$NON-NLS-1$
+			Platform.getLog(UploadPreview.class).warn("An error occurred while trying to read " + file.getAbsolutePath(), e); //$NON-NLS-1$
 		} finally {
 			try {
 				reader.close();
@@ -623,7 +623,7 @@ public class UploadPreview  {
 	 * or in the system editor where the IDE bundle is missing.
 	 */
 	private void openAllInEditor() {
-		File combined = new File(Activator.getDefault().getStateLocation().toFile(), "recorded-usage-data.csv"); //$NON-NLS-1$
+		File combined = new File(Platform.getStateLocation(FrameworkUtil.getBundle(UploadPreview.class)).toFile(), "recorded-usage-data.csv"); //$NON-NLS-1$
 		try (Writer writer = new BufferedWriter(new FileWriter(combined))) {
 			UsageDataRecorderUtils.writeHeader(writer);
 			for (File file : parameters.getFiles()) {
@@ -638,7 +638,7 @@ public class UploadPreview  {
 				}
 			}
 		} catch (IOException e) {
-			Activator.getDefault().log(IStatus.ERROR, e, "Cannot write %1$s", combined.getAbsolutePath()); //$NON-NLS-1$
+			Platform.getLog(UploadPreview.class).error("Cannot write " + combined.getAbsolutePath(), e); //$NON-NLS-1$
 			return;
 		}
 		if (Platform.getBundle(IDE_BUNDLE_ID) == null) {

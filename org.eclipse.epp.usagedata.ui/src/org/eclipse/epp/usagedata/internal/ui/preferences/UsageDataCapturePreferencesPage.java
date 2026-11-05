@@ -14,9 +14,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.epp.usagedata.internal.gathering.UsageDataCaptureActivator;
 import org.eclipse.epp.usagedata.internal.gathering.settings.UsageDataCaptureSettings;
-import org.eclipse.epp.usagedata.internal.recording.UsageDataRecordingActivator;
+import org.eclipse.epp.usagedata.internal.recording.UsageDataRecording;
 import org.eclipse.epp.usagedata.internal.recording.uploading.UploadEndpointCheck;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -54,7 +53,7 @@ public class UsageDataCapturePreferencesPage extends PreferencePage
 	
 	public UsageDataCapturePreferencesPage() {
 		setDescription(Messages.UsageDataCapturePreferencesPage_0); 
-		setPreferenceStore(UsageDataCaptureActivator.getDefault().getPreferenceStore());
+		setPreferenceStore(UsageDataCaptureSettings.getPreferenceStore());
 	}
 	
 	/* (non-Javadoc)
@@ -108,7 +107,7 @@ public class UsageDataCapturePreferencesPage extends PreferencePage
 	 * gathering data that has nowhere to go.
 	 */
 	private void warnIfUploadLocationUnreachable() {
-		final String url = UsageDataRecordingActivator.getDefault().getSettings().getUploadUrl();
+		final String url = UsageDataRecording.getSettings().getUploadUrl();
 		final boolean[] reachable = new boolean[1];
 		try {
 			new ProgressMonitorDialog(getShell()).run(true, false, new IRunnableWithProgress() {
@@ -150,6 +149,6 @@ public class UsageDataCapturePreferencesPage extends PreferencePage
 
 
 	private IPreferenceStore getCapturePreferences() {
-		return org.eclipse.epp.usagedata.internal.gathering.UsageDataCaptureActivator.getDefault().getPreferenceStore();
+		return UsageDataCaptureSettings.getPreferenceStore();
 	}
 }

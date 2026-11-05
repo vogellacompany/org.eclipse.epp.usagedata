@@ -4,6 +4,7 @@
    <service>
       <provide interface="org.osgi.service.event.EventHandler"/>
    </service>
+   <reference bind="setService" interface="org.eclipse.epp.usagedata.internal.gathering.services.UsageDataService" name="Service"/>
    <reference interface="org.eclipse.e4.ui.workbench.IWorkbench" name="workbench"/>
    <implementation class="org.eclipse.epp.usagedata.internal.gathering.MonitoringStarter"/>
 </scr:component>

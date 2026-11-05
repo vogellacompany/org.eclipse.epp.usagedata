@@ -12,9 +12,8 @@ package org.eclipse.epp.usagedata.internal.ui.preferences;
 
 import java.util.Date;
 
-import org.eclipse.epp.usagedata.internal.gathering.UsageDataCaptureActivator;
 import org.eclipse.epp.usagedata.internal.gathering.settings.UsageDataCaptureSettings;
-import org.eclipse.epp.usagedata.internal.recording.UsageDataRecordingActivator;
+import org.eclipse.epp.usagedata.internal.recording.UsageDataRecording;
 import org.eclipse.epp.usagedata.internal.recording.settings.UsageDataRecordingSettings;
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecoration;
@@ -107,7 +106,7 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 
 	public UsageDataUploadingPreferencesPage() {
 		updateDescription(getSettings().getUploadUrl());
-		setPreferenceStore(UsageDataRecordingActivator.getDefault().getPreferenceStore());
+		setPreferenceStore(UsageDataRecording.getPreferenceStore());
 	}
 
 	private void updateDescription(String uploadUrl) {
@@ -200,7 +199,7 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 
 
 	private IPreferenceStore getCapturePreferenceStore() {
-		return UsageDataCaptureActivator.getDefault().getPreferenceStore();
+		return UsageDataCaptureSettings.getPreferenceStore();
 	}
 
 
@@ -446,7 +445,7 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 
 
 	protected UsageDataRecordingSettings getSettings() {
-		return UsageDataRecordingActivator.getDefault().getSettings();
+		return UsageDataRecording.getSettings();
 	}
 
 
@@ -459,7 +458,7 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 		uploadNowButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				UsageDataRecordingActivator.getDefault().getUploadManager().startUpload();
+				UsageDataRecording.getUploadManager().startUpload();
 			}
 		});
 	}
@@ -483,10 +482,10 @@ public class UsageDataUploadingPreferencesPage extends PreferencePage
 
 
 	private IPreferenceStore getRecordingPreferences() {
-		return UsageDataRecordingActivator.getDefault().getPreferenceStore();
+		return UsageDataRecording.getPreferenceStore();
 	}
 
 	private UsageDataRecordingSettings getRecordingSettings() {
-		return UsageDataRecordingActivator.getDefault().getSettings();
+		return UsageDataRecording.getSettings();
 	}
 }

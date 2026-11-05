@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.eclipse.epp.usagedata.internal.recording.UsageDataRecordingActivator;
+import org.eclipse.epp.usagedata.internal.recording.UsageDataRecording;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -184,14 +184,10 @@ public class UsageDataRecordingSettingsTests {
 	}
 	
 	private UsageDataRecordingSettings getRecordingSettings() {
-		return getRecordingActivator().getSettings();
+		return UsageDataRecording.getSettings();
 	}
 
 	private IPreferenceStore getPreferenceStore() {
-		return getRecordingActivator().getPreferenceStore();
-	}
-
-	private UsageDataRecordingActivator getRecordingActivator() {
-		return UsageDataRecordingActivator.getDefault();
+		return UsageDataRecording.getPreferenceStore();
 	}
 }

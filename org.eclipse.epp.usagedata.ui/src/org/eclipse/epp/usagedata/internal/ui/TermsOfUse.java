@@ -19,7 +19,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
 
 import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
@@ -32,6 +31,8 @@ import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.ScrolledFormText;
+import org.eclipse.core.runtime.Platform;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * Shows the terms of use as native, theme-following text.
@@ -79,11 +80,11 @@ public class TermsOfUse {
 	}
 
 	private static String readTerms() {
-		try (InputStream in = FileLocator.openStream(Activator.getDefault().getBundle(), new Path(TERMS_FILE), false);
+		try (InputStream in = FileLocator.openStream(FrameworkUtil.getBundle(TermsOfUse.class), new Path(TERMS_FILE), false);
 				BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))) {
 			return reader.lines().collect(Collectors.joining("\n")); //$NON-NLS-1$
 		} catch (IOException e) {
-			Activator.getDefault().log(IStatus.WARNING, e, "Cannot read the terms of use."); //$NON-NLS-1$
+			Platform.getLog(TermsOfUse.class).warn("Cannot read the terms of use.", e); //$NON-NLS-1$
 			return "<form></form>"; //$NON-NLS-1$
 		}
 	}
@@ -92,7 +93,7 @@ public class TermsOfUse {
 		try {
 			PlatformUI.getWorkbench().getBrowserSupport().getExternalBrowser().openURL(new URL(url));
 		} catch (Exception e) {
-			Activator.getDefault().log(IStatus.WARNING, e, "Cannot open %1$s.", url); //$NON-NLS-1$
+			Platform.getLog(TermsOfUse.class).warn("Cannot open " + url, e); //$NON-NLS-1$
 		}
 	}
 }

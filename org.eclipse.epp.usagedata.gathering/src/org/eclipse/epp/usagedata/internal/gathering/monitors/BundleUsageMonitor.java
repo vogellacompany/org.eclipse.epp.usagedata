@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eclipse.epp.usagedata.internal.gathering.monitors;
 
-import org.eclipse.epp.usagedata.internal.gathering.UsageDataCaptureActivator;
 import org.eclipse.epp.usagedata.internal.gathering.services.UsageDataService;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
 import org.osgi.framework.BundleListener;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * Instances of this class hook into the {@link BundleContext} so
@@ -102,7 +102,7 @@ public class BundleUsageMonitor implements UsageMonitor {
 	}	
 
 	private BundleContext getBundleContext() {
-		return UsageDataCaptureActivator.getDefault().getBundle().getBundleContext();
+		return FrameworkUtil.getBundle(BundleUsageMonitor.class).getBundleContext();
 	}
 
 }
