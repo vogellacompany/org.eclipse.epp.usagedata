@@ -70,7 +70,21 @@ UDC records only application-level events -- never file contents, selection text
 - **System information** -- operating system, JVM version, and locale, recorded once per session.
 - **Log entries** -- messages written to the Eclipse error log.
 
-Every event is tagged with a timestamp, a stable workstation identifier derived from your user home, an auto-generated workspace identifier, and the originating bundle's symbolic name and version.
+Every event is tagged with a timestamp, a stable random workstation identifier stored in your user home, an auto-generated workspace identifier, and the originating bundle's symbolic name and version.
+
+## Unique IDs
+
+UDC uploads two random IDs, which are not derived from your name or computer:
+
+- **Workstation ID** -- one per operating system account on a computer, stored in `~/.org.eclipse.epp.usagedata.recording.userId`.
+- **Workspace ID** -- one per workspace, stored in the workspace metadata.
+
+The workstation ID stays the same in these cases, because the file lives outside the installation:
+
+- **Different tools** -- all Eclipse-based tools that include UDC and run under the same account share it.
+- **Different versions** -- updating a tool or installing another version keeps it.
+
+Another computer or account gets a different ID, and deleting the file creates a new one.
 
 ## Local Data Storage
 
