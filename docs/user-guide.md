@@ -9,7 +9,7 @@ UDC is distributed as the feature `org.eclipse.epp.usagedata.feature`.
 There is currently no published update site; install it by building the p2 repository from source and pointing **Help > Install New Software...** at the resulting local directory:
 
 ```bash
-mvn clean verify
+./mvnw clean verify
 ```
 
 The update site is then available under `org.eclipse.epp.usagedata.repository/target/repository/`.

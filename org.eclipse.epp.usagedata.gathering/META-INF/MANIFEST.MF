@@ -15,7 +15,7 @@ Export-Package: org.eclipse.epp.usagedata.internal.gathering;x-friends:="org.ecl
  org.eclipse.epp.usagedata.internal.gathering.monitors;x-friends:="org.eclipse.epp.usagedata.recording,org.eclipse.epp.usagedata.ui",
  org.eclipse.epp.usagedata.internal.gathering.services;x-friends:="org.eclipse.epp.usagedata.recording,org.eclipse.epp.usagedata.ui",
  org.eclipse.epp.usagedata.internal.gathering.settings;x-friends:="org.eclipse.epp.usagedata.recording,org.eclipse.epp.usagedata.ui"
-Bundle-RequiredExecutionEnvironment: JavaSE-21
+Bundle-RequiredExecutionEnvironment: JavaSE-25
 Bundle-Vendor: %Bundle-Vendor.0
 Service-Component: OSGI-INF/org.eclipse.epp.usagedata.internal.gathering.MonitoringStarter.xml,
  OSGI-INF/org.eclipse.epp.usagedata.internal.gathering.services.UsageDataService.xml
