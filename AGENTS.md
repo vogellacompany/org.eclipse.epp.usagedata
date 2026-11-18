@@ -6,10 +6,10 @@ This project is the **Usage Data Collector (UDC)** for the Eclipse Packaging Pro
 
 - **Core Purpose:** Collect and upload anonymized usage data from the Eclipse IDE.
 - **Main Technologies:**
-  - **Java 21:** The project's required execution environment.
+  - **Java 25:** The project's required execution environment.
   - **OSGi / Eclipse Plugins:** The project is a collection of Eclipse plugins and features.
-  - **Maven & Tycho:** Used for building OSGi bundles and managing dependencies within the Eclipse ecosystem.
-  - **Eclipse Target Platform:** Based on the Eclipse 2025-06 release.
+  - **Maven & Tycho:** Maven, run through the wrapper `./mvnw`, and Tycho, used for building OSGi bundles and managing dependencies within the Eclipse ecosystem.
+  - **Eclipse Target Platform:** Based on the Eclipse 2026-09 release.
 - **Architecture:**
   - `org.eclipse.epp.usagedata.gathering`: Handles the actual monitoring of user actions within the IDE. It defines extension points for custom monitors.
   - `org.eclipse.epp.usagedata.recording`: Manages the storage and filtering of collected data, and handles the upload process.
@@ -18,15 +18,15 @@ This project is the **Usage Data Collector (UDC)** for the Eclipse Packaging Pro
 
 ## Building and Running
 
-The project uses Maven with the Tycho plugin for building.
+The project uses Maven with the Tycho plugin for building, always through the Maven wrapper `./mvnw`, which brings the Maven version the build expects.
 
 - **Build and Test:**
   ```bash
-  mvn clean verify
+  ./mvnw clean verify
   ```
 - **Build a single module** (use `-am` to include its dependencies):
   ```bash
-  mvn clean compile -pl :org.eclipse.epp.usagedata.recording -am
+  ./mvnw clean compile -pl :org.eclipse.epp.usagedata.recording -am
   ```
 - **Target Platform:** The build relies on the target platform definition located at `target-platform/target-platform.target`.
 
@@ -34,8 +34,8 @@ The project uses Maven with the Tycho plugin for building.
 
 - **Eclipse Plugin Style:** Follows standard Eclipse plugin development practices, including `MANIFEST.MF` for dependencies and `plugin.xml` for extensions and extension points.
 - **Extensibility:** The `gathering` plugin provides the `org.eclipse.epp.usagedata.gathering.monitors` extension point, allowing other plugins to contribute their own `UsageMonitor` implementations.
-- **Testing:** Each core plugin has a corresponding test fragment alongside it in the repository root, run by Tycho Surefire during `mvn verify`. The tests need a running workbench, so use `xvfb-run -a mvn verify` on a headless machine.
-- **License:** The project is licensed under the **Eclipse Public License v1.0 (EPL-1.0)**.
+- **Testing:** Each core plugin has a corresponding test fragment alongside it in the repository root, run by Tycho Surefire during `./mvnw verify`. The tests need a running workbench, so use `xvfb-run -a ./mvnw verify` on a headless machine.
+- **License:** The project is licensed under the **Eclipse Public License 2.0 (EPL-2.0)**, see `LICENSE`; the source headers of the original Eclipse authors keep their EPL-1.0 wording.
 - **Contributions:** Contributions require an **Eclipse Contributor Agreement (ECA)** and must include a `Signed-off-by` footer in commit messages.
 - **Issue Tracking:** Development is tracked via the Eclipse Foundation's Bugzilla (Product: EPP).
 

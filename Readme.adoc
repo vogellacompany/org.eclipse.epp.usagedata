@@ -11,38 +11,32 @@ https://vogellacompany.github.io/org.eclipse.epp.usagedata/
 That URL always offers the newest release.
 The page at the same address lists the version-specific sites if you want to pin one.
 
-=== How to release
+=== How to publish the update site
 
-Every push to `main` runs the `Release` workflow, which builds the p2 repository and publishes it to the `gh-pages` branch as the update site above.
-Pushing a tag that starts with `v` additionally attaches the repository archive to a GitHub release.
-
-```bash
-git tag v1.4.0
-git push origin v1.4.0
-```
-
-The workflow can also be started manually from the Actions tab, which publishes the update site without creating a release.
+Every push to `main` runs the `Update site` workflow, which builds the p2 repository and publishes it to the `gh-pages` branch as the update site above.
+The workflow can also be started manually from the Actions tab.
+It is the only GitHub workflow; pull requests and branches are built and tested locally.
 
 === How to build
 
 Use the following command to build the collector:
 
 ```bash
-mvn clean verify
+./mvnw clean verify
 ```
 
 This also runs the tests.
-They start a workbench, so on a headless machine (or in CI) run them under a virtual display:
+They start a workbench, so on a headless machine run them under a virtual display:
 
 ```bash
-xvfb-run -a mvn clean verify
+xvfb-run -a ./mvnw clean verify
 ```
 
 The published artifacts are PGP signed with the vogella release key, held in the `MAVEN_GPG_KEY` and `MAVEN_GPG_PASSPHRASE` organization secrets.
-Signing is off in a plain `mvn clean verify`; to exercise it locally, point Tycho at an exported secret key:
+Signing is off in a plain `./mvnw clean verify`; to exercise it locally, point Tycho at an exported secret key:
 
 ```bash
-mvn clean verify -Dgpg.skip=false -Dtycho.pgp.signer.bc.secretKeys=/path/to/signing-key.asc
+./mvnw clean verify -Dgpg.skip=false -Dtycho.pgp.signer.bc.secretKeys=/path/to/signing-key.asc
 ```
 
 with the passphrase in `MAVEN_GPG_PASSPHRASE`.

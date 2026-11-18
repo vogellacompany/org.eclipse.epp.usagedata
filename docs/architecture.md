@@ -73,10 +73,10 @@ The gathering framework will call `startMonitoring()` at workbench startup and `
 
 ## Building
 
-Requires Java 21 and Maven. The build uses the Tycho plugin to resolve OSGi dependencies against the target platform defined in `target-platform/target-platform.target`.
+Requires Java 25; the Maven wrapper `./mvnw` brings Maven itself. The build uses the Tycho plugin to resolve OSGi dependencies against the target platform defined in `target-platform/target-platform.target`.
 
 ```bash
-mvn clean verify
+./mvnw clean verify
 ```
 
 This compiles all plugins, runs the test suites, and assembles the p2 update site under `org.eclipse.epp.usagedata.repository/target/`.
@@ -84,9 +84,9 @@ This compiles all plugins, runs the test suites, and assembles the p2 update sit
 To build a single module with its dependencies, use `-pl :bundle-id -am`:
 
 ```bash
-mvn clean compile -pl :org.eclipse.epp.usagedata.recording -am
+./mvnw clean compile -pl :org.eclipse.epp.usagedata.recording -am
 ```
 
 ## License
 
-Eclipse Public License v1.0 (EPL-1.0). Contributions require a signed Eclipse Contributor Agreement (ECA) and a `Signed-off-by` trailer in commit messages. See [CONTRIBUTING.md](../CONTRIBUTING.md) for details.
+Eclipse Public License 2.0 (EPL-2.0), see `LICENSE`; the source headers of the original Eclipse authors keep their EPL-1.0 wording. Contributions require a signed Eclipse Contributor Agreement (ECA) and a `Signed-off-by` trailer in commit messages. See [CONTRIBUTING.md](../CONTRIBUTING.md) for details.
