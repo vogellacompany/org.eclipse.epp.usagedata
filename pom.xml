@@ -3,14 +3,44 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
 	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.eclipse.epp.usagedata</groupId>
-	<artifactId>workspace</artifactId>
+	<!-- org.eclipse belongs to the Eclipse Foundation, Maven Central only accepts the vogella namespace -->
+	<groupId>com.vogella.epp.usagedata</groupId>
+	<artifactId>org.eclipse.epp.usagedata.parent</artifactId>
 	<version>1.3.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
+
+	<name>Eclipse Usage Data Collector</name>
+	<description>Records how the Eclipse IDE is used and uploads the anonymized data. Maintained and built by vogella GmbH.</description>
+	<url>https://github.com/vogellacompany/org.eclipse.epp.usagedata</url>
+
+	<licenses>
+		<license>
+			<name>Eclipse Public License - v 2.0</name>
+			<url>https://www.eclipse.org/legal/epl-2.0/</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<name>Lars Vogel</name>
+			<email>Lars.Vogel@vogella.com</email>
+			<organization>vogella GmbH</organization>
+			<organizationUrl>https://www.vogella.com</organizationUrl>
+		</developer>
+	</developers>
+
+	<scm>
+		<connection>scm:git:https://github.com/vogellacompany/org.eclipse.epp.usagedata.git</connection>
+		<developerConnection>scm:git:git@github.com:vogellacompany/org.eclipse.epp.usagedata.git</developerConnection>
+		<url>https://github.com/vogellacompany/org.eclipse.epp.usagedata</url>
+	</scm>
 
     <properties>
         <!-- PGP signing of the update site is off by default, the CI enables it with -Dgpg.skip=false -->
         <gpg.skip>true</gpg.skip>
+        <!-- same value as .mvn/maven.config, so the parent published to Maven Central resolves it -->
+        <tycho.version>5.0.4</tycho.version>
         <!-- Maven 3.10 pins outputTimestamp to 1980, which Tycho would take as the build qualifier -->
         <maven.build.timestamp.format>yyyy-MM-dd'T'HH:mm:ss'Z'</maven.build.timestamp.format>
         <project.build.outputTimestamp>${maven.build.timestamp}</project.build.outputTimestamp>
@@ -138,5 +168,82 @@
 		<module>./org.eclipse.epp.usagedata.recording.tests</module>
 		<module>./org.eclipse.epp.usagedata.ui.tests</module>
 	</modules>
+
+	<profiles>
+		<!-- Publishes the bundles and the feature to Maven Central, see docs/maven-central.md -->
+		<profile>
+			<id>release</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.eclipse.tycho</groupId>
+						<artifactId>tycho-packaging-plugin</artifactId>
+						<version>${tycho.version}</version>
+						<configuration>
+							<!-- the parent carries the metadata Central requires -->
+							<removeParent>false</removeParent>
+						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>org.eclipse.tycho</groupId>
+						<artifactId>tycho-source-plugin</artifactId>
+						<version>${tycho.version}</version>
+						<executions>
+							<execution>
+								<id>plugin-source</id>
+								<goals>
+									<goal>plugin-source</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<version>3.12.0</version>
+						<executions>
+							<execution>
+								<id>attach-javadocs</id>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+								<configuration>
+									<doclint>none</doclint>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<version>3.2.8</version>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+								<configuration>
+									<skip>false</skip>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.sonatype.central</groupId>
+						<artifactId>central-publishing-maven-plugin</artifactId>
+						<version>0.11.0</version>
+						<extensions>true</extensions>
+						<configuration>
+							<publishingServerId>central</publishingServerId>
+							<autoPublish>true</autoPublish>
+							<waitUntil>published</waitUntil>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 
 </project>

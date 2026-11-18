@@ -3,12 +3,12 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <artifactId>workspace</artifactId>
-    <groupId>org.eclipse.epp.usagedata</groupId>
+    <artifactId>org.eclipse.epp.usagedata.parent</artifactId>
+    <groupId>com.vogella.epp.usagedata</groupId>
     <version>1.3.1-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
-  <groupId>org.eclipse.epp.usagedata</groupId>
+  <groupId>com.vogella.epp.usagedata</groupId>
   <artifactId>org.eclipse.epp.usagedata.recording.tests</artifactId>
   <version>1.3.1-SNAPSHOT</version>
   <packaging>eclipse-test-plugin</packaging>
